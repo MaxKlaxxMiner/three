@@ -7,71 +7,82 @@ import (
 )
 
 func TestVector3Instancing(t *testing.T) {
-	// Test NewVector3Zero
-	a := three.NewVector3Zero() // Zugreifen über den Paketnamen
+	a := three.NewVector3Zero()
 	if a.X != 0 || a.Y != 0 || a.Z != 0 {
 		t.Errorf("NewVector3Zero() failed: expected (0, 0, 0), got (%f, %f, %f)", a.X, a.Y, a.Z)
 	}
-
-	// Test NewVector3 with constants
 	a = three.NewVector3(consts.X, consts.Y, consts.Z)
 	if a.X != consts.X || a.Y != consts.Y || a.Z != consts.Z {
 		t.Errorf("NewVector3(%f, %f, %f) failed: expected (%f, %f, %f), got (%f, %f, %f)", consts.X, consts.Y, consts.Z, consts.X, consts.Y, consts.Z, a.X, a.Y, a.Z)
 	}
+
+	a = three.NewVector3Zero()
+	if a.X != 0 || a.Y != 0 || a.Z != 0 {
+		t.Errorf("NewVector3Zero() failed: expected (0, 0, 0), got (%f, %f, %f)", a.X, a.Y, a.Z)
+	}
+	a.Set(consts.X, consts.Y, consts.Z)
+	if a.X != consts.X || a.Y != consts.Y || a.Z != consts.Z {
+		t.Errorf("Set(%f, %f, %f) failed: expected (%f, %f, %f), got (%f, %f, %f)", consts.X, consts.Y, consts.Z, consts.X, consts.Y, consts.Z, a.X, a.Y, a.Z)
+	}
+
+	a = three.NewVector3Zero()
+	if a.X != 0 || a.Y != 0 || a.Z != 0 {
+		t.Errorf("NewVector3Zero() failed: expected (0, 0, 0), got (%f, %f, %f)", a.X, a.Y, a.Z)
+	}
+	a.SetScalar(consts.W)
+	if a.X != consts.W || a.Y != consts.W || a.Z != consts.W {
+		t.Errorf("SetScalar(%f, %f, %f) failed: expected (%f, %f, %f), got (%f, %f, %f)", consts.W, consts.W, consts.W, consts.W, consts.W, consts.W, a.X, a.Y, a.Z)
+	}
+
+	a = three.NewVector3Zero()
+	a.SetX(consts.X)
+	a.SetY(consts.Y)
+	a.SetZ(consts.Z)
+	if a.X != consts.X || a.Y != consts.Y || a.Z != consts.Z {
+		t.Errorf("Set_X,Y,Z(%f, %f, %f) failed: expected (%f, %f, %f), got (%f, %f, %f)", consts.X, consts.Y, consts.Z, consts.X, consts.Y, consts.Z, a.X, a.Y, a.Z)
+	}
+
+	a = three.NewVector3Zero()
+	a.SetComponent(0, consts.X)
+	a.SetComponent(1, consts.Y)
+	a.SetComponent(2, consts.Z)
+	if a.X != consts.X || a.Y != consts.Y || a.Z != consts.Z {
+		t.Errorf("SetComponent_0,1,2(%f, %f, %f) failed: expected (%f, %f, %f), got (%f, %f, %f)", consts.X, consts.Y, consts.Z, consts.X, consts.Y, consts.Z, a.X, a.Y, a.Z)
+	}
+	unitPanic(t, "SetComponent(-1)", "index is out of range: -1", func() {
+		a = three.NewVector3Zero()
+		a.SetComponent(0, consts.X)  // ok
+		a.SetComponent(-1, consts.W) // panic
+	})
+	unitPanic(t, "SetComponent(3)", "index is out of range: 3", func() {
+		a = three.NewVector3Zero()
+		a.SetComponent(2, consts.Z) // ok
+		a.SetComponent(3, consts.W) // panic
+	})
+
+	a = three.NewVector3(consts.X, consts.Y, consts.Z)
+	if r := a.GetComponent(0); r != consts.X {
+		t.Errorf("GetComponent(%d) failed: expected (%f), got (%f)", 0, consts.X, r)
+	}
+	if r := a.GetComponent(1); r != consts.Y {
+		t.Errorf("GetComponent(%d) failed: expected (%f), got (%f)", 1, consts.Y, r)
+	}
+	if r := a.GetComponent(2); r != consts.Z {
+		t.Errorf("GetComponent(%d) failed: expected (%f), got (%f)", 2, consts.Z, r)
+	}
+	unitPanic(t, "GetComponent(-1)", "index is out of range: -1", func() {
+		a = three.NewVector3Zero()
+		a.GetComponent(0)  // ok
+		a.GetComponent(-1) // panic
+	})
+	unitPanic(t, "GetComponent(3)", "index is out of range: 3", func() {
+		a = three.NewVector3Zero()
+		a.GetComponent(2) // ok
+		a.GetComponent(3) // panic
+	})
 }
 
 // todo
-
-//		QUnit.test( 'set', ( assert ) => {
-//
-//			const a = new Vector3();
-//			assert.ok( a.x == 0, 'Passed!' );
-//			assert.ok( a.y == 0, 'Passed!' );
-//			assert.ok( a.z == 0, 'Passed!' );
-//
-//			a.set( x, y, z );
-//			assert.ok( a.x == x, 'Passed!' );
-//			assert.ok( a.y == y, 'Passed!' );
-//			assert.ok( a.z == z, 'Passed!' );
-//
-//		} );
-//
-//		QUnit.todo( 'setScalar', ( assert ) => {
-//
-//			assert.ok( false, 'everything\'s gonna be alright' );
-//
-//		} );
-//
-//		QUnit.todo( 'setX', ( assert ) => {
-//
-//			assert.ok( false, 'everything\'s gonna be alright' );
-//
-//		} );
-//
-//		QUnit.todo( 'setY', ( assert ) => {
-//
-//			assert.ok( false, 'everything\'s gonna be alright' );
-//
-//		} );
-//
-//		QUnit.todo( 'setZ', ( assert ) => {
-//
-//			assert.ok( false, 'everything\'s gonna be alright' );
-//
-//		} );
-//
-//		QUnit.todo( 'setComponent', ( assert ) => {
-//
-//			assert.ok( false, 'everything\'s gonna be alright' );
-//
-//		} );
-//
-//		QUnit.todo( 'getComponent', ( assert ) => {
-//
-//			assert.ok( false, 'everything\'s gonna be alright' );
-//
-//		} );
-//
 //		QUnit.todo( 'clone', ( assert ) => {
 //
 //			assert.ok( false, 'everything\'s gonna be alright' );

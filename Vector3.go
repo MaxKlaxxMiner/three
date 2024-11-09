@@ -1,12 +1,12 @@
 package three
 
+import "strconv"
+
 type Vector3 struct {
 	X float64
 	Y float64
 	Z float64
 }
-
-// --- constructor( x = 0, y = 0, z = 0 ) ---
 
 // NewVector3Zero Creates a new Vector3 with 0 for X, Y and Z.
 func NewVector3Zero() *Vector3 {
@@ -18,82 +18,70 @@ func NewVector3(x, y, z float64) *Vector3 {
 	return &Vector3{x, y, z}
 }
 
-//// --- set( x, y, z ) ---
-//
-//func (v *Vector3) SetXY(x, y float64) *Vector3 {
-//	v.X = x
-//	v.Y = y
-//	return v
-//}
-//
-//func (v *Vector3) SetXYZ(x, y, z float64) *Vector3 {
-//	v.X = x
-//	v.Y = y
-//	v.Z = z
-//	return v
-//}
-//
-//// --- setScalar( scalar ) ---
-//
-//func (v *Vector3) SetScalar(scalar float64) *Vector3 {
-//	v.X = scalar
-//	v.Y = scalar
-//	v.Z = scalar
-//	return v
-//}
-//
-//// --- setX( x ) ---
-//
-//func (v *Vector3) SetX(x float64) *Vector3 {
-//	v.X = x
-//	return v
-//}
-//
-//// --- setY( y ) ---
-//
-//func (v *Vector3) SetY(y float64) *Vector3 {
-//	v.Y = y
-//	return v
-//}
-//
-//// --- setZ( z ) ---
-//
-//func (v *Vector3) SetZ(z float64) *Vector3 {
-//	v.Z = z
-//	return v
-//}
-//
-//// --- setComponent( index, value ) ---
-//
-//func (v *Vector3) SetComponent(index int, value float64) *Vector3 {
-//	switch index {
-//	case 0:
-//		v.X = value
-//	case 1:
-//		v.Y = value
-//	case 2:
-//		v.Z = value
-//	default:
-//		panic("index is out of range: " + strconv.Itoa(index))
-//	}
-//	return v
-//}
-//
-//// --- getComponent( index ) ---
-//
-//func (v *Vector3) GetComponent(index int) float64 {
-//	switch index {
-//	case 0:
-//		return v.X
-//	case 1:
-//		return v.Y
-//	case 2:
-//		return v.Z
-//	default:
-//		panic("index is out of range: " + strconv.Itoa(index))
-//	}
-//}
-//
+// Set Sets the x, y and z components of this vector.
+func (v *Vector3) Set(x, y, z float64) *Vector3 {
+	v.X = x
+	v.Y = y
+	v.Z = z
+	return v
+}
+
+// SetScalar Set the x, y and z values of this vector both equal to scalar.
+func (v *Vector3) SetScalar(scalar float64) *Vector3 {
+	v.X = scalar
+	v.Y = scalar
+	v.Z = scalar
+	return v
+}
+
+// SetX Replace this vector's x value with x.
+func (v *Vector3) SetX(x float64) *Vector3 {
+	v.X = x
+	return v
+}
+
+// SetY Replace this vector's y value with y.
+func (v *Vector3) SetY(y float64) *Vector3 {
+	v.Y = y
+	return v
+}
+
+// SetZ Replace this vector's z value with z.
+func (v *Vector3) SetZ(z float64) *Vector3 {
+	v.Z = z
+	return v
+}
+
+// SetComponent Sets the indexed components of this vector. index: 0 = x, 1 = y or 2 = z
+func (v *Vector3) SetComponent(index int, value float64) *Vector3 {
+	switch index {
+	case 0:
+		v.X = value
+	case 1:
+		v.Y = value
+	case 2:
+		v.Z = value
+	default:
+		panic("index is out of range: " + strconv.Itoa(index))
+	}
+	return v
+}
+
+// GetComponent Sets the indexed components of this vector. index: 0 = x, 1 = y or 2 = z
+func (v *Vector3) GetComponent(index int) float64 {
+	switch index {
+	case 0:
+		return v.X
+	case 1:
+		return v.Y
+	case 2:
+		return v.Z
+	default:
+		panic("index is out of range: " + strconv.Itoa(index))
+	}
+}
+
+//todo
 //// --- clone() ---
 //
 //func (v *Vector3) Clone() *Vector3 {
