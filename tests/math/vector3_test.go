@@ -2,7 +2,7 @@ package tests
 
 import (
 	"github.com/MaxKlaxxMiner/three"
-	"github.com/MaxKlaxxMiner/three/tests/consts"
+	"github.com/MaxKlaxxMiner/three/internal/consts"
 	"testing"
 )
 
@@ -100,101 +100,65 @@ func TestVector3Instancing(t *testing.T) {
 	}
 }
 
+func TestVector3SimpleArithmetic(t *testing.T) {
+	a := three.NewVector3(consts.X, consts.Y, consts.Z)
+	b := three.NewVector3(-consts.X, -consts.Y, -consts.Z)
+
+	a.Add(b)
+	if a.X != 0 || a.Y != 0 || a.Z != 0 {
+		t.Errorf("a.Add(b) failed: expected (0, 0, 0), got (%f, %f, %f)", a.X, a.Y, a.Z)
+	}
+	a.Add(b).AddScalar(consts.W)
+	if a.X != -consts.X+consts.W || a.Y != -consts.Y+consts.W || a.Z != -consts.Z+consts.W {
+		t.Errorf("a.Add(b).AddScalar(%f) failed: expected (%f, %f, %f), got (%f, %f, %f)", consts.W, -consts.X+consts.W, -consts.Y+consts.W, -consts.Z+consts.W, a.X, a.Y, a.Z)
+	}
+	a = three.NewVector3Zero().AddVectors(b, b)
+	if a.X != -2*consts.X || a.Y != -2*consts.Y || a.Z != -2*consts.Z {
+		t.Errorf("new.AddVectors(b, b) failed: expected (%f, %f, %f), got (%f, %f, %f)", -2*consts.X, -2*consts.Y, -2*consts.Z, a.X, a.Y, a.Z)
+	}
+	a = three.NewVector3(consts.X, consts.Y, consts.Z)
+	b = three.NewVector3(2, 3, 4)
+	s := 3.0
+	a.AddScaledVector(b, s)
+	if a.X != consts.X+b.X*s || a.Y != consts.Y+b.Y*s || a.Z != consts.Z+b.Z*s {
+		t.Errorf("a.AddScaledVector(b) failed: expected (%f, %f, %f), got (%f, %f, %f)", consts.X+b.X*s, consts.Y+b.Y*s, consts.Z+b.Z*s, a.X, a.Y, a.Z)
+	}
+
+	a = three.NewVector3(consts.X, consts.Y, consts.Z)
+	b = three.NewVector3(-consts.X, -consts.Y, -consts.Z)
+	a.Sub(b)
+	if a.X != 2*consts.X || a.Y != 2*consts.Y || a.Z != 2*consts.Z {
+		t.Errorf("a.Sub(b) failed: expected (%f, %f, %f), got (%f, %f, %f)", 2*consts.X, 2*consts.Y, 2*consts.Z, a.X, a.Y, a.Z)
+	}
+	a = three.NewVector3Zero().SubVectors(a, a)
+	if a.X != 0 || a.Y != 0 || a.Z != 0 {
+		t.Errorf("new.SubVectors(a, a) failed: expected (0, 0, 0), got (%f, %f, %f)", a.X, a.Y, a.Z)
+	}
+	b.SubScalar(consts.W)
+	if b.X != -consts.X-consts.W || b.Y != -consts.Y-consts.W || b.Z != -consts.Z-consts.W {
+		t.Errorf("b.SubScalar(%f) failed: expected (%f, %f, %f), got (%f, %f, %f)", consts.W, -consts.X-consts.W, -consts.Y-consts.W, -consts.Z-consts.W, b.X, b.Y, b.Z)
+	}
+
+	a = three.NewVector3(consts.X, consts.Y, consts.Z)
+	b = three.NewVector3(consts.X/2, consts.Y/2, consts.Z/2)
+	a.Multiply(b)
+	if a.X != consts.X*consts.X/2 || a.Y != consts.Y*consts.Y/2 || a.Z != consts.Z*consts.Z/2 {
+		t.Errorf("a.Multiply(b) failed: expected (%f, %f, %f), got (%f, %f, %f)", consts.X*consts.X/2, consts.Y*consts.Y/2, consts.Z*consts.Z/2, a.X, a.Y, a.Z)
+	}
+	a.MultiplyScalar(2)
+	if a.X != consts.X*consts.X || a.Y != consts.Y*consts.Y || a.Z != consts.Z*consts.Z {
+		t.Errorf("a.MultiplyScalar(%f) failed: expected (%f, %f, %f), got (%f, %f, %f)", 2.0, consts.X*consts.X, consts.Y*consts.Y, consts.Z*consts.Z, a.X, a.Y, a.Z)
+	}
+
+	a = three.NewVector3(consts.X, consts.Y, consts.Z)
+	b = three.NewVector3(2, 3, -5)
+	a = three.NewVector3Zero().MultiplyVectors(a, b)
+	if a.X != consts.X*b.X || a.Y != consts.Y*b.Y || a.Z != consts.Z*b.Z {
+		t.Errorf("new.MultiplyVectors() failed: expected (%f, %f, %f), got (%f, %f, %f)", consts.X*b.X, consts.Y*b.Y, consts.Z*b.Z, a.X, a.Y, a.Z)
+	}
+}
+
 // todo
-//		QUnit.test( 'add', ( assert ) => {
-//
-//			const a = new Vector3( x, y, z );
-//			const b = new Vector3( - x, - y, - z );
-//
-//			a.add( b );
-//			assert.ok( a.x == 0, 'Passed!' );
-//			assert.ok( a.y == 0, 'Passed!' );
-//			assert.ok( a.z == 0, 'Passed!' );
-//
-//			const c = new Vector3().addVectors( b, b );
-//			assert.ok( c.x == - 2 * x, 'Passed!' );
-//			assert.ok( c.y == - 2 * y, 'Passed!' );
-//			assert.ok( c.z == - 2 * z, 'Passed!' );
-//
-//		} );
-//
-//		QUnit.todo( 'addScalar', ( assert ) => {
-//
-//			assert.ok( false, 'everything\'s gonna be alright' );
-//
-//		} );
-//
-//		QUnit.todo( 'addVectors', ( assert ) => {
-//
-//			assert.ok( false, 'everything\'s gonna be alright' );
-//
-//		} );
-//
-//		QUnit.test( 'addScaledVector', ( assert ) => {
-//
-//			const a = new Vector3( x, y, z );
-//			const b = new Vector3( 2, 3, 4 );
-//			const s = 3;
-//
-//			a.addScaledVector( b, s );
-//			assert.strictEqual( a.x, x + b.x * s, 'Check x' );
-//			assert.strictEqual( a.y, y + b.y * s, 'Check y' );
-//			assert.strictEqual( a.z, z + b.z * s, 'Check z' );
-//
-//		} );
-//
-//		QUnit.test( 'sub', ( assert ) => {
-//
-//			const a = new Vector3( x, y, z );
-//			const b = new Vector3( - x, - y, - z );
-//
-//			a.sub( b );
-//			assert.ok( a.x == 2 * x, 'Passed!' );
-//			assert.ok( a.y == 2 * y, 'Passed!' );
-//			assert.ok( a.z == 2 * z, 'Passed!' );
-//
-//			const c = new Vector3().subVectors( a, a );
-//			assert.ok( c.x == 0, 'Passed!' );
-//			assert.ok( c.y == 0, 'Passed!' );
-//			assert.ok( c.z == 0, 'Passed!' );
-//
-//		} );
-//
-//		QUnit.todo( 'subScalar', ( assert ) => {
-//
-//			assert.ok( false, 'everything\'s gonna be alright' );
-//
-//		} );
-//
-//		QUnit.todo( 'subVectors', ( assert ) => {
-//
-//			assert.ok( false, 'everything\'s gonna be alright' );
-//
-//		} );
-//
-//		QUnit.todo( 'multiply', ( assert ) => {
-//
-//			assert.ok( false, 'everything\'s gonna be alright' );
-//
-//		} );
-//
-//		QUnit.todo( 'multiplyScalar', ( assert ) => {
-//
-//			assert.ok( false, 'everything\'s gonna be alright' );
-//
-//		} );
-//
-//		QUnit.test( 'multiplyVectors', ( assert ) => {
-//
-//			const a = new Vector3( x, y, z );
-//			const b = new Vector3( 2, 3, - 5 );
-//
-//			const c = new Vector3().multiplyVectors( a, b );
-//			assert.strictEqual( c.x, x * 2, 'Check x' );
-//			assert.strictEqual( c.y, y * 3, 'Check y' );
-//			assert.strictEqual( c.z, z * - 5, 'Check z' );
-//
-//		} );
 //
 //		QUnit.test( 'applyEuler', ( assert ) => {
 //

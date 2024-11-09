@@ -94,97 +94,86 @@ func (v *Vector3) Copy(a *Vector3) *Vector3 {
 	return v
 }
 
-//todo
-//// --- add( v ) ---
-//
-//func (v *Vector3) Add(a *Vector3) *Vector3 {
-//	v.X += a.X
-//	v.Y += a.Y
-//	v.Z += a.Z
-//	return v
-//}
-//
-//// --- addScalar( s ) ---
-//
-//func (v *Vector3) AddScalar(s float64) *Vector3 {
-//	v.X += s
-//	v.Y += s
-//	v.Z += s
-//	return v
-//}
-//
-//// --- addVectors( a, b ) ---
-//
-//func (v *Vector3) AddVectors(a, b *Vector3) *Vector3 {
-//	v.X = a.X + b.X
-//	v.Y = a.Y + b.Y
-//	v.Z = a.Z + b.Z
-//	return v
-//}
-//
-//// --- addScaledVector( v, s ) ---
-//
-//func (v *Vector3) AddScaledVector(a *Vector3, s float64) *Vector3 {
-//	v.X += a.X * s
-//	v.Y += a.Y * s
-//	v.Z += a.Z * s
-//	return v
-//}
-//
-//// --- sub( v ) ---
-//
-//func (v *Vector3) Sub(a *Vector3) *Vector3 {
-//	v.X -= a.X
-//	v.Y -= a.Y
-//	v.Z -= a.Z
-//	return v
-//}
-//
-//// --- subScalar( s ) ---
-//
-//func (v *Vector3) SubScalar(s float64) *Vector3 {
-//	v.X -= s
-//	v.Y -= s
-//	v.Z -= s
-//	return v
-//}
-//
-//// --- subVectors( a, b ) ---
-//
-//func (v *Vector3) SubVectors(a, b *Vector3) *Vector3 {
-//	v.X -= a.X - b.X
-//	v.Y -= a.Y - b.Y
-//	v.Z -= a.Z - b.Z
-//	return v
-//}
-//
-//// --- multiply( v ) ---
-//
-//func (v *Vector3) Multiply(a *Vector3) *Vector3 {
-//	v.X *= a.X
-//	v.Y *= a.Y
-//	v.Z *= a.Z
-//	return v
-//}
-//
-//// --- multiplyScalar( scalar ) ---
-//
-//func (v *Vector3) MultiplyScalar(s float64) *Vector3 {
-//	v.X *= s
-//	v.Y *= s
-//	v.Z *= s
-//	return v
-//}
-//
-//// --- multiplyVectors( a, b ) ---
-//
-//func (v *Vector3) MultiplyVectors(a, b *Vector3) *Vector3 {
-//	v.X = a.X * b.X
-//	v.Y = a.Y * b.Y
-//	v.Z = a.Z * b.Z
-//	return v
-//}
-//
+// Add Adds vector a to this vector.
+func (v *Vector3) Add(a *Vector3) *Vector3 {
+	v.X += a.X
+	v.Y += a.Y
+	v.Z += a.Z
+	return v
+}
+
+// AddScalar Adds the scalar value s to this vector's x, y and z values.
+func (v *Vector3) AddScalar(s float64) *Vector3 {
+	v.X += s
+	v.Y += s
+	v.Z += s
+	return v
+}
+
+// AddVectors Sets this vector to a + b.
+func (v *Vector3) AddVectors(a, b *Vector3) *Vector3 {
+	v.X = a.X + b.X
+	v.Y = a.Y + b.Y
+	v.Z = a.Z + b.Z
+	return v
+}
+
+// AddScaledVector Adds the multiple of a and s to this vector.
+func (v *Vector3) AddScaledVector(a *Vector3, s float64) *Vector3 {
+	v.X += a.X * s
+	v.Y += a.Y * s
+	v.Z += a.Z * s
+	return v
+}
+
+// Sub Subtracts a from this vector.
+func (v *Vector3) Sub(a *Vector3) *Vector3 {
+	v.X -= a.X
+	v.Y -= a.Y
+	v.Z -= a.Z
+	return v
+}
+
+// SubScalar Subtracts s from this vector's x, y and z components.
+func (v *Vector3) SubScalar(s float64) *Vector3 {
+	v.X -= s
+	v.Y -= s
+	v.Z -= s
+	return v
+}
+
+// SubVectors Sets this vector to a - b.
+func (v *Vector3) SubVectors(a, b *Vector3) *Vector3 {
+	v.X -= a.X - b.X
+	v.Y -= a.Y - b.Y
+	v.Z -= a.Z - b.Z
+	return v
+}
+
+// Multiply Multiplies this vector by a.
+func (v *Vector3) Multiply(a *Vector3) *Vector3 {
+	v.X *= a.X
+	v.Y *= a.Y
+	v.Z *= a.Z
+	return v
+}
+
+// MultiplyScalar Multiplies this vector by scalar s.
+func (v *Vector3) MultiplyScalar(s float64) *Vector3 {
+	v.X *= s
+	v.Y *= s
+	v.Z *= s
+	return v
+}
+
+// MultiplyVectors Sets this vector equal to a * b, component-wise.
+func (v *Vector3) MultiplyVectors(a, b *Vector3) *Vector3 {
+	v.X = a.X * b.X
+	v.Y = a.Y * b.Y
+	v.Z = a.Z * b.Z
+	return v
+}
+
 //// todo
 ////	applyEuler( euler ) {
 ////
