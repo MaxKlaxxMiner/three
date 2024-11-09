@@ -80,33 +80,27 @@ func TestVector3Instancing(t *testing.T) {
 		a.GetComponent(2) // ok
 		a.GetComponent(3) // panic
 	})
+
+	a = three.NewVector3(consts.X, consts.Y, consts.Z)
+	b := a.Clone()
+	a.Set(-consts.Z, -consts.X, -consts.Y)
+	if a.X != -consts.Z || a.Y != -consts.X || a.Z != -consts.Y {
+		t.Errorf("a.Clone() failed: expected (%f, %f, %f), got (%f, %f, %f)", -consts.Z, -consts.X, -consts.Y, a.X, a.Y, a.Z)
+	}
+	if b.X != consts.X || b.Y != consts.Y || b.Z != consts.Z {
+		t.Errorf("b.Clone() failed: expected (%f, %f, %f), got (%f, %f, %f)", consts.X, consts.Y, consts.Z, a.X, a.Y, a.Z)
+	}
+
+	a.Copy(b)
+	if b.X != consts.X || b.Y != consts.Y || b.Z != consts.Z {
+		t.Errorf("b.Copy() failed: expected (%f, %f, %f), got (%f, %f, %f)", consts.X, consts.Y, consts.Z, a.X, a.Y, a.Z)
+	}
+	if a.X != consts.X || a.Y != consts.Y || a.Z != consts.Z {
+		t.Errorf("a.Copy() failed: expected (%f, %f, %f), got (%f, %f, %f)", consts.X, consts.Y, consts.Z, a.X, a.Y, a.Z)
+	}
 }
 
 // todo
-//		QUnit.todo( 'clone', ( assert ) => {
-//
-//			assert.ok( false, 'everything\'s gonna be alright' );
-//
-//		} );
-//
-//		QUnit.test( 'copy', ( assert ) => {
-//
-//			const a = new Vector3( x, y, z );
-//			const b = new Vector3().copy( a );
-//			assert.ok( b.x == x, 'Passed!' );
-//			assert.ok( b.y == y, 'Passed!' );
-//			assert.ok( b.z == z, 'Passed!' );
-//
-//			// ensure that it is a true copy
-//			a.x = 0;
-//			a.y = - 1;
-//			a.z = - 2;
-//			assert.ok( b.x == x, 'Passed!' );
-//			assert.ok( b.y == y, 'Passed!' );
-//			assert.ok( b.z == z, 'Passed!' );
-//
-//		} );
-//
 //		QUnit.test( 'add', ( assert ) => {
 //
 //			const a = new Vector3( x, y, z );

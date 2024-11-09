@@ -81,22 +81,20 @@ func (v *Vector3) GetComponent(index int) float64 {
 	}
 }
 
+// Clone Returns a new vector3 with the same x, y and z values as this one.
+func (v *Vector3) Clone() *Vector3 {
+	return NewVector3(v.X, v.Y, v.Z)
+}
+
+// Copy Copies the values of the passed vector3's x, y and z properties to this vector3.
+func (v *Vector3) Copy(a *Vector3) *Vector3 {
+	v.X = a.X
+	v.Y = a.Y
+	v.Z = a.Z
+	return v
+}
+
 //todo
-//// --- clone() ---
-//
-//func (v *Vector3) Clone() *Vector3 {
-//	return NewVector3(v.X, v.Y, v.Z)
-//}
-//
-//// --- copy( v ) ---
-//
-//func (v *Vector3) Copy(a *Vector3) *Vector3 {
-//	v.X = a.X
-//	v.Y = a.Y
-//	v.Z = a.Z
-//	return v
-//}
-//
 //// --- add( v ) ---
 //
 //func (v *Vector3) Add(a *Vector3) *Vector3 {
