@@ -1,11 +1,11 @@
 package consts
 
 const (
-	x   = 2.0
-	y   = 3.0
-	z   = 4.0
-	w   = 5.0
-	eps = 0.0001
+	X   = 2.0
+	Y   = 3.0
+	Z   = 4.0
+	W   = 5.0
+	EPS = 0.0001
 )
 
 //todo
