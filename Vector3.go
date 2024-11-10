@@ -1,6 +1,8 @@
 package three
 
-import "strconv"
+import (
+	"strconv"
+)
 
 type Vector3 struct {
 	X float64
