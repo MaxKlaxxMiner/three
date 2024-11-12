@@ -34,9 +34,9 @@ const RAD2DEG = 180 / math.Pi
 
 // --- clamp( value, min, max ) ---
 
-func Clamp(value, min, max float64) float64 {
-	return math.Max(min, math.Min(max, value))
-}
+//func Clamp(value, min, max float64) float64 {
+//	return math.Max(min, math.Min(max, value))
+//}
 
 // todo
 //// compute euclidean modulo of m % n
