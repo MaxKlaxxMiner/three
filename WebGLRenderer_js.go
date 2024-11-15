@@ -25,6 +25,9 @@ type WebGLRenderer struct {
 	// Defines whether the renderer should sort objects. Default is true.
 	// 	Note: Sorting is used to attempt to properly render objects that have some degree of transparency. By definition, sorting objects may not work in all cases. Depending on the needs of application, it may be necessary to turn off sorting and use other methods to deal with transparency rendering e.g. manually determining each object's rendering order.
 	SortObjects bool
+
+	renderParams     // internal Render Params
+	renderProperties // internal Properties/Variables
 }
 
 type WebGLRendererParams struct {
@@ -42,7 +45,6 @@ type WebGLRendererParams struct {
 }
 
 type renderParams struct {
-	context                      js.Value
 	depth                        bool
 	stencil                      bool
 	alpha                        bool
@@ -54,10 +56,15 @@ type renderParams struct {
 	reverseDepthBuffer           bool
 }
 
-func (p *WebGLRendererParams) getBaseRenderer() (*WebGLRenderer, *renderParams) {
-	r := &renderParams{}
+type renderProperties struct {
+	canvas  js.Value
+	context js.Value
+}
+
+func (p *WebGLRendererParams) getBaseRenderer() *WebGLRenderer {
+	r := renderParams{}
 	canvas := utils.IfFunc(utils.InstanceOf(p.Canvas, "HTMLCanvasElement"), func() js.Value { return *p.Canvas }, func() js.Value { return utils.CreateCanvasElement() })
-	r.context = utils.NotNullOrDefault(p.Context, js.Null())
+	context := utils.NotNullOrDefault(p.Context, js.Null())
 	r.depth = utils.NotNullOrDefault(p.Depth, true)
 	r.stencil = utils.NotNullOrDefault(p.Stencil, false)
 	r.alpha = utils.NotNullOrDefault(p.Alpha, false)
@@ -68,14 +75,17 @@ func (p *WebGLRendererParams) getBaseRenderer() (*WebGLRenderer, *renderParams) 
 	r.failIfMajorPerformanceCaveat = utils.NotNullOrDefault(p.FailIfMajorPerformanceCaveat, false)
 	r.reverseDepthBuffer = utils.NotNullOrDefault(p.ReverseDepthBuffer, false)
 
-	if !r.context.IsNull() {
-		if utils.InstanceOf(&r.context, "WebGLRenderingContext") {
+	if !context.IsNull() {
+		if utils.InstanceOf(&context, "WebGLRenderingContext") {
 			panic("THREE.WebGLRenderer: WebGL 1 is not supported since r163.")
 		}
-		r.alpha = r.context.Call("getContextAttributes").Get("alpha").Bool()
+		r.alpha = context.Call("getContextAttributes").Get("alpha").Bool()
 	}
 
 	this := new(WebGLRenderer)
+	this.renderParams = r
+	this.canvas = canvas
+	this.context = context
 
 	// --- public properties ---
 	this.DomElement = canvas
@@ -92,5 +102,11 @@ func (p *WebGLRendererParams) getBaseRenderer() (*WebGLRenderer, *renderParams) 
 	// --- scene graph ---
 	this.SortObjects = true
 
-	return this, r
+	return this
+}
+
+// --- API ---
+
+func (r *WebGLRenderer) GetContext() js.Value {
+	return r.context
 }

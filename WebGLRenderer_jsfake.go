@@ -24,6 +24,9 @@ type WebGLRenderer struct {
 	// Defines whether the renderer should sort objects. Default is true.
 	// 	Note: Sorting is used to attempt to properly render objects that have some degree of transparency. By definition, sorting objects may not work in all cases. Depending on the needs of application, it may be necessary to turn off sorting and use other methods to deal with transparency rendering e.g. manually determining each object's rendering order.
 	SortObjects bool
+
+	renderParams     // internal Render Params
+	renderProperties // internal Properties/Variables
 }
 
 type WebGLRendererParams struct {
@@ -41,7 +44,6 @@ type WebGLRendererParams struct {
 }
 
 type renderParams struct {
-	context                      js.Value
 	depth                        bool
 	stencil                      bool
 	alpha                        bool
@@ -53,6 +55,17 @@ type renderParams struct {
 	reverseDepthBuffer           bool
 }
 
-func (p *WebGLRendererParams) getBaseRenderer() (*WebGLRenderer, *renderParams) {
-	return new(WebGLRenderer), &renderParams{}
+type renderProperties struct {
+	canvas  js.Value
+	context js.Value
+}
+
+func (p *WebGLRendererParams) getBaseRenderer() *WebGLRenderer {
+	return new(WebGLRenderer)
+}
+
+// --- API ---
+
+func (r *WebGLRenderer) GetContext() js.Value {
+	return r.context
 }
