@@ -3,6 +3,7 @@
 package three
 
 import (
+	"github.com/MaxKlaxxMiner/three/utils"
 	"github.com/MaxKlaxxMiner/three/utils/fake/js"
 )
 
@@ -25,7 +26,6 @@ type WebGLRenderer struct {
 	// 	Note: Sorting is used to attempt to properly render objects that have some degree of transparency. By definition, sorting objects may not work in all cases. Depending on the needs of application, it may be necessary to turn off sorting and use other methods to deal with transparency rendering e.g. manually determining each object's rendering order.
 	SortObjects bool
 
-	renderParams     // internal Render Params
 	renderProperties // internal Properties/Variables
 }
 
@@ -43,25 +43,17 @@ type WebGLRendererParams struct {
 	ReverseDepthBuffer           *bool     // whether to use a reverse depth buffer. Requires the EXT_clip_control extension. This is a more faster and accurate version than logarithmic depth buffer. Default is false.
 }
 
-type renderParams struct {
-	depth                        bool
-	stencil                      bool
-	alpha                        bool
-	antialias                    bool
-	premultipliedAlpha           bool
-	preserveDrawingBuffer        bool
-	powerPreference              string
-	failIfMajorPerformanceCaveat bool
-	reverseDepthBuffer           bool
-}
-
 type renderProperties struct {
 	canvas  js.Value
 	context js.Value
 }
 
-func (p *WebGLRendererParams) getBaseRenderer() *WebGLRenderer {
-	return new(WebGLRenderer)
+func (p *WebGLRendererParams) getOrCreateCanvas() js.Value {
+	if utils.InstanceOf(p.Canvas, "HTMLCanvasElement") {
+		return *p.Canvas
+	} else {
+		return utils.CreateCanvasElement()
+	}
 }
 
 // --- API ---

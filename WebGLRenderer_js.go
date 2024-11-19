@@ -26,7 +26,6 @@ type WebGLRenderer struct {
 	// 	Note: Sorting is used to attempt to properly render objects that have some degree of transparency. By definition, sorting objects may not work in all cases. Depending on the needs of application, it may be necessary to turn off sorting and use other methods to deal with transparency rendering e.g. manually determining each object's rendering order.
 	SortObjects bool
 
-	renderParams     // internal Render Params
 	renderProperties // internal Properties/Variables
 }
 
@@ -44,65 +43,17 @@ type WebGLRendererParams struct {
 	ReverseDepthBuffer           *bool     // whether to use a reverse depth buffer. Requires the EXT_clip_control extension. This is a more faster and accurate version than logarithmic depth buffer. Default is false.
 }
 
-type renderParams struct {
-	depth                        bool
-	stencil                      bool
-	alpha                        bool
-	antialias                    bool
-	premultipliedAlpha           bool
-	preserveDrawingBuffer        bool
-	powerPreference              string
-	failIfMajorPerformanceCaveat bool
-	reverseDepthBuffer           bool
-}
-
 type renderProperties struct {
 	canvas  js.Value
 	context js.Value
 }
 
-func (p *WebGLRendererParams) getBaseRenderer() *WebGLRenderer {
-	r := renderParams{}
-	canvas := utils.IfFunc(utils.InstanceOf(p.Canvas, "HTMLCanvasElement"), func() js.Value { return *p.Canvas }, func() js.Value { return utils.CreateCanvasElement() })
-	context := utils.NotNullOrDefault(p.Context, js.Null())
-	r.depth = utils.NotNullOrDefault(p.Depth, true)
-	r.stencil = utils.NotNullOrDefault(p.Stencil, false)
-	r.alpha = utils.NotNullOrDefault(p.Alpha, false)
-	r.antialias = utils.NotNullOrDefault(p.Antialias, false)
-	r.premultipliedAlpha = utils.NotNullOrDefault(p.PremultipliedAlpha, true)
-	r.preserveDrawingBuffer = utils.NotNullOrDefault(p.PreserveDrawingBuffer, false)
-	r.powerPreference = utils.If(len(p.PowerPreference) != 0, p.PowerPreference, "default")
-	r.failIfMajorPerformanceCaveat = utils.NotNullOrDefault(p.FailIfMajorPerformanceCaveat, false)
-	r.reverseDepthBuffer = utils.NotNullOrDefault(p.ReverseDepthBuffer, false)
-
-	if !context.IsNull() {
-		if utils.InstanceOf(&context, "WebGLRenderingContext") {
-			panic("THREE.WebGLRenderer: WebGL 1 is not supported since r163.")
-		}
-		r.alpha = context.Call("getContextAttributes").Get("alpha").Bool()
+func (p *WebGLRendererParams) getOrCreateCanvas() js.Value {
+	if utils.InstanceOf(p.Canvas, "HTMLCanvasElement") {
+		return *p.Canvas
+	} else {
+		return utils.CreateCanvasElement()
 	}
-
-	this := new(WebGLRenderer)
-	this.renderParams = r
-	this.canvas = canvas
-	this.context = context
-
-	// --- public properties ---
-	this.DomElement = canvas
-
-	// Debug configuration container
-	this.Debug.CheckShaderErrors = true
-
-	// --- clearing ---
-	this.AutoClear = true
-	this.AutoClearColor = true
-	this.AutoClearDepth = true
-	this.AutoClearStencil = true
-
-	// --- scene graph ---
-	this.SortObjects = true
-
-	return this
 }
 
 // --- API ---

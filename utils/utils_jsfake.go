@@ -17,3 +17,7 @@ func CreateCanvasElement() js.Value {
 func InstanceOf(value *js.Value, className string) bool {
 	return false
 }
+
+func JsNull() js.Value {
+	return js.Value{}
+}

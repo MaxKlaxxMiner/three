@@ -24,3 +24,7 @@ func InstanceOf(value *js.Value, className string) bool {
 	}
 	return value.InstanceOf(class)
 }
+
+func JsNull() js.Value {
+	return js.Null()
+}

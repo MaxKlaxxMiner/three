@@ -1,13 +1,52 @@
 package three
 
-import "strconv"
+import (
+	"github.com/MaxKlaxxMiner/three/utils"
+	"strconv"
+)
 
 func NewWebGLRenderer() *WebGLRenderer {
 	return NewWebGLRendererWithParams(WebGLRendererParams{})
 }
 
 func NewWebGLRendererWithParams(parameters WebGLRendererParams) *WebGLRenderer {
-	r := parameters.getBaseRenderer()
+	canvas := parameters.getOrCreateCanvas()
+	context := utils.NotNullOrDefault(parameters.Context, utils.JsNull())
+	depth := utils.NotNullOrDefault(parameters.Depth, true)
+	stencil := utils.NotNullOrDefault(parameters.Stencil, false)
+	alpha := utils.NotNullOrDefault(parameters.Alpha, false)
+	antialias := utils.NotNullOrDefault(parameters.Antialias, false)
+	premultipliedAlpha := utils.NotNullOrDefault(parameters.PremultipliedAlpha, true)
+	preserveDrawingBuffer := utils.NotNullOrDefault(parameters.PreserveDrawingBuffer, false)
+	powerPreference := utils.If(len(parameters.PowerPreference) != 0, parameters.PowerPreference, "default")
+	failIfMajorPerformanceCaveat := utils.NotNullOrDefault(parameters.FailIfMajorPerformanceCaveat, false)
+	reverseDepthBuffer := utils.NotNullOrDefault(parameters.ReverseDepthBuffer, false)
+
+	if !context.IsNull() {
+		if utils.InstanceOf(&context, "WebGLRenderingContext") {
+			panic("THREE.WebGLRenderer: WebGL 1 is not supported since r163.")
+		}
+		alpha = context.Call("getContextAttributes").Get("alpha").Bool()
+	}
+
+	this := new(WebGLRenderer)
+	this.canvas = canvas
+	this.context = context
+
+	// --- public properties ---
+	this.DomElement = canvas
+
+	// Debug configuration container
+	this.Debug.CheckShaderErrors = true
+
+	// --- clearing ---
+	this.AutoClear = true
+	this.AutoClearColor = true
+	this.AutoClearDepth = true
+	this.AutoClearStencil = true
+
+	// --- scene graph ---
+	this.SortObjects = true
 
 	//var uintClearColor [4]uint32 todo
 	//var intClearColor [4]int32 todo
@@ -108,8 +147,8 @@ func NewWebGLRendererWithParams(parameters WebGLRendererParams) *WebGLRenderer {
 	//
 
 	// OffscreenCanvas does not have setAttribute, see #22811
-	if !r.canvas.Get("setAttribute").IsUndefined() {
-		r.canvas.Call("setAttribute", "data-engine", "three go wasm r"+strconv.Itoa(Revision)+"."+strconv.Itoa(WasmVersion))
+	if !canvas.Get("setAttribute").IsUndefined() {
+		canvas.Call("setAttribute", "data-engine", "three go wasm r"+strconv.Itoa(Revision)+"."+strconv.Itoa(WasmVersion))
 	}
 	//			if ( 'setAttribute' in canvas ) canvas.setAttribute( 'data-engine', `three.js r${REVISION}` );
 
@@ -2464,7 +2503,9 @@ func NewWebGLRendererWithParams(parameters WebGLRendererParams) *WebGLRenderer {
 	//		}
 	//
 
-	return r
+	_, _, _, _, _, _, _, _, _ = depth, stencil, alpha, antialias, premultipliedAlpha, preserveDrawingBuffer, powerPreference, failIfMajorPerformanceCaveat, reverseDepthBuffer
+
+	return this
 }
 
 //	get coordinateSystem() {
