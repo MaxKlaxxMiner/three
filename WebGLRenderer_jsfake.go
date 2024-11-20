@@ -3,8 +3,8 @@
 package three
 
 import (
+	"github.com/MaxKlaxxMiner/three/internal/fake/js"
 	"github.com/MaxKlaxxMiner/three/utils"
-	"github.com/MaxKlaxxMiner/three/utils/fake/js"
 )
 
 type WebGLRenderer struct {

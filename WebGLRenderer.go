@@ -1,6 +1,7 @@
 package three
 
 import (
+	"fmt"
 	"github.com/MaxKlaxxMiner/three/utils"
 	"strconv"
 )
@@ -72,8 +73,8 @@ func NewWebGLRendererWithParams(parameters WebGLRendererParams) *WebGLRenderer {
 	//		this.toneMappingExposure = 1.0; todo
 
 	// --- internal properties ---
-	//		let _isContextLost = false; todo
-	//
+	_isContextLost := false
+
 	// --- internal state cache ---
 	//		let _currentActiveCubeFace = 0; todo
 	//		let _currentActiveMipmapLevel = 0; todo
@@ -121,71 +122,78 @@ func NewWebGLRendererWithParams(parameters WebGLRendererParams) *WebGLRenderer {
 	//		function getTargetPixelRatio() { todo
 	//			return _currentRenderTarget === null ? _pixelRatio : 1;
 	//		}
-	//
+
 	// --- initialize ---
-	//
-	//		let _gl = context;
-	//
-	//		function getContext( contextName, contextAttributes ) {
-	//
-	//			return canvas.getContext( contextName, contextAttributes );
-	//
-	//		}
-	//
-	//		try {
-	//
-	//			const contextAttributes = {
-	//				alpha: true,
-	//				depth,
-	//				stencil,
-	//				antialias,
-	//				premultipliedAlpha,
-	//				preserveDrawingBuffer,
-	//				powerPreference,
-	//				failIfMajorPerformanceCaveat,
-	//			};
-	//
+
+	_gl := GLContext{context}
+
+	getContext := func(contextName string, contextAttributes utils.JsValue) GLContext {
+		return GLContext{canvas.Call("getContext", contextName, contextAttributes.AsJsValue())}
+	}
+
+	contextAttributes := utils.JsGlobal.Get("Object").New()
+	contextAttributes.Set("alpha", true)
+	contextAttributes.Set("depth", depth)
+	contextAttributes.Set("stencil", stencil)
+	contextAttributes.Set("antialias", antialias)
+	contextAttributes.Set("premultipliedAlpha", premultipliedAlpha)
+	contextAttributes.Set("preserveDrawingBuffer", preserveDrawingBuffer)
+	contextAttributes.Set("powerPreference", powerPreference)
+	contextAttributes.Set("failIfMajorPerformanceCaveat", failIfMajorPerformanceCaveat)
 
 	// OffscreenCanvas does not have setAttribute, see #22811
 	if !canvas.Get("setAttribute").IsUndefined() {
 		canvas.Call("setAttribute", "data-engine", "three go wasm r"+strconv.Itoa(Revision)+"."+strconv.Itoa(WasmVersion))
 	}
-	//			if ( 'setAttribute' in canvas ) canvas.setAttribute( 'data-engine', `three.js r${REVISION}` );
 
-	//
-	//			// event listeners must be registered before WebGL context is created, see #12753
-	//			canvas.addEventListener( 'webglcontextlost', onContextLost, false );
-	//			canvas.addEventListener( 'webglcontextrestored', onContextRestore, false );
-	//			canvas.addEventListener( 'webglcontextcreationerror', onContextCreationError, false );
-	//
-	//			if ( _gl === null ) {
-	//
-	//				const contextName = 'webgl2';
-	//
-	//				_gl = getContext( contextName, contextAttributes );
-	//
-	//				if ( _gl === null ) {
-	//
-	//					if ( getContext( contextName ) ) {
-	//
-	//						throw new Error( 'Error creating WebGL context with your selected attributes.' );
-	//
-	//					} else {
-	//
-	//						throw new Error( 'Error creating WebGL context.' );
-	//
-	//					}
-	//
-	//				}
-	//
-	//			}
-	//
-	//		} catch ( error ) {
-	//
-	//			console.error( 'THREE.WebGLRenderer: ' + error.message );
-	//			throw error;
-	//
-	//		}
+	// event listeners must be registered before WebGL context is created, see #12753
+	canvas.Call("addEventListener", "webglcontextlost", utils.FuncOf(func(_ utils.JsValue, args utils.JsValueSlice) any {
+		args[0].Call("preventDefault")
+		fmt.Println("THREE.WebGLRenderer: Context Lost.")
+		_isContextLost = true
+		return nil
+	}), false)
+
+	canvas.Call("addEventListener", "webglcontextrestored", utils.FuncOf(func(_ utils.JsValue, _ utils.JsValueSlice) any {
+		fmt.Println("THREE.WebGLRenderer: Context Restored.")
+		_isContextLost = false
+
+		//			const infoAutoReset = info.autoReset; todo
+		//			const shadowMapEnabled = shadowMap.enabled; todo
+		//			const shadowMapAutoUpdate = shadowMap.autoUpdate; todo
+		//			const shadowMapNeedsUpdate = shadowMap.needsUpdate; todo
+		//			const shadowMapType = shadowMap.type; todo
+		//
+		//			initGLContext(); todo
+		//
+		//			info.autoReset = infoAutoReset; todo
+		//			shadowMap.enabled = shadowMapEnabled; todo
+		//			shadowMap.autoUpdate = shadowMapAutoUpdate; todo
+		//			shadowMap.needsUpdate = shadowMapNeedsUpdate; todo
+		//			shadowMap.type = shadowMapType; todo
+
+		return nil
+	}), false)
+
+	canvas.Call("addEventListener", "webglcontextcreationerror", utils.FuncOf(func(_ utils.JsValue, args utils.JsValueSlice) any {
+		fmt.Println("THREE.WebGLRenderer: A WebGL context could not be created. Reason:", args[0].Get("statusMessage").String())
+		return nil
+	}), false)
+
+	if _gl.IsNull() {
+		const contextName = "webgl2"
+
+		_gl = getContext(contextName, utils.JsValue(contextAttributes))
+
+		if _gl.IsNull() {
+			if getContext(contextName, utils.JsValue(utils.JsUndefined())).Truthy() {
+				panic("Error creating WebGL context with your selected attributes.")
+			} else {
+				panic("Error creating WebGL context.")
+			}
+		}
+	}
+
 	//
 	//		let extensions, capabilities, state, info;
 	//		let properties, textures, cubemaps, cubeuvmaps, attributes, geometries, objects;
@@ -254,46 +262,7 @@ func NewWebGLRendererWithParams(parameters WebGLRendererParams) *WebGLRenderer {
 	//
 	//		this.xr = xr;
 	//
-	//
 	//		// Events
-	//
-	//		function onContextLost( event ) {
-	//
-	//			event.preventDefault();
-	//
-	//			console.log( 'THREE.WebGLRenderer: Context Lost.' );
-	//
-	//			_isContextLost = true;
-	//
-	//		}
-	//
-	//		function onContextRestore( * event * ) {
-	//
-	//			console.log( 'THREE.WebGLRenderer: Context Restored.' );
-	//
-	//			_isContextLost = false;
-	//
-	//			const infoAutoReset = info.autoReset;
-	//			const shadowMapEnabled = shadowMap.enabled;
-	//			const shadowMapAutoUpdate = shadowMap.autoUpdate;
-	//			const shadowMapNeedsUpdate = shadowMap.needsUpdate;
-	//			const shadowMapType = shadowMap.type;
-	//
-	//			initGLContext();
-	//
-	//			info.autoReset = infoAutoReset;
-	//			shadowMap.enabled = shadowMapEnabled;
-	//			shadowMap.autoUpdate = shadowMapAutoUpdate;
-	//			shadowMap.needsUpdate = shadowMapNeedsUpdate;
-	//			shadowMap.type = shadowMapType;
-	//
-	//		}
-	//
-	//		function onContextCreationError( event ) {
-	//
-	//			console.error( 'THREE.WebGLRenderer: A WebGL context could not be created. Reason: ', event.statusMessage );
-	//
-	//		}
 	//
 	//		function onMaterialDispose( event ) {
 	//
@@ -2504,6 +2473,7 @@ func NewWebGLRendererWithParams(parameters WebGLRendererParams) *WebGLRenderer {
 	//
 
 	_, _, _, _, _, _, _, _, _ = depth, stencil, alpha, antialias, premultipliedAlpha, preserveDrawingBuffer, powerPreference, failIfMajorPerformanceCaveat, reverseDepthBuffer
+	_ = _isContextLost
 
 	return this
 }
