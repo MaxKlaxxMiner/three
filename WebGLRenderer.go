@@ -2,6 +2,7 @@ package three
 
 import (
 	"fmt"
+	"github.com/MaxKlaxxMiner/three/consts"
 	"github.com/MaxKlaxxMiner/three/utils"
 	"strconv"
 )
@@ -130,10 +131,10 @@ func NewWebGLRendererWithParams(parameters WebGLRendererParams) *WebGLRenderer {
 
 	// --- initialize ---
 
-	_gl := GLContext{context}
+	_gl := GLContext{context, make(map[string]int)}
 
 	getContext := func(contextName string, contextAttributes utils.JsValue) GLContext {
-		return GLContext{canvas.Call("getContext", contextName, contextAttributes.AsJsValue())}
+		return GLContext{canvas.Call("getContext", contextName, contextAttributes.AsJsValue()), make(map[string]int)}
 	}
 
 	contextAttributes := utils.JsGlobal.Get("Object").New()
@@ -148,7 +149,7 @@ func NewWebGLRendererWithParams(parameters WebGLRendererParams) *WebGLRenderer {
 
 	// OffscreenCanvas does not have setAttribute, see #22811
 	if !canvas.Get("setAttribute").IsUndefined() {
-		canvas.Call("setAttribute", "data-engine", "three go wasm r"+strconv.Itoa(Revision)+"."+strconv.Itoa(WasmVersion))
+		canvas.Call("setAttribute", "data-engine", "three go wasm r"+consts.Revision+"."+strconv.Itoa(consts.WasmVersion))
 	}
 
 	// event listeners must be registered before WebGL context is created, see #12753
@@ -187,10 +188,7 @@ func NewWebGLRendererWithParams(parameters WebGLRendererParams) *WebGLRenderer {
 
 	if _gl.IsNull() {
 		const contextName = "webgl2"
-
-		_gl = getContext(contextName, utils.JsValue(contextAttributes))
-
-		if _gl.IsNull() {
+		if _gl = getContext(contextName, utils.JsValue(contextAttributes)); _gl.IsNull() {
 			if getContext(contextName, utils.JsValue(utils.JsUndefined())).Truthy() {
 				panic("Error creating WebGL context with your selected attributes.")
 			} else {
@@ -206,14 +204,16 @@ func NewWebGLRendererWithParams(parameters WebGLRendererParams) *WebGLRenderer {
 	//
 	//		let background, morphtargets, bufferRenderer, indexedBufferRenderer;
 	//
-	//		let utils, bindingStates, uniformsGroups;
+	var glUtils *WebGLUtils
+	//		let bindingStates, uniformsGroups;
 	//
 
 	initGLContext := func() {
 		extensions = NewWebGLExtensions(_gl)
 		extensions.Init()
 
-		//			utils = new WebGLUtils( _gl, extensions );
+		glUtils = NewWebGLUtils(_gl, extensions)
+		_ = glUtils
 		//
 		//			capabilities = new WebGLCapabilities( _gl, extensions, parameters, utils );
 		//
