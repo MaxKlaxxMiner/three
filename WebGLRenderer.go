@@ -10,6 +10,13 @@ func NewWebGLRenderer() *WebGLRenderer {
 	return NewWebGLRendererWithParams(WebGLRendererParams{})
 }
 
+type localProperties struct {
+	_width      int
+	_height     int
+	_pixelRatio float64
+	_viewport   Vector4
+}
+
 func NewWebGLRendererWithParams(parameters WebGLRendererParams) *WebGLRenderer {
 	canvas := parameters.getOrCreateCanvas()
 	context := utils.NotNullOrDefault(parameters.Context, utils.JsNull())
@@ -90,14 +97,14 @@ func NewWebGLRendererWithParams(parameters WebGLRendererParams) *WebGLRenderer {
 	//		const _currentClearColor = new Color( 0x000000 ); todo
 	//		let _currentClearAlpha = 0; todo
 
-	//_width := canvas.Get("width").Int() todo
-	//_height := canvas.Get("height").Int() todo
+	this._width = canvas.Get("width").Int()
+	this._height = canvas.Get("height").Int()
 
-	//		let _pixelRatio = 1; todo
+	this._pixelRatio = 1
 	//		let _opaqueSort = null; todo
 	//		let _transparentSort = null; todo
 
-	//		const _viewport = new Vector4( 0, 0, _width, _height ); todo
+	this._viewport = Vector4{0, 0, float64(this._width), float64(this._height)}
 	//		const _scissor = new Vector4( 0, 0, _width, _height ); todo
 	//		let _scissorTest = false; todo
 

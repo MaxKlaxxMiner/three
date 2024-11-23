@@ -46,6 +46,7 @@ type WebGLRendererParams struct {
 type renderProperties struct {
 	canvas  js.Value
 	context js.Value
+	localProperties
 }
 
 func (p *WebGLRendererParams) getOrCreateCanvas() js.Value {

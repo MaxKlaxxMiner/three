@@ -31,6 +31,10 @@ func (v Value) Bool() bool {
 	return false
 }
 
+func (v Value) Int() int {
+	return 0
+}
+
 func (v Value) String() string {
 	return ""
 }

@@ -1,5 +1,7 @@
 package three
 
+import "strconv"
+
 //		// API
 //
 //
@@ -45,33 +47,33 @@ package three
 //			return target.set( _width, _height );
 //
 //		};
+
+func (r *WebGLRenderer) SetSize(width, height float64) {
+	r.SetSizeAndStyle(width, height, true)
+}
+
+func (r *WebGLRenderer) SetSizeAndStyle(width, height float64, updateStyle bool) {
+	//			if ( xr.isPresenting ) { todo
+	//				console.warn( 'THREE.WebGLRenderer: Can\'t change size while VR device is presenting.' );
+	//				return;
+	//			}
+
+	r._width = int(width)
+	r._height = int(height)
+
+	r.canvas.Set("width", int(width*r._pixelRatio))
+	r.canvas.Set("height", int(height*r._pixelRatio))
+
+	if updateStyle {
+		r.canvas.Get("style").Set("width", strconv.Itoa(r._width)+"px")
+		r.canvas.Get("style").Set("height", strconv.Itoa(r._height)+"px")
+	}
+
+	//			this.setViewport( 0, 0, width, height );
+}
+
 //
-//		this.setSize = function ( width, height, updateStyle = true ) {
-//
-//			if ( xr.isPresenting ) {
-//
-//				console.warn( 'THREE.WebGLRenderer: Can\'t change size while VR device is presenting.' );
-//				return;
-//
-//			}
-//
-//			_width = width;
-//			_height = height;
-//
-//			canvas.width = Math.floor( width * _pixelRatio );
-//			canvas.height = Math.floor( height * _pixelRatio );
-//
-//			if ( updateStyle === true ) {
-//
-//				canvas.style.width = width + 'px';
-//				canvas.style.height = height + 'px';
-//
-//			}
-//
-//			this.setViewport( 0, 0, width, height );
-//
-//		};
-//
+// todo
 //		this.getDrawingBufferSize = function ( target ) {
 //
 //			return target.set( _width * _pixelRatio, _height * _pixelRatio ).floor();
@@ -104,22 +106,19 @@ package three
 //
 //		};
 //
-//		this.setViewport = function ( x, y, width, height ) {
-//
-//			if ( x.isVector4 ) {
-//
-//				_viewport.set( x.x, x.y, x.z, x.w );
-//
-//			} else {
-//
-//				_viewport.set( x, y, width, height );
-//
-//			}
-//
-//			state.viewport( _currentViewport.copy( _viewport ).multiplyScalar( _pixelRatio ).round() );
-//
-//		};
-//
+
+func (r *WebGLRenderer) SetViewport(x, y, width, height float64) {
+	r._viewport.Set(x, y, width, height)
+
+	//todo
+	//	state.viewport( _currentViewport.copy( _viewport ).multiplyScalar( _pixelRatio ).round() );
+}
+
+func (r *WebGLRenderer) SetViewportVector4(v Vector4) {
+	r.SetViewport(v.X, v.Y, v.Z, v.W)
+}
+
+// todo
 //		this.getScissor = function ( target ) {
 //
 //			return target.copy( _scissor );
@@ -296,6 +295,7 @@ package three
 //			canvas.removeEventListener( 'webglcontextrestored', onContextRestore, false );
 //			canvas.removeEventListener( 'webglcontextcreationerror', onContextCreationError, false );
 //
+//			background.dispose();
 //			renderLists.dispose();
 //			renderStates.dispose();
 //			properties.dispose();

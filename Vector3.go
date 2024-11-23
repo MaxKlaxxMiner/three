@@ -5,9 +5,7 @@ import (
 )
 
 type Vector3 struct {
-	X float64
-	Y float64
-	Z float64
+	X, Y, Z float64
 }
 
 // NewVector3Zero Creates a new Vector3 with 0 for X, Y and Z.
@@ -22,17 +20,13 @@ func NewVector3(x, y, z float64) *Vector3 {
 
 // Set Sets the x, y and z components of this vector.
 func (v *Vector3) Set(x, y, z float64) *Vector3 {
-	v.X = x
-	v.Y = y
-	v.Z = z
+	v.X, v.Y, v.Z = x, y, z
 	return v
 }
 
 // SetScalar Set the x, y and z values of this vector both equal to scalar.
 func (v *Vector3) SetScalar(scalar float64) *Vector3 {
-	v.X = scalar
-	v.Y = scalar
-	v.Z = scalar
+	v.X, v.Y, v.Z = scalar, scalar, scalar
 	return v
 }
 
@@ -90,9 +84,7 @@ func (v *Vector3) Clone() *Vector3 {
 
 // Copy Copies the values of the passed vector3's x, y and z properties to this vector3.
 func (v *Vector3) Copy(a *Vector3) *Vector3 {
-	v.X = a.X
-	v.Y = a.Y
-	v.Z = a.Z
+	v.X, v.Y, v.Z = a.X, a.Y, a.Z
 	return v
 }
 
@@ -114,9 +106,7 @@ func (v *Vector3) AddScalar(s float64) *Vector3 {
 
 // AddVectors Sets this vector to a + b.
 func (v *Vector3) AddVectors(a, b *Vector3) *Vector3 {
-	v.X = a.X + b.X
-	v.Y = a.Y + b.Y
-	v.Z = a.Z + b.Z
+	v.X, v.Y, v.Z = a.X+b.X, a.Y+b.Y, a.Z+b.Z
 	return v
 }
 
@@ -170,9 +160,7 @@ func (v *Vector3) MultiplyScalar(s float64) *Vector3 {
 
 // MultiplyVectors Sets this vector equal to a * b, component-wise.
 func (v *Vector3) MultiplyVectors(a, b *Vector3) *Vector3 {
-	v.X = a.X * b.X
-	v.Y = a.Y * b.Y
-	v.Z = a.Z * b.Z
+	v.X, v.Y, v.Z = a.X*b.X, a.Y*b.Y, a.Z*b.Z
 	return v
 }
 

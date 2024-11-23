@@ -3,7 +3,7 @@
 package three
 
 import (
-	"github.com/MaxKlaxxMiner/three/utils/fake/js"
+	"github.com/MaxKlaxxMiner/three/internal/fake/js"
 )
 
 type GLContext struct {
