@@ -11,10 +11,11 @@ func NewWebGLRenderer() *WebGLRenderer {
 }
 
 type localProperties struct {
-	_width      int
-	_height     int
-	_pixelRatio float64
-	_viewport   Vector4
+	_isContextLost bool
+	_width         int
+	_height        int
+	_pixelRatio    float64
+	_viewport      Vector4
 }
 
 func NewWebGLRendererWithParams(parameters WebGLRendererParams) *WebGLRenderer {
@@ -78,9 +79,6 @@ func NewWebGLRendererWithParams(parameters WebGLRendererParams) *WebGLRenderer {
 	// --- tone mapping ---
 	//		this.toneMapping = NoToneMapping; todo
 	//		this.toneMappingExposure = 1.0; todo
-
-	// --- internal properties ---
-	_isContextLost := false
 
 	// --- internal state cache ---
 	//		let _currentActiveCubeFace = 0; todo
@@ -157,13 +155,13 @@ func NewWebGLRendererWithParams(parameters WebGLRendererParams) *WebGLRenderer {
 	canvas.Call("addEventListener", "webglcontextlost", utils.FuncOf(func(_ utils.JsValue, args utils.JsValueSlice) any {
 		args[0].Call("preventDefault")
 		fmt.Println("THREE.WebGLRenderer: Context Lost.")
-		_isContextLost = true
+		this._isContextLost = true
 		return nil
 	}), false)
 
 	canvas.Call("addEventListener", "webglcontextrestored", utils.FuncOf(func(_ utils.JsValue, _ utils.JsValueSlice) any {
 		fmt.Println("THREE.WebGLRenderer: Context Restored.")
-		_isContextLost = false
+		this._isContextLost = false
 
 		//			const infoAutoReset = info.autoReset; todo
 		//			const shadowMapEnabled = shadowMap.enabled; todo
@@ -201,8 +199,8 @@ func NewWebGLRendererWithParams(parameters WebGLRendererParams) *WebGLRenderer {
 		}
 	}
 
-	//
-	//		let extensions, capabilities, state, info;
+	var extensions *WebGLExtensions
+	//		let capabilities, state, info;
 	//		let properties, textures, cubemaps, cubeuvmaps, attributes, geometries, objects;
 	//		let programCache, materials, renderLists, renderStates, clipping, shadowMap;
 	//
@@ -210,61 +208,62 @@ func NewWebGLRendererWithParams(parameters WebGLRendererParams) *WebGLRenderer {
 	//
 	//		let utils, bindingStates, uniformsGroups;
 	//
-	//		function initGLContext() {
-	//
-	//			extensions = new WebGLExtensions( _gl );
-	//			extensions.init();
-	//
-	//			utils = new WebGLUtils( _gl, extensions );
-	//
-	//			capabilities = new WebGLCapabilities( _gl, extensions, parameters, utils );
-	//
-	//			state = new WebGLState( _gl, extensions );
-	//
-	//			if ( capabilities.reverseDepthBuffer && reverseDepthBuffer ) {
-	//
-	//				state.buffers.depth.setReversed( true );
-	//
-	//			}
-	//
-	//			info = new WebGLInfo( _gl );
-	//			properties = new WebGLProperties();
-	//			textures = new WebGLTextures( _gl, extensions, state, properties, capabilities, utils, info );
-	//			cubemaps = new WebGLCubeMaps( _this );
-	//			cubeuvmaps = new WebGLCubeUVMaps( _this );
-	//			attributes = new WebGLAttributes( _gl );
-	//			bindingStates = new WebGLBindingStates( _gl, attributes );
-	//			geometries = new WebGLGeometries( _gl, attributes, info, bindingStates );
-	//			objects = new WebGLObjects( _gl, geometries, attributes, info );
-	//			morphtargets = new WebGLMorphtargets( _gl, capabilities, textures );
-	//			clipping = new WebGLClipping( properties );
-	//			programCache = new WebGLPrograms( _this, cubemaps, cubeuvmaps, extensions, capabilities, bindingStates, clipping );
-	//			materials = new WebGLMaterials( _this, properties );
-	//			renderLists = new WebGLRenderLists();
-	//			renderStates = new WebGLRenderStates( extensions );
-	//			background = new WebGLBackground( _this, cubemaps, cubeuvmaps, state, objects, _alpha, premultipliedAlpha );
-	//			shadowMap = new WebGLShadowMap( _this, objects, capabilities );
-	//			uniformsGroups = new WebGLUniformsGroups( _gl, info, capabilities, state );
-	//
-	//			bufferRenderer = new WebGLBufferRenderer( _gl, extensions, info );
-	//			indexedBufferRenderer = new WebGLIndexedBufferRenderer( _gl, extensions, info );
-	//
-	//			info.programs = programCache.programs;
-	//
-	//			_this.capabilities = capabilities;
-	//			_this.extensions = extensions;
-	//			_this.properties = properties;
-	//			_this.renderLists = renderLists;
-	//			_this.shadowMap = shadowMap;
-	//			_this.state = state;
-	//			_this.info = info;
-	//
-	//		}
-	//
-	//		initGLContext();
-	//
+
+	initGLContext := func() {
+		extensions = NewWebGLExtensions(_gl)
+		extensions.Init()
+
+		//			utils = new WebGLUtils( _gl, extensions );
+		//
+		//			capabilities = new WebGLCapabilities( _gl, extensions, parameters, utils );
+		//
+		//			state = new WebGLState( _gl, extensions );
+		//
+		//			if ( capabilities.reverseDepthBuffer && reverseDepthBuffer ) {
+		//
+		//				state.buffers.depth.setReversed( true );
+		//
+		//			}
+		//
+		//			info = new WebGLInfo( _gl );
+		//			properties = new WebGLProperties();
+		//			textures = new WebGLTextures( _gl, extensions, state, properties, capabilities, utils, info );
+		//			cubemaps = new WebGLCubeMaps( _this );
+		//			cubeuvmaps = new WebGLCubeUVMaps( _this );
+		//			attributes = new WebGLAttributes( _gl );
+		//			bindingStates = new WebGLBindingStates( _gl, attributes );
+		//			geometries = new WebGLGeometries( _gl, attributes, info, bindingStates );
+		//			objects = new WebGLObjects( _gl, geometries, attributes, info );
+		//			morphtargets = new WebGLMorphtargets( _gl, capabilities, textures );
+		//			clipping = new WebGLClipping( properties );
+		//			programCache = new WebGLPrograms( _this, cubemaps, cubeuvmaps, extensions, capabilities, bindingStates, clipping );
+		//			materials = new WebGLMaterials( _this, properties );
+		//			renderLists = new WebGLRenderLists();
+		//			renderStates = new WebGLRenderStates( extensions );
+		//			background = new WebGLBackground( _this, cubemaps, cubeuvmaps, state, objects, _alpha, premultipliedAlpha );
+		//			shadowMap = new WebGLShadowMap( _this, objects, capabilities );
+		//			uniformsGroups = new WebGLUniformsGroups( _gl, info, capabilities, state );
+		//
+		//			bufferRenderer = new WebGLBufferRenderer( _gl, extensions, info );
+		//			indexedBufferRenderer = new WebGLIndexedBufferRenderer( _gl, extensions, info );
+		//
+		//			info.programs = programCache.programs;
+		//
+		//			_this.capabilities = capabilities;
+		//			_this.extensions = extensions;
+		//			_this.properties = properties;
+		//			_this.renderLists = renderLists;
+		//			_this.shadowMap = shadowMap;
+		//			_this.state = state;
+		//			_this.info = info;
+		//
+
+	}
+
+	initGLContext()
+
 	//		// xr
-	//
+	//todo
 	//		const xr = new WebXRManager( _this, _gl );
 	//
 	//		this.xr = xr;
@@ -2480,7 +2479,6 @@ func NewWebGLRendererWithParams(parameters WebGLRendererParams) *WebGLRenderer {
 	//
 
 	_, _, _, _, _, _, _, _, _ = depth, stencil, alpha, antialias, premultipliedAlpha, preserveDrawingBuffer, powerPreference, failIfMajorPerformanceCaveat, reverseDepthBuffer
-	_ = _isContextLost
 
 	return this
 }
