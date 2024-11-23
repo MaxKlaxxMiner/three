@@ -4,7 +4,7 @@ package three
 
 import (
 	"github.com/MaxKlaxxMiner/three/internal/fake/js"
-	"github.com/MaxKlaxxMiner/three/utils"
+	"github.com/MaxKlaxxMiner/three/util"
 )
 
 type WebGLRenderer struct {
@@ -50,10 +50,10 @@ type renderProperties struct {
 }
 
 func (p *WebGLRendererParams) getOrCreateCanvas() js.Value {
-	if utils.InstanceOf(p.Canvas, "HTMLCanvasElement") {
+	if util.InstanceOf(p.Canvas, "HTMLCanvasElement") {
 		return *p.Canvas
 	} else {
-		return utils.CreateCanvasElement()
+		return util.CreateCanvasElement()
 	}
 }
 

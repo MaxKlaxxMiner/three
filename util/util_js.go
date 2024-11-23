@@ -1,6 +1,6 @@
 //go:build js
 
-package utils
+package util
 
 import "syscall/js"
 

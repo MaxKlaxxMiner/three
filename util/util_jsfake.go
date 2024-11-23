@@ -1,10 +1,8 @@
 //go:build !js
 
-package utils
+package util
 
-import (
-	"github.com/MaxKlaxxMiner/three/internal/fake/js"
-)
+import "github.com/MaxKlaxxMiner/three/internal/fake/js"
 
 var JsGlobal = js.Global()
 

@@ -3,7 +3,7 @@ package three
 import (
 	"fmt"
 	"github.com/MaxKlaxxMiner/three/consts"
-	"github.com/MaxKlaxxMiner/three/utils"
+	"github.com/MaxKlaxxMiner/three/util"
 	"strconv"
 )
 
@@ -21,19 +21,19 @@ type localProperties struct {
 
 func NewWebGLRendererWithParams(parameters WebGLRendererParams) *WebGLRenderer {
 	canvas := parameters.getOrCreateCanvas()
-	context := utils.NotNullOrDefault(parameters.Context, utils.JsNull())
-	depth := utils.NotNullOrDefault(parameters.Depth, true)
-	stencil := utils.NotNullOrDefault(parameters.Stencil, false)
-	alpha := utils.NotNullOrDefault(parameters.Alpha, false)
-	antialias := utils.NotNullOrDefault(parameters.Antialias, false)
-	premultipliedAlpha := utils.NotNullOrDefault(parameters.PremultipliedAlpha, true)
-	preserveDrawingBuffer := utils.NotNullOrDefault(parameters.PreserveDrawingBuffer, false)
-	powerPreference := utils.If(len(parameters.PowerPreference) != 0, parameters.PowerPreference, "default")
-	failIfMajorPerformanceCaveat := utils.NotNullOrDefault(parameters.FailIfMajorPerformanceCaveat, false)
-	reverseDepthBuffer := utils.NotNullOrDefault(parameters.ReverseDepthBuffer, false)
+	context := util.NotNullOrDefault(parameters.Context, util.JsNull())
+	depth := util.NotNullOrDefault(parameters.Depth, true)
+	stencil := util.NotNullOrDefault(parameters.Stencil, false)
+	alpha := util.NotNullOrDefault(parameters.Alpha, false)
+	antialias := util.NotNullOrDefault(parameters.Antialias, false)
+	premultipliedAlpha := util.NotNullOrDefault(parameters.PremultipliedAlpha, true)
+	preserveDrawingBuffer := util.NotNullOrDefault(parameters.PreserveDrawingBuffer, false)
+	powerPreference := util.If(len(parameters.PowerPreference) != 0, parameters.PowerPreference, "default")
+	failIfMajorPerformanceCaveat := util.NotNullOrDefault(parameters.FailIfMajorPerformanceCaveat, false)
+	reverseDepthBuffer := util.NotNullOrDefault(parameters.ReverseDepthBuffer, false)
 
 	if !context.IsNull() {
-		if utils.InstanceOf(&context, "WebGLRenderingContext") {
+		if util.InstanceOf(&context, "WebGLRenderingContext") {
 			panic("THREE.WebGLRenderer: WebGL 1 is not supported since r163.")
 		}
 		alpha = context.Call("getContextAttributes").Get("alpha").Bool()
@@ -133,11 +133,11 @@ func NewWebGLRendererWithParams(parameters WebGLRendererParams) *WebGLRenderer {
 
 	_gl := GLContext{context, make(map[string]int)}
 
-	getContext := func(contextName string, contextAttributes utils.JsValue) GLContext {
+	getContext := func(contextName string, contextAttributes util.JsValue) GLContext {
 		return GLContext{canvas.Call("getContext", contextName, contextAttributes.AsJsValue()), make(map[string]int)}
 	}
 
-	contextAttributes := utils.JsGlobal.Get("Object").New()
+	contextAttributes := util.JsGlobal.Get("Object").New()
 	contextAttributes.Set("alpha", true)
 	contextAttributes.Set("depth", depth)
 	contextAttributes.Set("stencil", stencil)
@@ -153,17 +153,18 @@ func NewWebGLRendererWithParams(parameters WebGLRendererParams) *WebGLRenderer {
 	}
 
 	// event listeners must be registered before WebGL context is created, see #12753
-	canvas.Call("addEventListener", "webglcontextlost", utils.FuncOf(func(_ utils.JsValue, args utils.JsValueSlice) any {
+	canvas.Call("addEventListener", "webglcontextlost", util.FuncOf(func(_ util.JsValue, args util.JsValueSlice) any {
 		args[0].Call("preventDefault")
 		fmt.Println("THREE.WebGLRenderer: Context Lost.")
 		this._isContextLost = true
 		return nil
 	}), false)
 
-	canvas.Call("addEventListener", "webglcontextrestored", utils.FuncOf(func(_ utils.JsValue, _ utils.JsValueSlice) any {
+	canvas.Call("addEventListener", "webglcontextrestored", util.FuncOf(func(_ util.JsValue, _ util.JsValueSlice) any {
 		fmt.Println("THREE.WebGLRenderer: Context Restored.")
 		this._isContextLost = false
 
+		panic("todo")
 		//			const infoAutoReset = info.autoReset; todo
 		//			const shadowMapEnabled = shadowMap.enabled; todo
 		//			const shadowMapAutoUpdate = shadowMap.autoUpdate; todo
@@ -181,15 +182,15 @@ func NewWebGLRendererWithParams(parameters WebGLRendererParams) *WebGLRenderer {
 		return nil
 	}), false)
 
-	canvas.Call("addEventListener", "webglcontextcreationerror", utils.FuncOf(func(_ utils.JsValue, args utils.JsValueSlice) any {
+	canvas.Call("addEventListener", "webglcontextcreationerror", util.FuncOf(func(_ util.JsValue, args util.JsValueSlice) any {
 		fmt.Println("THREE.WebGLRenderer: A WebGL context could not be created. Reason:", args[0].Get("statusMessage").String())
 		return nil
 	}), false)
 
 	if _gl.IsNull() {
 		const contextName = "webgl2"
-		if _gl = getContext(contextName, utils.JsValue(contextAttributes)); _gl.IsNull() {
-			if getContext(contextName, utils.JsValue(utils.JsUndefined())).Truthy() {
+		if _gl = getContext(contextName, util.JsValue(contextAttributes)); _gl.IsNull() {
+			if getContext(contextName, util.JsValue(util.JsUndefined())).Truthy() {
 				panic("Error creating WebGL context with your selected attributes.")
 			} else {
 				panic("Error creating WebGL context.")
@@ -204,7 +205,7 @@ func NewWebGLRendererWithParams(parameters WebGLRendererParams) *WebGLRenderer {
 	//
 	//		let background, morphtargets, bufferRenderer, indexedBufferRenderer;
 	//
-	var glUtils *WebGLUtils
+	var utils *WebGLUtils
 	//		let bindingStates, uniformsGroups;
 	//
 
@@ -212,9 +213,9 @@ func NewWebGLRendererWithParams(parameters WebGLRendererParams) *WebGLRenderer {
 		extensions = NewWebGLExtensions(_gl)
 		extensions.Init()
 
-		glUtils = NewWebGLUtils(_gl, extensions)
-		_ = glUtils
-		//
+		utils = NewWebGLUtils(_gl, extensions)
+		_ = utils
+
 		//			capabilities = new WebGLCapabilities( _gl, extensions, parameters, utils );
 		//
 		//			state = new WebGLState( _gl, extensions );

@@ -1,4 +1,4 @@
-package utils
+package util
 
 func If[T any](cmp bool, okVal, elseVal T) T {
 	if cmp {
