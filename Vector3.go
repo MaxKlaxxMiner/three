@@ -51,11 +51,11 @@ func (v *Vector3) SetZ(z float64) *Vector3 {
 // SetComponent Sets the indexed components of this vector. index: 0 = x, 1 = y or 2 = z
 func (v *Vector3) SetComponent(index int, value float64) *Vector3 {
 	switch index {
-	case 0:
+	case 0, 'x', 'X':
 		v.X = value
-	case 1:
+	case 1, 'y', 'Y':
 		v.Y = value
-	case 2:
+	case 2, 'z', 'Z':
 		v.Z = value
 	default:
 		panic("index is out of range: " + strconv.Itoa(index))
@@ -66,11 +66,11 @@ func (v *Vector3) SetComponent(index int, value float64) *Vector3 {
 // GetComponent Sets the indexed components of this vector. index: 0 = x, 1 = y or 2 = z
 func (v *Vector3) GetComponent(index int) float64 {
 	switch index {
-	case 0:
+	case 0, 'x', 'X':
 		return v.X
-	case 1:
+	case 1, 'y', 'Y':
 		return v.Y
-	case 2:
+	case 2, 'z', 'Z':
 		return v.Z
 	default:
 		panic("index is out of range: " + strconv.Itoa(index))
