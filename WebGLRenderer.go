@@ -199,7 +199,8 @@ func NewWebGLRendererWithParams(parameters WebGLRendererParams) *WebGLRenderer {
 	}
 
 	var extensions *WebGLExtensions
-	//		let capabilities, state, info;
+	var capabilities *WebGLCapabilities
+	//		let state, info;
 	//		let properties, textures, cubemaps, cubeuvmaps, attributes, geometries, objects;
 	//		let programCache, materials, renderLists, renderStates, clipping, shadowMap;
 	//
@@ -214,10 +215,10 @@ func NewWebGLRendererWithParams(parameters WebGLRendererParams) *WebGLRenderer {
 		extensions.Init()
 
 		utils = NewWebGLUtils(_gl, extensions)
-		_ = utils
 
-		//			capabilities = new WebGLCapabilities( _gl, extensions, parameters, utils );
-		//
+		capabilities = NewWebGLCapabilities(_gl, extensions, &parameters, utils)
+		_ = capabilities
+
 		//			state = new WebGLState( _gl, extensions );
 		//
 		//			if ( capabilities.reverseDepthBuffer && reverseDepthBuffer ) {

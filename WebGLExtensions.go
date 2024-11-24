@@ -17,7 +17,7 @@ func (e *WebGLExtensions) getExtension(name string) (ext GLExtension) {
 	}
 
 	ext = e.gl.getExtension(name)
-	if !ext.IsNull() {
+	if !ext.Truthy() {
 		switch name {
 		case "WEBGL_depth_texture":
 			ext = e.gl.getExtension("MOZ_WEBGL_depth_texture")
