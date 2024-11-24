@@ -17,6 +17,64 @@ func NewWebGLCapabilities(gl GLContext, extensions *WebGLExtensions, parameters 
 		maxAnisotropy: -1,
 	}
 
+	//todo
+	//	let precision = parameters.precision !== undefined ? parameters.precision : 'highp';
+	//	const maxPrecision = getMaxPrecision( precision );
+	//
+	//	if ( maxPrecision !== precision ) {
+	//
+	//		console.warn( 'THREE.WebGLRenderer:', precision, 'not supported, using', maxPrecision, 'instead.' );
+	//		precision = maxPrecision;
+	//
+	//	}
+	//
+	//	const logarithmicDepthBuffer = parameters.logarithmicDepthBuffer === true;
+	//	const reverseDepthBuffer = parameters.reverseDepthBuffer === true && extensions.has( 'EXT_clip_control' );
+	//
+	//	const maxTextures = gl.getParameter( gl.MAX_TEXTURE_IMAGE_UNITS );
+	//	const maxVertexTextures = gl.getParameter( gl.MAX_VERTEX_TEXTURE_IMAGE_UNITS );
+	//	const maxTextureSize = gl.getParameter( gl.MAX_TEXTURE_SIZE );
+	//	const maxCubemapSize = gl.getParameter( gl.MAX_CUBE_MAP_TEXTURE_SIZE );
+	//
+	//	const maxAttributes = gl.getParameter( gl.MAX_VERTEX_ATTRIBS );
+	//	const maxVertexUniforms = gl.getParameter( gl.MAX_VERTEX_UNIFORM_VECTORS );
+	//	const maxVaryings = gl.getParameter( gl.MAX_VARYING_VECTORS );
+	//	const maxFragmentUniforms = gl.getParameter( gl.MAX_FRAGMENT_UNIFORM_VECTORS );
+	//
+	//	const vertexTextures = maxVertexTextures > 0;
+	//
+	//	const maxSamples = gl.getParameter( gl.MAX_SAMPLES );
+	//
+	//	return {
+	//
+	//		isWebGL2: true, // keeping this for backwards compatibility
+	//
+	//		getMaxAnisotropy: getMaxAnisotropy,
+	//		getMaxPrecision: getMaxPrecision,
+	//
+	//		textureFormatReadable: textureFormatReadable,
+	//		textureTypeReadable: textureTypeReadable,
+	//
+	//		precision: precision,
+	//		logarithmicDepthBuffer: logarithmicDepthBuffer,
+	//		reverseDepthBuffer: reverseDepthBuffer,
+	//
+	//		maxTextures: maxTextures,
+	//		maxVertexTextures: maxVertexTextures,
+	//		maxTextureSize: maxTextureSize,
+	//		maxCubemapSize: maxCubemapSize,
+	//
+	//		maxAttributes: maxAttributes,
+	//		maxVertexUniforms: maxVertexUniforms,
+	//		maxVaryings: maxVaryings,
+	//		maxFragmentUniforms: maxFragmentUniforms,
+	//
+	//		vertexTextures: vertexTextures,
+	//
+	//		maxSamples: maxSamples
+	//
+	//	};
+
 	return r
 }
 
@@ -89,60 +147,3 @@ func (c *WebGLCapabilities) GetMaxAnisotropy() int {
 //		return 'lowp';
 //
 //	}
-//
-//	let precision = parameters.precision !== undefined ? parameters.precision : 'highp';
-//	const maxPrecision = getMaxPrecision( precision );
-//
-//	if ( maxPrecision !== precision ) {
-//
-//		console.warn( 'THREE.WebGLRenderer:', precision, 'not supported, using', maxPrecision, 'instead.' );
-//		precision = maxPrecision;
-//
-//	}
-//
-//	const logarithmicDepthBuffer = parameters.logarithmicDepthBuffer === true;
-//	const reverseDepthBuffer = parameters.reverseDepthBuffer === true && extensions.has( 'EXT_clip_control' );
-//
-//	const maxTextures = gl.getParameter( gl.MAX_TEXTURE_IMAGE_UNITS );
-//	const maxVertexTextures = gl.getParameter( gl.MAX_VERTEX_TEXTURE_IMAGE_UNITS );
-//	const maxTextureSize = gl.getParameter( gl.MAX_TEXTURE_SIZE );
-//	const maxCubemapSize = gl.getParameter( gl.MAX_CUBE_MAP_TEXTURE_SIZE );
-//
-//	const maxAttributes = gl.getParameter( gl.MAX_VERTEX_ATTRIBS );
-//	const maxVertexUniforms = gl.getParameter( gl.MAX_VERTEX_UNIFORM_VECTORS );
-//	const maxVaryings = gl.getParameter( gl.MAX_VARYING_VECTORS );
-//	const maxFragmentUniforms = gl.getParameter( gl.MAX_FRAGMENT_UNIFORM_VECTORS );
-//
-//	const vertexTextures = maxVertexTextures > 0;
-//
-//	const maxSamples = gl.getParameter( gl.MAX_SAMPLES );
-//
-//	return {
-//
-//		isWebGL2: true, // keeping this for backwards compatibility
-//
-//		getMaxAnisotropy: getMaxAnisotropy,
-//		getMaxPrecision: getMaxPrecision,
-//
-//		textureFormatReadable: textureFormatReadable,
-//		textureTypeReadable: textureTypeReadable,
-//
-//		precision: precision,
-//		logarithmicDepthBuffer: logarithmicDepthBuffer,
-//		reverseDepthBuffer: reverseDepthBuffer,
-//
-//		maxTextures: maxTextures,
-//		maxVertexTextures: maxVertexTextures,
-//		maxTextureSize: maxTextureSize,
-//		maxCubemapSize: maxCubemapSize,
-//
-//		maxAttributes: maxAttributes,
-//		maxVertexUniforms: maxVertexUniforms,
-//		maxVaryings: maxVaryings,
-//		maxFragmentUniforms: maxFragmentUniforms,
-//
-//		vertexTextures: vertexTextures,
-//
-//		maxSamples: maxSamples
-//
-//	};
