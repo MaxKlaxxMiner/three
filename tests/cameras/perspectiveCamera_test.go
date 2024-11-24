@@ -154,7 +154,7 @@ func TestPerspectiveCameraValues(t *testing.T) {
 //
 //			for ( let i = 0, il = a.elements.length; i < il; i ++ ) {
 //
-//				const delta = a.elements[ i ] - b.elements[ i ];
+//				const delta = Math.abs( a.elements[ i ] - b.elements[ i ] );
 //				if ( delta > tolerance ) {
 //
 //					return false;
