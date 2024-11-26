@@ -129,8 +129,8 @@ func NewBoxGeometrySegments(width, height, depth float64, widthSegments, heightS
 	buildPlane('x', 'y', 'z', -1, -1, width, height, -depth, widthSegments, heightSegments, 5) // nz
 
 	// --- build geometry ---
+	//this.SetIndex(indices)
 	//todo
-	//		this.setIndex( indices );
 	//		this.setAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
 	//		this.setAttribute( 'normal', new Float32BufferAttribute( normals, 3 ) );
 	//		this.setAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );

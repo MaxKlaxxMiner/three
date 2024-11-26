@@ -2,4 +2,4 @@ package consts
 
 const Revision = "171dev"
 
-const WasmVersion = 11
+const WasmVersion = 12
