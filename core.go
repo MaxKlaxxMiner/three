@@ -1,12 +1,15 @@
 package three
 
+import "github.com/MaxKlaxxMiner/three/scenes"
+
 // export { WebGLArrayRenderTarget } from './renderers/WebGLArrayRenderTarget.js';
 // export { WebGL3DRenderTarget } from './renderers/WebGL3DRenderTarget.js';
 // export { WebGLCubeRenderTarget } from './renderers/WebGLCubeRenderTarget.js';
 // export { WebGLRenderTarget } from './renderers/WebGLRenderTarget.js';
 // export { FogExp2 } from './scenes/FogExp2.js';
 // export { Fog } from './scenes/Fog.js';
-// export { Scene } from './scenes/Scene.js';
+var NewScene = scenes.NewScene
+
 // export { Sprite } from './objects/Sprite.js';
 // export { LOD } from './objects/LOD.js';
 // export { SkinnedMesh } from './objects/SkinnedMesh.js';
@@ -152,5 +155,3 @@ package three
 // export { ShapeUtils } from './extras/ShapeUtils.js';
 // export { TextureUtils } from './extras/TextureUtils.js';
 // export { createCanvasElement } from './utils.js';
-// export * from './constants.js';
-// export * from './Three.Legacy.js';
