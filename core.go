@@ -3,6 +3,8 @@ package three
 import (
 	"github.com/MaxKlaxxMiner/three/cameras"
 	"github.com/MaxKlaxxMiner/three/geometries"
+	"github.com/MaxKlaxxMiner/three/materials"
+	"github.com/MaxKlaxxMiner/three/math"
 	"github.com/MaxKlaxxMiner/three/renderers"
 	"github.com/MaxKlaxxMiner/three/scenes"
 )
@@ -71,7 +73,24 @@ var (
 	// export * from './geometries/TorusKnotGeometry.js';
 	// export * from './geometries/TubeGeometry.js';
 	// export * from './geometries/WireframeGeometry.js';
-	// export * from './geometries/materials/Materials.js';
+	// export ShadowMaterial,
+	// export SpriteMaterial,
+	// export RawShaderMaterial,
+	// export ShaderMaterial,
+	// export PointsMaterial,
+	// export MeshPhysicalMaterial,
+	// export MeshStandardMaterial,
+	// export MeshPhongMaterial,
+	// export MeshToonMaterial,
+	// export MeshNormalMaterial,
+	// export MeshLambertMaterial,
+	// export MeshDepthMaterial,
+	// export MeshDistanceMaterial,
+	NewMeshBasicMaterial = materials.NewMeshBasicMaterial
+	// export MeshMatcapMaterial,
+	// export LineDashedMaterial,
+	// export LineBasicMaterial,
+	// export Material
 	// export { AnimationLoader } from './loaders/AnimationLoader.js';
 	// export { CompressedTextureLoader } from './loaders/CompressedTextureLoader.js';
 	// export { CubeTextureLoader } from './loaders/CubeTextureLoader.js';
@@ -162,7 +181,8 @@ var (
 	// export { Vector3 } from './math/Vector3.js';
 	// export { Vector2 } from './math/Vector2.js';
 	// export { Quaternion } from './math/Quaternion.js';
-	// export { Color } from './math/Color.js';
+	NewColor    = math.NewColor
+	NewColorHex = math.NewColorHex
 	// export { ColorManagement } from './math/ColorManagement.js';
 	// export { SphericalHarmonics3 } from './math/SphericalHarmonics3.js';
 	// export { SpotLightHelper } from './helpers/SpotLightHelper.js';

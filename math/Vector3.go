@@ -14,7 +14,7 @@ func NewVector3(x, y, z float64) *Vector3 {
 	return &Vector3{x, y, z}
 }
 
-func (v *Vector3) IsVector3() bool { return true }
+func (v *Vector3) IsVector3() bool { return v != nil }
 
 //todo
 // 	set( x, y, z ) {

@@ -15,8 +15,6 @@ type boxGeometryParameters struct {
 	widthSegments, heightSegments, depthSegments int
 }
 
-func (c *BoxGeometry) IsBoxGeometry() bool { return c != nil }
-
 func NewBoxGeometry(width, height, depth float64) *BoxGeometry {
 	return NewBoxGeometrySegments(width, height, depth, 1, 1, 1)
 }
@@ -144,6 +142,8 @@ func NewBoxGeometrySegments(width, height, depth float64, widthSegments, heightS
 
 	return this
 }
+
+func (c *BoxGeometry) IsBoxGeometry() bool { return c != nil }
 
 //todo
 // 	copy( source ) {

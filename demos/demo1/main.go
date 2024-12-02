@@ -2,6 +2,7 @@ package demo1
 
 import (
 	"github.com/MaxKlaxxMiner/three"
+	"github.com/MaxKlaxxMiner/three/materials"
 	"syscall/js"
 )
 
@@ -25,7 +26,8 @@ func Main() {
 
 	// const geometry = new THREE.BoxGeometry( 1, 1, 1 );
 	geometry := three.NewBoxGeometry(1, 1, 1)
-	//const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+	// const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+	material := three.NewMeshBasicMaterial(materials.MeshBasicMaterialParameters{Color: three.NewColorHex(0x00ff00)})
 	//const cube = new THREE.Mesh( geometry, material );
 	//scene.add( cube );
 	//
@@ -40,5 +42,5 @@ func Main() {
 	//
 	//}
 
-	_, _, _, _ = scene, camera, renderer, geometry
+	_, _, _, _, _ = scene, camera, renderer, geometry, material
 }

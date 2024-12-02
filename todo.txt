@@ -1,6 +1,8 @@
 [ 5%] cameras/PerspectiveCamera
-[60%] demos/demo1
+[64%] demos/demo1
 [83%] geometries/BoxGeometry
+[23%] materials/MeshBasicMaterial
+[ 5%] math/Color
 [ 6%] math/Vector3
 [ 3%] renderers/WebGLRenderer
 [15%] scenes/Scene

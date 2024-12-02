@@ -294,7 +294,7 @@ func NewWebGLRenderer(parameters WebGLRendererParams) *WebGLRenderer {
 	return this
 }
 
-func (r *WebGLRenderer) IsWebGLRenderer() bool { return true }
+func (r *WebGLRenderer) IsWebGLRenderer() bool { return r != nil }
 
 //todo
 // 	constructor( parameters = {} ) {

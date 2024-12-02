@@ -20,7 +20,7 @@ func NewScene() *Scene {
 	return this
 }
 
-func (s *Scene) IsScene() bool { return true }
+func (s *Scene) IsScene() bool { return s != nil }
 
 // todo
 // 	copy( source, recursive ) {
