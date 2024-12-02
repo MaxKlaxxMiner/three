@@ -25,7 +25,7 @@ func NewPerspectiveCamera(fov, aspect, near, far float64) *PerspectiveCamera {
 	return this
 }
 
-func (c *PerspectiveCamera) IsPerspectiveCamera() bool { return true }
+func (c *PerspectiveCamera) IsPerspectiveCamera() bool { return c != nil }
 
 //todo
 // 	copy( source, recursive ) {

@@ -23,7 +23,8 @@ func Main() {
 	// document.body.appendChild( renderer.domElement );
 	js.Global().Get("document").Get("body").Call("appendChild", renderer.DomElement)
 
-	//const geometry = new THREE.BoxGeometry( 1, 1, 1 );
+	// const geometry = new THREE.BoxGeometry( 1, 1, 1 );
+	geometry := three.NewBoxGeometry(1, 1, 1)
 	//const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
 	//const cube = new THREE.Mesh( geometry, material );
 	//scene.add( cube );
@@ -39,5 +40,5 @@ func Main() {
 	//
 	//}
 
-	_, _, _ = scene, camera, renderer
+	_, _, _, _ = scene, camera, renderer, geometry
 }

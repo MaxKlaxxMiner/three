@@ -1,7 +1,9 @@
 [ 5%] cameras/PerspectiveCamera
-[56%] demos/demo1
+[60%] demos/demo1
+[83%] geometries/BoxGeometry
+[ 6%] math/Vector3
 [ 3%] renderers/WebGLRenderer
 [15%] scenes/Scene
 [ 6%] utils/utils
 [ 2%] constants
-[ 3%] core
+[ 5%] core

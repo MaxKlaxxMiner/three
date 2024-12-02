@@ -2,6 +2,7 @@ package three
 
 import (
 	"github.com/MaxKlaxxMiner/three/cameras"
+	"github.com/MaxKlaxxMiner/three/geometries"
 	"github.com/MaxKlaxxMiner/three/renderers"
 	"github.com/MaxKlaxxMiner/three/scenes"
 )
@@ -48,8 +49,29 @@ var (
 	// export { CanvasTexture } from './textures/CanvasTexture.js';
 	// export { DepthTexture } from './textures/DepthTexture.js';
 	// export { Texture } from './textures/Texture.js';
-	// export * from './geometries/Geometries.js';
-	// export * from './materials/Materials.js';
+	NewBoxGeometry         = geometries.NewBoxGeometry
+	NewBoxGeometrySegments = geometries.NewBoxGeometrySegments
+	// export * from './geometries/CapsuleGeometry.js';
+	// export * from './geometries/CircleGeometry.js';
+	// export * from './geometries/ConeGeometry.js';
+	// export * from './geometries/CylinderGeometry.js';
+	// export * from './geometries/DodecahedronGeometry.js';
+	// export * from './geometries/EdgesGeometry.js';
+	// export * from './geometries/ExtrudeGeometry.js';
+	// export * from './geometries/IcosahedronGeometry.js';
+	// export * from './geometries/LatheGeometry.js';
+	// export * from './geometries/OctahedronGeometry.js';
+	// export * from './geometries/PlaneGeometry.js';
+	// export * from './geometries/PolyhedronGeometry.js';
+	// export * from './geometries/RingGeometry.js';
+	// export * from './geometries/ShapeGeometry.js';
+	// export * from './geometries/SphereGeometry.js';
+	// export * from './geometries/TetrahedronGeometry.js';
+	// export * from './geometries/TorusGeometry.js';
+	// export * from './geometries/TorusKnotGeometry.js';
+	// export * from './geometries/TubeGeometry.js';
+	// export * from './geometries/WireframeGeometry.js';
+	// export * from './geometries/materials/Materials.js';
 	// export { AnimationLoader } from './loaders/AnimationLoader.js';
 	// export { CompressedTextureLoader } from './loaders/CompressedTextureLoader.js';
 	// export { CubeTextureLoader } from './loaders/CubeTextureLoader.js';
