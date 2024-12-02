@@ -17,6 +17,7 @@ func Main() {
 	camera := three.NewPerspectiveCamera(75, windowWidth/windowHeight, 0.1, 1000)
 
 	//const renderer = new THREE.WebGLRenderer();
+	renderer := three.NewWebGLRendererDefaults()
 	//renderer.setSize( window.innerWidth, window.innerHeight );
 	//document.body.appendChild( renderer.domElement );
 	//
@@ -36,5 +37,5 @@ func Main() {
 	//
 	//}
 
-	_, _ = scene, camera
+	_, _, _ = scene, camera, renderer
 }

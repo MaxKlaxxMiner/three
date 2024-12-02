@@ -1,8 +1,5 @@
 package scenes
 
-// import { Object3D } from '../core/Object3D.js';
-// import { Euler } from '../math/Euler.js';
-
 type Scene struct {
 	// Object3D todo
 }
@@ -25,6 +22,7 @@ func NewScene() *Scene {
 
 func (s *Scene) IsScene() bool { return true }
 
+// todo
 // 	copy( source, recursive ) {
 //
 // 		super.copy( source, recursive );
@@ -64,3 +62,6 @@ func (s *Scene) IsScene() bool { return true }
 // 		return data;
 //
 // 	}
+//
+// import { Object3D } from '../core/Object3D.js';
+// import { Euler } from '../math/Euler.js';

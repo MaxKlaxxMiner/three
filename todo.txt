@@ -1,6 +1,7 @@
-[16%] cameras/PerspectiveCamera
-[34%] demos/demo1
-[17%] scenes/Scene
+[ 5%] cameras/PerspectiveCamera
+[38%] demos/demo1
+[ 1%] renderers/WebGLRenderer
+[15%] scenes/Scene
+[ 6%] utils/utils
 [ 2%] constants
-[ 2%] core
-[ 0%] utils
+[ 3%] core
