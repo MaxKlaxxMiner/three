@@ -1,6 +1,9 @@
 package demo1
 
-import "github.com/MaxKlaxxMiner/three"
+import (
+	"github.com/MaxKlaxxMiner/three"
+	"syscall/js"
+)
 
 // --- Creating a scene ---
 
@@ -9,7 +12,10 @@ func Main() {
 	scene := three.NewScene()
 
 	//const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-	//
+	windowWidth := js.Global().Get("innerWidth").Float()
+	windowHeight := js.Global().Get("innerHeight").Float()
+	camera := three.NewPerspectiveCamera(75, windowWidth/windowHeight, 0.1, 1000)
+
 	//const renderer = new THREE.WebGLRenderer();
 	//renderer.setSize( window.innerWidth, window.innerHeight );
 	//document.body.appendChild( renderer.domElement );
@@ -30,5 +36,5 @@ func Main() {
 	//
 	//}
 
-	_ = scene
+	_, _ = scene, camera
 }

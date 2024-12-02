@@ -1,5 +1,6 @@
-[13%] demos/demo1
+[16%] cameras/PerspectiveCamera
+[34%] demos/demo1
 [17%] scenes/Scene
 [ 2%] constants
-[ 1%] core
+[ 2%] core
 [ 0%] utils
