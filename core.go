@@ -2,6 +2,7 @@ package three
 
 import (
 	"github.com/MaxKlaxxMiner/three/cameras"
+	"github.com/MaxKlaxxMiner/three/core"
 	"github.com/MaxKlaxxMiner/three/geometries"
 	"github.com/MaxKlaxxMiner/three/materials"
 	"github.com/MaxKlaxxMiner/three/math"
@@ -91,7 +92,7 @@ var (
 	// export MeshMatcapMaterial,
 	// export LineDashedMaterial,
 	// export LineBasicMaterial,
-	// export Material
+	NewMaterial = materials.NewMaterial
 	// export { AnimationLoader } from './loaders/AnimationLoader.js';
 	// export { CompressedTextureLoader } from './loaders/CompressedTextureLoader.js';
 	// export { CubeTextureLoader } from './loaders/CubeTextureLoader.js';
@@ -122,7 +123,7 @@ var (
 	// export { OrthographicCamera } from './cameras/OrthographicCamera.js';
 	// export { CubeCamera } from './cameras/CubeCamera.js';
 	// export { ArrayCamera } from './cameras/ArrayCamera.js';
-	// export { Camera } from './cameras/Camera.js';
+	NewCamera = cameras.NewCamera
 	// export { AudioListener } from './audio/AudioListener.js';
 	// export { PositionalAudio } from './audio/PositionalAudio.js';
 	// export { AudioContext } from './audio/AudioContext.js';
@@ -146,17 +147,17 @@ var (
 	// export { Uniform } from './core/Uniform.js';
 	// export { UniformsGroup } from './core/UniformsGroup.js';
 	// export { InstancedBufferGeometry } from './core/InstancedBufferGeometry.js';
-	// export { BufferGeometry } from './core/BufferGeometry.js';
+	NewBufferGeometry = core.NewBufferGeometry
 	// export { InterleavedBufferAttribute } from './core/InterleavedBufferAttribute.js';
 	// export { InstancedInterleavedBuffer } from './core/InstancedInterleavedBuffer.js';
 	// export { InterleavedBuffer } from './core/InterleavedBuffer.js';
 	// export { InstancedBufferAttribute } from './core/InstancedBufferAttribute.js';
 	// export { GLBufferAttribute } from './core/GLBufferAttribute.js';
 	// export * from './core/BufferAttribute.js';
-	// export { Object3D } from './core/Object3D.js';
+	NewObject3D = core.NewObject3D
 	// export { Raycaster } from './core/Raycaster.js';
 	// export { Layers } from './core/Layers.js';
-	// export { EventDispatcher } from './core/EventDispatcher.js';
+	NewEventDispatcher = core.NewEventDispatcher
 	// export { Clock } from './core/Clock.js';
 	// export { QuaternionLinearInterpolant } from './math/interpolants/QuaternionLinearInterpolant.js';
 	// export { LinearInterpolant } from './math/interpolants/LinearInterpolant.js';
@@ -180,6 +181,8 @@ var (
 	// export { Euler } from './math/Euler.js';
 	// export { Vector4 } from './math/Vector4.js';
 	// export { Vector3 } from './math/Vector3.js';
+	NewVector3Defaults = math.NewVector3Defaults
+	NewVector3         = math.NewVector3
 	// export { Vector2 } from './math/Vector2.js';
 	// export { Quaternion } from './math/Quaternion.js';
 	NewColor    = math.NewColor

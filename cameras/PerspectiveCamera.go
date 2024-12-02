@@ -1,7 +1,7 @@
 package cameras
 
 type PerspectiveCamera struct {
-	// Camera todo
+	Camera
 }
 
 func NewPerspectiveCameraDefaults() *PerspectiveCamera {
@@ -10,8 +10,9 @@ func NewPerspectiveCameraDefaults() *PerspectiveCamera {
 
 func NewPerspectiveCamera(fov, aspect, near, far float64) *PerspectiveCamera {
 	this := new(PerspectiveCamera)
-	// 		super(); // Camera todo
-	// 		this.type = 'PerspectiveCamera'; todo
+	this.Camera = *NewCamera()
+	this.This = this
+	this.Type = "PerspectiveCamera"
 	// 		this.fov = fov; todo
 	// 		this.zoom = 1; todo
 	// 		this.near = near; todo
@@ -255,11 +256,6 @@ func (c *PerspectiveCamera) IsPerspectiveCamera() bool { return c != nil }
 // 		return data;
 //
 // 	}
-//
-// import { Camera } from './Camera.js';
-// import { RAD2DEG, DEG2RAD } from '../math/MathUtils.js';
-// import { Vector2 } from '../math/Vector2.js';
-// import { Vector3 } from '../math/Vector3.js';
 //
 // const _v3 = /*@__PURE__*/ new Vector3();
 // const _minTarget = /*@__PURE__*/ new Vector2();

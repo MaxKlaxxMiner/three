@@ -10,7 +10,9 @@ type Object3D struct {
 	Type     string
 	Parent   *Object3D
 	Children []*Object3D
+	Up       math.Vector3
 	Position math.Vector3
+	Scale    math.Vector3
 }
 
 var _object3DId = 0
@@ -27,35 +29,24 @@ func NewObject3D() *Object3D {
 	this.Parent = nil
 	this.Children = nil
 
-	//todo
-	// 		this.up = Object3D.DEFAULT_UP.clone();
-	//
+	this.Up.Copy(Object3dDefaultUp)
 	this.Position = math.Vector3{}
 	// 		const rotation = new Euler();
 	// 		const quaternion = new Quaternion();
-	// 		const scale = new Vector3( 1, 1, 1 );
-	//
+	this.Scale.SetScalar(1)
+
 	// 		function onRotationChange() {
-	//
 	// 			quaternion.setFromEuler( rotation, false );
-	//
 	// 		}
 	//
 	// 		function onQuaternionChange() {
-	//
 	// 			rotation.setFromQuaternion( quaternion, undefined, false );
-	//
 	// 		}
 	//
 	// 		rotation._onChange( onRotationChange );
 	// 		quaternion._onChange( onQuaternionChange );
 	//
 	// 		Object.defineProperties( this, {
-	// 			position: {
-	// 				configurable: true,
-	// 				enumerable: true,
-	// 				value: position
-	// 			},
 	// 			rotation: {
 	// 				configurable: true,
 	// 				enumerable: true,
@@ -65,11 +56,6 @@ func NewObject3D() *Object3D {
 	// 				configurable: true,
 	// 				enumerable: true,
 	// 				value: quaternion
-	// 			},
-	// 			scale: {
-	// 				configurable: true,
-	// 				enumerable: true,
-	// 				value: scale
 	// 			},
 	// 			modelViewMatrix: {
 	// 				value: new Matrix4()
@@ -295,50 +281,27 @@ func (o *Object3D) IsObject3D() bool { return o != nil }
 // 		}
 //
 // 	}
-//
-// 	add( object ) {
-//
-// 		if ( arguments.length > 1 ) {
-//
-// 			for ( let i = 0; i < arguments.length; i ++ ) {
-//
-// 				this.add( arguments[ i ] );
-//
-// 			}
-//
-// 			return this;
-//
-// 		}
-//
-// 		if ( object === this ) {
-//
-// 			console.error( 'THREE.Object3D.add: object can\'t be added as a child of itself.', object );
-// 			return this;
-//
-// 		}
-//
-// 		if ( object && object.isObject3D ) {
-//
-// 			object.removeFromParent();
-// 			object.parent = this;
-// 			this.children.push( object );
-//
-// 			object.dispatchEvent( _addedEvent );
-//
-// 			_childaddedEvent.child = object;
-// 			this.dispatchEvent( _childaddedEvent );
-// 			_childaddedEvent.child = null;
-//
-// 		} else {
-//
-// 			console.error( 'THREE.Object3D.add: object not an instance of THREE.Object3D.', object );
-//
-// 		}
-//
-// 		return this;
-//
-// 	}
-//
+
+func (o *Object3D) Add(objects ...*Object3D) *Object3D {
+	for _, obj := range objects {
+		if obj == o {
+			panic("THREE.Object3D.add: object can't be added as a child of itself.")
+		}
+		if !obj.IsObject3D() {
+			panic("THREE.Object3D.add: object not an instance of THREE.Object3D.")
+		}
+		// object.removeFromParent(); todo
+		obj.Parent = o
+		o.Children = append(o.Children, obj)
+		// object.dispatchEvent( _addedEvent ); todo
+		// _childaddedEvent.child = object; todo
+		// this.dispatchEvent( _childaddedEvent ); todo
+		// _childaddedEvent.child = null; todo
+	}
+	return o
+}
+
+//todo
 // 	remove( object ) {
 //
 // 		if ( arguments.length > 1 ) {
@@ -1001,16 +964,14 @@ func (o *Object3D) IsObject3D() bool { return o != nil }
 //
 // 	}
 
-//goland:noinspection GoSnakeCaseUsage
-var Object3D_DEFAULT_UP = math.NewVector3(0, 1, 0)
+var Object3dDefaultUp = math.NewVector3(0, 1, 0)
+var Object3dDefaultMatrixAutoUpdate = true
+var Object3dDefaultMatrixWorldAutoUpdate = true
 
-// Object3D.DEFAULT_UP = /*@__PURE__*/ new Vector3( 0, 1, 0 );
-// Object3D.DEFAULT_MATRIX_AUTO_UPDATE = true;
-// Object3D.DEFAULT_MATRIX_WORLD_AUTO_UPDATE = true;
+//todo
 // import { Quaternion } from '../math/Quaternion.js';
 // import { Euler } from '../math/Euler.js';
 // import { Layers } from './Layers.js';
-//
 //
 // const _v1 = /*@__PURE__*/ new Vector3();
 // const _q1 = /*@__PURE__*/ new Quaternion();

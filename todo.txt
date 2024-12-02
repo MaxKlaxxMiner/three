@@ -1,6 +1,7 @@
-[ 5%] cameras/PerspectiveCamera
+[23%] cameras/Camera
+[11%] cameras/PerspectiveCamera
 [ 2%] core/BufferGeometry
-[ 3%] core/Object3D
+[ 6%] core/Object3D
 [68%] demos/demo1
 [85%] geometries/BoxGeometry
 [ 5%] materials/Material
@@ -13,7 +14,7 @@
 [21%] scenes/Scene
 [ 6%] utils/utils
 [ 2%] constants
-[ 6%] core
+[10%] core
 
 --- finished ---
 [100%] core/EventDispatcher

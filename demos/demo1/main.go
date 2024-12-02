@@ -30,10 +30,12 @@ func Main() {
 	material := three.NewMeshBasicMaterial(materials.MeshBasicMaterialParameters{Color: three.NewColorHex(0x00ff00)})
 	// const cube = new THREE.Mesh( geometry, material );
 	cube := three.NewMesh(&geometry.BufferGeometry, &material.Material)
-	//scene.add( cube );
-	//
-	//camera.position.z = 5;
-	//
+	// scene.add( cube );
+	scene.Add(&cube.Object3D)
+
+	// camera.position.z = 5;
+	camera.Position.Z = 5
+
 	//function animate() {
 	//
 	//	cube.rotation.x += 0.01;
@@ -43,5 +45,5 @@ func Main() {
 	//
 	//}
 
-	_, _, _, _ = scene, camera, renderer, cube
+	_ = renderer
 }
