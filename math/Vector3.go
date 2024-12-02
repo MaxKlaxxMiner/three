@@ -1,6 +1,10 @@
 package math
 
-import "strconv"
+import (
+	"github.com/MaxKlaxxMiner/three/utils"
+	"math"
+	"strconv"
+)
 
 type Vector3 struct {
 	X, Y, Z float64
@@ -16,52 +20,30 @@ func NewVector3(x, y, z float64) *Vector3 {
 
 func (v *Vector3) IsVector3() bool { return v != nil }
 
-//todo
-// 	set( x, y, z ) {
-//
-// 		if ( z === undefined ) z = this.z; // sprite.scale.set(x,y)
-//
-// 		this.x = x;
-// 		this.y = y;
-// 		this.z = z;
-//
-// 		return this;
-//
-// 	}
-//
-// 	setScalar( scalar ) {
-//
-// 		this.x = scalar;
-// 		this.y = scalar;
-// 		this.z = scalar;
-//
-// 		return this;
-//
-// 	}
-//
-// 	setX( x ) {
-//
-// 		this.x = x;
-//
-// 		return this;
-//
-// 	}
-//
-// 	setY( y ) {
-//
-// 		this.y = y;
-//
-// 		return this;
-//
-// 	}
-//
-// 	setZ( z ) {
-//
-// 		this.z = z;
-//
-// 		return this;
-//
-// 	}
+func (v *Vector3) Set(x, y, z float64) *Vector3 {
+	v.X, v.Y, v.Z = x, y, z
+	return v
+}
+
+func (v *Vector3) SetScalar(scalar float64) *Vector3 {
+	v.X, v.Y, v.Z = scalar, scalar, scalar
+	return v
+}
+
+func (v *Vector3) SetX(x float64) *Vector3 {
+	v.X = x
+	return v
+}
+
+func (v *Vector3) SetY(y float64) *Vector3 {
+	v.Y = y
+	return v
+}
+
+func (v *Vector3) SetZ(z float64) *Vector3 {
+	v.Z = z
+	return v
+}
 
 func (v *Vector3) SetComponent(index int, value float64) *Vector3 {
 	switch index {
@@ -94,117 +76,78 @@ func (v *Vector3) Clone() *Vector3 {
 	return NewVector3(v.X, v.Y, v.Z)
 }
 
+func (v *Vector3) Copy(src *Vector3) *Vector3 {
+	v.X, v.Y, v.Z = src.X, src.Y, src.Z
+	return v
+}
+
+func (v *Vector3) Add(a *Vector3) *Vector3 {
+	v.X += a.X
+	v.Y += a.Y
+	v.Z += a.Z
+	return v
+}
+
+func (v *Vector3) AddScalar(s float64) *Vector3 {
+	v.X += s
+	v.Y += s
+	v.Z += s
+	return v
+}
+
+func (v *Vector3) AddVectors(a, b *Vector3) *Vector3 {
+	v.X, v.Y, v.Z = a.X+b.X, a.Y+b.Y, a.Z+b.Z
+	return v
+}
+
+func (v *Vector3) AddScaledVector(a *Vector3, s float64) *Vector3 {
+	v.X += a.X * s
+	v.Y += a.Y * s
+	v.Z += a.Z * s
+	return v
+}
+
+func (v *Vector3) Sub(a *Vector3) *Vector3 {
+	v.X -= a.X
+	v.Y -= a.Y
+	v.Z -= a.Z
+	return v
+}
+
+func (v *Vector3) SubScalar(s float64) *Vector3 {
+	v.X -= s
+	v.Y -= s
+	v.Z -= s
+	return v
+}
+
+func (v *Vector3) SubVectors(a, b *Vector3) *Vector3 {
+	v.X -= a.X - b.X
+	v.Y -= a.Y - b.Y
+	v.Z -= a.Z - b.Z
+	return v
+}
+
+func (v *Vector3) Multiply(a *Vector3) *Vector3 {
+	v.X *= a.X
+	v.Y *= a.Y
+	v.Z *= a.Z
+	return v
+}
+
+func (v *Vector3) MultiplyScalar(s float64) *Vector3 {
+	v.X *= s
+	v.Y *= s
+	v.Z *= s
+	return v
+}
+
+func (v *Vector3) MultiplyVectors(a, b *Vector3) *Vector3 {
+	v.X, v.Y, v.Z = a.X*b.X, a.Y*b.Y, a.Z*b.Z
+	return v
+}
+
 //todo
-// 	copy( v ) {
-//
-// 		this.x = v.x;
-// 		this.y = v.y;
-// 		this.z = v.z;
-//
-// 		return this;
-//
-// 	}
-//
-// 	add( v ) {
-//
-// 		this.x += v.x;
-// 		this.y += v.y;
-// 		this.z += v.z;
-//
-// 		return this;
-//
-// 	}
-//
-// 	addScalar( s ) {
-//
-// 		this.x += s;
-// 		this.y += s;
-// 		this.z += s;
-//
-// 		return this;
-//
-// 	}
-//
-// 	addVectors( a, b ) {
-//
-// 		this.x = a.x + b.x;
-// 		this.y = a.y + b.y;
-// 		this.z = a.z + b.z;
-//
-// 		return this;
-//
-// 	}
-//
-// 	addScaledVector( v, s ) {
-//
-// 		this.x += v.x * s;
-// 		this.y += v.y * s;
-// 		this.z += v.z * s;
-//
-// 		return this;
-//
-// 	}
-//
-// 	sub( v ) {
-//
-// 		this.x -= v.x;
-// 		this.y -= v.y;
-// 		this.z -= v.z;
-//
-// 		return this;
-//
-// 	}
-//
-// 	subScalar( s ) {
-//
-// 		this.x -= s;
-// 		this.y -= s;
-// 		this.z -= s;
-//
-// 		return this;
-//
-// 	}
-//
-// 	subVectors( a, b ) {
-//
-// 		this.x = a.x - b.x;
-// 		this.y = a.y - b.y;
-// 		this.z = a.z - b.z;
-//
-// 		return this;
-//
-// 	}
-//
-// 	multiply( v ) {
-//
-// 		this.x *= v.x;
-// 		this.y *= v.y;
-// 		this.z *= v.z;
-//
-// 		return this;
-//
-// 	}
-//
-// 	multiplyScalar( scalar ) {
-//
-// 		this.x *= scalar;
-// 		this.y *= scalar;
-// 		this.z *= scalar;
-//
-// 		return this;
-//
-// 	}
-//
-// 	multiplyVectors( a, b ) {
-//
-// 		this.x = a.x * b.x;
-// 		this.y = a.y * b.y;
-// 		this.z = a.z * b.z;
-//
-// 		return this;
-//
-// 	}
-//
 // 	applyEuler( euler ) {
 //
 // 		return this.applyQuaternion( _quaternion.setFromEuler( euler ) );
@@ -300,425 +243,331 @@ func (v *Vector3) Clone() *Vector3 {
 //
 // 	}
 //
-// 	divide( v ) {
-//
-// 		this.x /= v.x;
-// 		this.y /= v.y;
-// 		this.z /= v.z;
-//
-// 		return this;
-//
-// 	}
-//
-// 	divideScalar( scalar ) {
-//
-// 		return this.multiplyScalar( 1 / scalar );
-//
-// 	}
-//
-// 	min( v ) {
-//
-// 		this.x = Math.min( this.x, v.x );
-// 		this.y = Math.min( this.y, v.y );
-// 		this.z = Math.min( this.z, v.z );
-//
-// 		return this;
-//
-// 	}
-//
-// 	max( v ) {
-//
-// 		this.x = Math.max( this.x, v.x );
-// 		this.y = Math.max( this.y, v.y );
-// 		this.z = Math.max( this.z, v.z );
-//
-// 		return this;
-//
-// 	}
-//
-// 	clamp( min, max ) {
-//
-// 		// assumes min < max, componentwise
-//
-// 		this.x = clamp( this.x, min.x, max.x );
-// 		this.y = clamp( this.y, min.y, max.y );
-// 		this.z = clamp( this.z, min.z, max.z );
-//
-// 		return this;
-//
-// 	}
-//
-// 	clampScalar( minVal, maxVal ) {
-//
-// 		this.x = clamp( this.x, minVal, maxVal );
-// 		this.y = clamp( this.y, minVal, maxVal );
-// 		this.z = clamp( this.z, minVal, maxVal );
-//
-// 		return this;
-//
-// 	}
-//
-// 	clampLength( min, max ) {
-//
-// 		const length = this.length();
-//
-// 		return this.divideScalar( length || 1 ).multiplyScalar( clamp( length, min, max ) );
-//
-// 	}
-//
-// 	floor() {
-//
-// 		this.x = Math.floor( this.x );
-// 		this.y = Math.floor( this.y );
-// 		this.z = Math.floor( this.z );
-//
-// 		return this;
-//
-// 	}
-//
-// 	ceil() {
-//
-// 		this.x = Math.ceil( this.x );
-// 		this.y = Math.ceil( this.y );
-// 		this.z = Math.ceil( this.z );
-//
-// 		return this;
-//
-// 	}
-//
-// 	round() {
-//
-// 		this.x = Math.round( this.x );
-// 		this.y = Math.round( this.y );
-// 		this.z = Math.round( this.z );
-//
-// 		return this;
-//
-// 	}
-//
-// 	roundToZero() {
-//
-// 		this.x = Math.trunc( this.x );
-// 		this.y = Math.trunc( this.y );
-// 		this.z = Math.trunc( this.z );
-//
-// 		return this;
-//
-// 	}
-//
-// 	negate() {
-//
-// 		this.x = - this.x;
-// 		this.y = - this.y;
-// 		this.z = - this.z;
-//
-// 		return this;
-//
-// 	}
-//
-// 	dot( v ) {
-//
-// 		return this.x * v.x + this.y * v.y + this.z * v.z;
-//
-// 	}
-//
-// 	// lengthSquared?
-//
-// 	lengthSq() {
-//
-// 		return this.x * this.x + this.y * this.y + this.z * this.z;
-//
-// 	}
-//
-// 	length() {
-//
-// 		return Math.sqrt( this.x * this.x + this.y * this.y + this.z * this.z );
-//
-// 	}
-//
-// 	manhattanLength() {
-//
-// 		return Math.abs( this.x ) + Math.abs( this.y ) + Math.abs( this.z );
-//
-// 	}
-//
-// 	normalize() {
-//
-// 		return this.divideScalar( this.length() || 1 );
-//
-// 	}
-//
-// 	setLength( length ) {
-//
-// 		return this.normalize().multiplyScalar( length );
-//
-// 	}
-//
-// 	lerp( v, alpha ) {
-//
-// 		this.x += ( v.x - this.x ) * alpha;
-// 		this.y += ( v.y - this.y ) * alpha;
-// 		this.z += ( v.z - this.z ) * alpha;
-//
-// 		return this;
-//
-// 	}
-//
-// 	lerpVectors( v1, v2, alpha ) {
-//
-// 		this.x = v1.x + ( v2.x - v1.x ) * alpha;
-// 		this.y = v1.y + ( v2.y - v1.y ) * alpha;
-// 		this.z = v1.z + ( v2.z - v1.z ) * alpha;
-//
-// 		return this;
-//
-// 	}
-//
-// 	cross( v ) {
-//
-// 		return this.crossVectors( this, v );
-//
-// 	}
-//
-// 	crossVectors( a, b ) {
-//
-// 		const ax = a.x, ay = a.y, az = a.z;
-// 		const bx = b.x, by = b.y, bz = b.z;
-//
-// 		this.x = ay * bz - az * by;
-// 		this.y = az * bx - ax * bz;
-// 		this.z = ax * by - ay * bx;
-//
-// 		return this;
-//
-// 	}
-//
-// 	projectOnVector( v ) {
-//
-// 		const denominator = v.lengthSq();
-//
-// 		if ( denominator === 0 ) return this.set( 0, 0, 0 );
-//
-// 		const scalar = v.dot( this ) / denominator;
-//
-// 		return this.copy( v ).multiplyScalar( scalar );
-//
-// 	}
-//
-// 	projectOnPlane( planeNormal ) {
-//
-// 		_vector.copy( this ).projectOnVector( planeNormal );
-//
-// 		return this.sub( _vector );
-//
-// 	}
-//
-// 	reflect( normal ) {
-//
-// 		// reflect incident vector off plane orthogonal to normal
-// 		// normal is assumed to have unit length
-//
-// 		return this.sub( _vector.copy( normal ).multiplyScalar( 2 * this.dot( normal ) ) );
-//
-// 	}
-//
-// 	angleTo( v ) {
-//
-// 		const denominator = Math.sqrt( this.lengthSq() * v.lengthSq() );
-//
-// 		if ( denominator === 0 ) return Math.PI / 2;
-//
-// 		const theta = this.dot( v ) / denominator;
-//
-// 		// clamp, to handle numerical problems
-//
-// 		return Math.acos( clamp( theta, - 1, 1 ) );
-//
-// 	}
-//
-// 	distanceTo( v ) {
-//
-// 		return Math.sqrt( this.distanceToSquared( v ) );
-//
-// 	}
-//
-// 	distanceToSquared( v ) {
-//
-// 		const dx = this.x - v.x, dy = this.y - v.y, dz = this.z - v.z;
-//
-// 		return dx * dx + dy * dy + dz * dz;
-//
-// 	}
-//
-// 	manhattanDistanceTo( v ) {
-//
-// 		return Math.abs( this.x - v.x ) + Math.abs( this.y - v.y ) + Math.abs( this.z - v.z );
-//
-// 	}
-//
-// 	setFromSpherical( s ) {
-//
-// 		return this.setFromSphericalCoords( s.radius, s.phi, s.theta );
-//
-// 	}
-//
-// 	setFromSphericalCoords( radius, phi, theta ) {
-//
-// 		const sinPhiRadius = Math.sin( phi ) * radius;
-//
-// 		this.x = sinPhiRadius * Math.sin( theta );
-// 		this.y = Math.cos( phi ) * radius;
-// 		this.z = sinPhiRadius * Math.cos( theta );
-//
-// 		return this;
-//
-// 	}
-//
-// 	setFromCylindrical( c ) {
-//
-// 		return this.setFromCylindricalCoords( c.radius, c.theta, c.y );
-//
-// 	}
-//
-// 	setFromCylindricalCoords( radius, theta, y ) {
-//
-// 		this.x = radius * Math.sin( theta );
-// 		this.y = y;
-// 		this.z = radius * Math.cos( theta );
-//
-// 		return this;
-//
-// 	}
-//
-// 	setFromMatrixPosition( m ) {
-//
-// 		const e = m.elements;
-//
-// 		this.x = e[ 12 ];
-// 		this.y = e[ 13 ];
-// 		this.z = e[ 14 ];
-//
-// 		return this;
-//
-// 	}
-//
-// 	setFromMatrixScale( m ) {
-//
-// 		const sx = this.setFromMatrixColumn( m, 0 ).length();
-// 		const sy = this.setFromMatrixColumn( m, 1 ).length();
-// 		const sz = this.setFromMatrixColumn( m, 2 ).length();
-//
-// 		this.x = sx;
-// 		this.y = sy;
-// 		this.z = sz;
-//
-// 		return this;
-//
-// 	}
-//
-// 	setFromMatrixColumn( m, index ) {
-//
-// 		return this.fromArray( m.elements, index * 4 );
-//
-// 	}
-//
-// 	setFromMatrix3Column( m, index ) {
-//
-// 		return this.fromArray( m.elements, index * 3 );
-//
-// 	}
-//
-// 	setFromEuler( e ) {
-//
-// 		this.x = e._x;
-// 		this.y = e._y;
-// 		this.z = e._z;
-//
-// 		return this;
-//
-// 	}
-//
-// 	setFromColor( c ) {
-//
-// 		this.x = c.r;
-// 		this.y = c.g;
-// 		this.z = c.b;
-//
-// 		return this;
-//
-// 	}
-//
-// 	equals( v ) {
-//
-// 		return ( ( v.x === this.x ) && ( v.y === this.y ) && ( v.z === this.z ) );
-//
-// 	}
-//
-// 	fromArray( array, offset = 0 ) {
-//
-// 		this.x = array[ offset ];
-// 		this.y = array[ offset + 1 ];
-// 		this.z = array[ offset + 2 ];
-//
-// 		return this;
-//
-// 	}
-//
-// 	toArray( array = [], offset = 0 ) {
-//
-// 		array[ offset ] = this.x;
-// 		array[ offset + 1 ] = this.y;
-// 		array[ offset + 2 ] = this.z;
-//
-// 		return array;
-//
-// 	}
-//
-// 	fromBufferAttribute( attribute, index ) {
-//
-// 		this.x = attribute.getX( index );
-// 		this.y = attribute.getY( index );
-// 		this.z = attribute.getZ( index );
-//
-// 		return this;
-//
-// 	}
-//
-// 	random() {
-//
-// 		this.x = Math.random();
-// 		this.y = Math.random();
-// 		this.z = Math.random();
-//
-// 		return this;
-//
-// 	}
-//
-// 	randomDirection() {
-//
-// 		// https://mathworld.wolfram.com/SpherePointPicking.html
-//
-// 		const theta = Math.random() * Math.PI * 2;
-// 		const u = Math.random() * 2 - 1;
-// 		const c = Math.sqrt( 1 - u * u );
-//
-// 		this.x = c * Math.cos( theta );
-// 		this.y = u;
-// 		this.z = c * Math.sin( theta );
-//
-// 		return this;
-//
-// 	}
-//
-// 	*[ Symbol.iterator ]() {
-//
-// 		yield this.x;
-// 		yield this.y;
-// 		yield this.z;
-//
-// 	}
-//
-// const _vector = /*@__PURE__*/ new Vector3();
-// const _quaternion = /*@__PURE__*/ new Quaternion();
-// import { clamp } from './MathUtils.js';
-// import { Quaternion } from './Quaternion.js';
+
+func (v *Vector3) Divide(a *Vector3) *Vector3 {
+	v.X /= a.X
+	v.Y /= a.Y
+	v.Z /= a.Z
+	return v
+}
+
+func (v *Vector3) DivideScalar(s float64) *Vector3 {
+	return v.MultiplyScalar(1 / s)
+}
+
+func (v *Vector3) Min(a *Vector3) *Vector3 {
+	v.X = math.Min(v.X, a.X)
+	v.Y = math.Min(v.Y, a.Y)
+	v.Z = math.Min(v.Z, a.Z)
+	return v
+}
+
+func (v *Vector3) Max(a *Vector3) *Vector3 {
+	v.X = math.Max(v.X, a.X)
+	v.Y = math.Max(v.Y, a.Y)
+	v.Z = math.Max(v.Z, a.Z)
+	return v
+}
+
+func (v *Vector3) Clamp(min, max *Vector3) *Vector3 {
+	v.X = Clamp(v.X, min.X, max.X)
+	v.Y = Clamp(v.Y, min.Y, max.Y)
+	v.Z = Clamp(v.Z, min.Z, max.Z)
+	return v
+}
+
+func (v *Vector3) ClampScalar(minVal, maxVal float64) *Vector3 {
+	v.X = Clamp(v.X, minVal, maxVal)
+	v.Y = Clamp(v.Y, minVal, maxVal)
+	v.Z = Clamp(v.Z, minVal, maxVal)
+	return v
+}
+
+func (v *Vector3) ClampLength(minVal, maxVal float64) *Vector3 {
+	length := v.Length()
+	return v.DivideScalar(utils.If(length > 0, length, 1)).MultiplyScalar(Clamp(length, minVal, maxVal))
+}
+
+func (v *Vector3) Floor() *Vector3 {
+	v.X = math.Floor(v.X)
+	v.Y = math.Floor(v.Y)
+	v.Z = math.Floor(v.Z)
+	return v
+}
+
+func (v *Vector3) Ceil() *Vector3 {
+	v.X = math.Ceil(v.X)
+	v.Y = math.Ceil(v.Y)
+	v.Z = math.Ceil(v.Z)
+	return v
+}
+
+func (v *Vector3) Round() *Vector3 {
+	v.X = math.Round(v.X)
+	v.Y = math.Round(v.Y)
+	v.Z = math.Round(v.Z)
+	return v
+}
+
+func (v *Vector3) RoundToZero() *Vector3 {
+	v.X = math.Trunc(v.X)
+	v.Y = math.Trunc(v.Y)
+	v.Z = math.Trunc(v.Z)
+	return v
+}
+
+func (v *Vector3) Negate() *Vector3 {
+	v.X = -v.X
+	v.Y = -v.Y
+	v.Z = -v.Z
+	return v
+}
+
+func (v *Vector3) Dot(a *Vector3) float64 {
+	return v.X*a.X + v.Y*a.Y + v.Z*a.Z
+}
+
+func (v *Vector3) LengthSq() float64 {
+	return v.X*v.X + v.Y*v.Y + v.Z*v.Z
+}
+
+func (v *Vector3) Length() float64 {
+	return math.Sqrt(v.LengthSq())
+}
+
+func (v *Vector3) LengthOrOne() float64 {
+	if l := v.Length(); l > 0 {
+		return l
+	}
+	return 1
+}
+
+func (v *Vector3) ManhattanLength() float64 {
+	return math.Abs(v.X) + math.Abs(v.Y) + math.Abs(v.Z)
+}
+
+func (v *Vector3) Normalize() *Vector3 {
+	return v.DivideScalar(v.LengthOrOne())
+}
+
+func (v *Vector3) SetLength(length float64) *Vector3 {
+	return v.Normalize().MultiplyScalar(length)
+}
+
+func (v *Vector3) Lerp(a *Vector3, alpha float64) *Vector3 {
+	v.X += (a.X - v.X) * alpha
+	v.Y += (a.Y - v.Y) * alpha
+	v.Z += (a.Z - v.Z) * alpha
+	return v
+}
+
+func (v *Vector3) LerpVectors(a, b *Vector3, alpha float64) *Vector3 {
+	v.X = a.X + (b.X-a.X)*alpha
+	v.Y = a.Y + (b.Y-a.Y)*alpha
+	v.Z = a.Z + (b.Z-a.Z)*alpha
+	return v
+}
+
+func (v *Vector3) Cross(a *Vector3) *Vector3 {
+	return v.CrossVectors(v, a)
+}
+
+func (v *Vector3) CrossVectors(a, b *Vector3) *Vector3 {
+	ax, ay, az := a.X, a.Y, a.Z
+	bx, by, bz := b.X, b.Y, b.Z
+	v.X = ay*bz - az*by
+	v.Y = az*bx - ax*bz
+	v.Z = ax*by - ay*bx
+	return v
+}
+
+func (v *Vector3) ProjectOnVector(a *Vector3) *Vector3 {
+	if denominator := a.LengthSq(); denominator == 0 {
+		return v.SetScalar(0)
+	} else {
+		scalar := a.Dot(v) / denominator
+		return v.Copy(a).MultiplyScalar(scalar)
+	}
+}
+
+func (v *Vector3) ProjectOnPlane(planeNormal *Vector3) *Vector3 {
+	return v.Sub(_vector.Copy(v).ProjectOnVector(planeNormal))
+}
+
+func (v *Vector3) Reflect(normal *Vector3) *Vector3 {
+	// reflect incident vector off plane orthogonal to normal
+	// normal is assumed to have unit length
+	return v.Sub(_vector.Copy(normal).MultiplyScalar(2 * v.Dot(normal)))
+}
+
+func (v *Vector3) AngleTo(a *Vector3) float64 {
+	if denominator := math.Sqrt(v.LengthSq() * a.LengthSq()); denominator == 0 {
+		return math.Pi / 2
+	} else {
+		theta := v.Dot(a) / denominator
+		// clamp, to handle numerical problems
+		return math.Acos(Clamp(theta, -1, 1))
+	}
+}
+
+func (v *Vector3) DistanceTo(a *Vector3) float64 {
+	return math.Sqrt(v.DistanceToSquared(a))
+}
+
+func (v *Vector3) DistanceToSquared(a *Vector3) float64 {
+	dx, dy, dz := v.X-a.X, v.Y-a.Y, v.Z-a.Z
+	return dx*dx + dy*dy + dz*dz
+}
+
+func (v *Vector3) ManhattanDistanceTo(a *Vector3) float64 {
+	return math.Abs(v.X-a.X) + math.Abs(v.Y-a.Y) + math.Abs(v.Z-a.Z)
+}
+
+//todo
+// setFromSpherical( s ) {
+//
+//	return this.setFromSphericalCoords( s.radius, s.phi, s.theta );
+//
+// }
+//
+
+func (v *Vector3) SetFromSphericalCoords(radius, phi, theta float64) *Vector3 {
+	sinPhiRadius := math.Sin(phi) * radius
+	v.X = sinPhiRadius * math.Sin(theta)
+	v.Y = math.Cos(phi) * radius
+	v.Z = sinPhiRadius * math.Cos(theta)
+	return v
+}
+
+//todo
+// setFromCylindrical( c ) {
+//
+//	return this.setFromCylindricalCoords( c.radius, c.theta, c.y );
+//
+// }
+//
+
+func (v *Vector3) SetFromCylindricalCoords(radius, theta, y float64) *Vector3 {
+	v.X = radius * math.Sin(theta)
+	v.Y = y
+	v.Z = radius * math.Cos(theta)
+	return v
+}
+
+//todo
+// setFromCylindricalCoords( radius, theta, y ) {
+//
+//	this.x = radius * Math.sin( theta );
+//	this.y = y;
+//	this.z = radius * Math.cos( theta );
+//
+//	return this;
+//
+// }
+//
+// setFromMatrixPosition( m ) {
+//
+//	const e = m.elements;
+//
+//	this.x = e[ 12 ];
+//	this.y = e[ 13 ];
+//	this.z = e[ 14 ];
+//
+//	return this;
+//
+// }
+//
+// setFromMatrixScale( m ) {
+//
+//	const sx = this.setFromMatrixColumn( m, 0 ).length();
+//	const sy = this.setFromMatrixColumn( m, 1 ).length();
+//	const sz = this.setFromMatrixColumn( m, 2 ).length();
+//
+//	this.x = sx;
+//	this.y = sy;
+//	this.z = sz;
+//
+//	return this;
+//
+// }
+//
+// setFromMatrixColumn( m, index ) {
+//
+//	return this.fromArray( m.elements, index * 4 );
+//
+// }
+//
+// setFromMatrix3Column( m, index ) {
+//
+//	return this.fromArray( m.elements, index * 3 );
+//
+// }
+//
+// setFromEuler( e ) {
+//
+//	this.x = e._x;
+//	this.y = e._y;
+//	this.z = e._z;
+//
+//	return this;
+//
+// }
+//
+
+func (v *Vector3) SetFromColor(color *Color) *Vector3 {
+	v.X, v.Y, v.Z = color.R, color.G, color.B
+	return v
+}
+
+func (v *Vector3) Equals(a *Vector3) bool {
+	return *v == *a
+}
+
+func (v *Vector3) FromArray(array []float64) *Vector3 {
+	_ = array[2]
+	v.X = array[0]
+	v.Y = array[1]
+	v.Z = array[2]
+	return v
+}
+
+func (v *Vector3) ToArray(array []float64) []float64 {
+	_ = array[2]
+	array[0] = v.X
+	array[1] = v.Y
+	array[2] = v.Z
+	return array
+}
+
+//todo
+// fromBufferAttribute( attribute, index ) {
+//	this.x = attribute.getX( index );
+//	this.y = attribute.getY( index );
+//	this.z = attribute.getZ( index );
+//	return this;
+// }
+
+func (v *Vector3) Random() *Vector3 {
+	v.X = RandomFloat()
+	v.Y = RandomFloat()
+	v.Z = RandomFloat()
+	return v
+}
+
+func (v *Vector3) RandomDirection() *Vector3 {
+	// https://mathworld.wolfram.com/SpherePointPicking.html
+	theta := RandomFloat() * math.Pi * 2
+	u := RandomFloat()*2 - 1
+	c := math.Sqrt(1 - u*u)
+
+	v.X = c * math.Cos(theta)
+	v.Y = u
+	v.Z = c * math.Sin(theta)
+	return v
+}
+
+func (v *Vector3) Append(buf []float64) []float64 {
+	return append(buf, v.X, v.Y, v.Z)
+}
+
+var _vector = NewVector3Defaults()

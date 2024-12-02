@@ -1,90 +1,62 @@
 package core
 
+import "slices"
+
 /**
  * ported from:
  * https://github.com/mrdoob/eventdispatcher.js/
  */
 
+type Event struct {
+	TypeName string
+	Target   any
+}
+
 type EventDispatcher struct {
+	listeners map[string][]*func(event Event)
+	This      any
 }
 
 func NewEventDispatcher() *EventDispatcher {
-	return new(EventDispatcher)
+	this := new(EventDispatcher)
+	this.This = this
+	return this
 }
 
-// 	addEventListener( type, listener ) {
-//
-// 		if ( this._listeners === undefined ) this._listeners = {};
-//
-// 		const listeners = this._listeners;
-//
-// 		if ( listeners[ type ] === undefined ) {
-//
-// 			listeners[ type ] = [];
-//
-// 		}
-//
-// 		if ( listeners[ type ].indexOf( listener ) === - 1 ) {
-//
-// 			listeners[ type ].push( listener );
-//
-// 		}
-//
-// 	}
-//
-// 	hasEventListener( type, listener ) {
-//
-// 		if ( this._listeners === undefined ) return false;
-//
-// 		const listeners = this._listeners;
-//
-// 		return listeners[ type ] !== undefined && listeners[ type ].indexOf( listener ) !== - 1;
-//
-// 	}
-//
-// 	removeEventListener( type, listener ) {
-//
-// 		if ( this._listeners === undefined ) return;
-//
-// 		const listeners = this._listeners;
-// 		const listenerArray = listeners[ type ];
-//
-// 		if ( listenerArray !== undefined ) {
-//
-// 			const index = listenerArray.indexOf( listener );
-//
-// 			if ( index !== - 1 ) {
-//
-// 				listenerArray.splice( index, 1 );
-//
-// 			}
-//
-// 		}
-//
-// 	}
-//
-// 	dispatchEvent( event ) {
-//
-// 		if ( this._listeners === undefined ) return;
-//
-// 		const listeners = this._listeners;
-// 		const listenerArray = listeners[ event.type ];
-//
-// 		if ( listenerArray !== undefined ) {
-//
-// 			event.target = this;
-//
-// 			// Make a copy, in case listeners are removed while iterating.
-// 			const array = listenerArray.slice( 0 );
-//
-// 			for ( let i = 0, l = array.length; i < l; i ++ ) {
-//
-// 				array[ i ].call( this, event );
-//
-// 			}
-//
-// 			event.target = null;
-//
-// 		}
-//
-// 	}
+func (e *EventDispatcher) AddListener(typeName string, listener *func(event Event)) {
+	if e.listeners == nil {
+		e.listeners = make(map[string][]*func(event Event))
+	}
+	if !e.HasEventListener(typeName, listener) {
+		e.listeners[typeName] = append(e.listeners[typeName], listener)
+	}
+}
+
+func (e *EventDispatcher) HasEventListener(typeName string, listener *func(event Event)) bool {
+	if e.listeners == nil {
+		return false
+	}
+	return slices.Index(e.listeners[typeName], listener) >= 0
+}
+
+func (e *EventDispatcher) RemoveListener(typeName string, listener *func(event Event)) {
+	if e.listeners == nil {
+		return
+	}
+	if i := slices.Index(e.listeners[typeName], listener); i >= 0 {
+		e.listeners[typeName] = slices.Delete(e.listeners[typeName], i, i+1)
+	}
+}
+
+func (e *EventDispatcher) DispatchEvent(typeName string) {
+	if e.listeners == nil {
+		return
+	}
+	if array := e.listeners[typeName]; array != nil {
+		array = slices.Clone(array) // Make a copy, in case listeners are removed while iterating.
+		event := Event{typeName, e.This}
+		for _, run := range array {
+			(*run)(event)
+		}
+	}
+}

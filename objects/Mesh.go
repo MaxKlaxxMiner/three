@@ -6,15 +6,16 @@ import (
 )
 
 type Mesh struct {
-	// Object3D todo
+	core.Object3D
 	geometry *core.BufferGeometry
 	material *materials.Material
 }
 
 func NewMesh(geometry *core.BufferGeometry, material *materials.Material) *Mesh {
 	this := new(Mesh)
-	// 		super(); Object3D todo
-	// 		this.type = 'Mesh'; todo
+	this.Object3D = *core.NewObject3D()
+	this.This = this
+	this.Type = "Mesh"
 
 	this.geometry = geometry
 	this.material = material
@@ -26,9 +27,6 @@ func NewMesh(geometry *core.BufferGeometry, material *materials.Material) *Mesh 
 
 func (m *Mesh) IsMesh() bool { return m != nil }
 
-// 	constructor( geometry = new BufferGeometry(), material = new MeshBasicMaterial() ) {
-// 	}
-//
 // 	copy( source, recursive ) {
 //
 // 		super.copy( source, recursive );

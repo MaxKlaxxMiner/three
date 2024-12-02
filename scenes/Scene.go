@@ -1,13 +1,16 @@
 package scenes
 
+import "github.com/MaxKlaxxMiner/three/core"
+
 type Scene struct {
-	// Object3D todo
+	core.Object3D
 }
 
 func NewScene() *Scene {
 	this := new(Scene)
-	// 		super(); // Object3D todo
-	// 		this.type = 'Scene'; todo
+	this.Object3D = *core.NewObject3D()
+	this.This = this
+	this.Type = "Scene"
 	// 		this.background = null; todo
 	// 		this.environment = null; todo
 	// 		this.fog = null; todo

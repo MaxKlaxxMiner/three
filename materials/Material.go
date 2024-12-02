@@ -17,7 +17,7 @@ var _materialId = 0
 
 func NewMaterial() *Material {
 	this := new(Material)
-	this.EventDispatcher = *core.NewEventDispatcher()
+	this.This = this
 	this.Id = _materialId
 	_materialId++
 	this.Uuid = math.GenerateUUID()
@@ -398,7 +398,7 @@ func (m *Material) IsMaterial() bool { return m != nil }
 //
 // 		if ( Object.keys( this.userData ).length > 0 ) data.userData = this.userData;
 //
-// 		// TODO: Copied from Object3D.toJSON
+// 		// Copied from Object3D.toJSON
 //
 // 		function extractFromCache( cache ) {
 //

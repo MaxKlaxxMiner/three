@@ -17,6 +17,7 @@ type MeshBasicMaterialParameters struct {
 func NewMeshBasicMaterial(parameters MeshBasicMaterialParameters) *MeshBasicMaterial {
 	this := new(MeshBasicMaterial)
 	this.Material = *NewMaterial()
+	this.This = this
 	this.Type = "MeshBasicMaterial"
 
 	this.Color = utils.NotNullOrDefault(parameters.Color, *math.NewColorHex(0xffffff)) // emissive

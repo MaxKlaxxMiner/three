@@ -14,7 +14,7 @@ var _geometryId = 0
 
 func NewBufferGeometry() *BufferGeometry {
 	this := new(BufferGeometry)
-	this.EventDispatcher = *NewEventDispatcher()
+	this.This = this
 	this.Id = _geometryId
 	_geometryId++
 	this.Uuid = math.GenerateUUID()
@@ -43,6 +43,7 @@ func NewBufferGeometry() *BufferGeometry {
 
 func (g *BufferGeometry) IsBufferGeometry() bool { return g != nil }
 
+//todo
 // 	getIndex() {
 //
 // 		return this.index;

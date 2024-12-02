@@ -23,7 +23,9 @@ func NewBoxGeometry(width, height, depth float64) *BoxGeometry {
 func NewBoxGeometrySegments(width, height, depth float64, widthSegments, heightSegments, depthSegments int) *BoxGeometry {
 	this := new(BoxGeometry)
 	this.BufferGeometry = *core.NewBufferGeometry()
-	// 		this.type = 'BoxGeometry'; todo
+	this.This = this
+	this.Type = "BoxGeometry"
+
 	this.parameters = boxGeometryParameters{
 		width:          width,
 		height:         height,
