@@ -1,7 +1,19 @@
 package renderers
 
+import (
+	"github.com/MaxKlaxxMiner/three"
+	"strconv"
+)
+
 type WebGLRenderer struct {
 	localValues
+	localJsValues
+	GlobalJsValues
+}
+
+type localValues struct {
+	_width, _height int
+	_pixelRatio     float64
 }
 
 func NewWebGLRendererDefaults() *WebGLRenderer {
@@ -42,11 +54,11 @@ func NewWebGLRenderer(parameters WebGLRendererParams) *WebGLRenderer {
 	//
 	// 		const renderListStack = [];
 	// 		const renderStateStack = [];
-	//
-	// 		// public properties
-	//
-	// 		this.domElement = canvas;
-	//
+
+	// --- public properties ---
+	this.DomElement = this.canvas
+
+	//todo
 	// 		// Debug configuration container
 	// 		this.debug = {
 	//
@@ -108,13 +120,12 @@ func NewWebGLRenderer(parameters WebGLRendererParams) *WebGLRenderer {
 	//
 	// 		const _currentClearColor = new Color( 0x000000 );
 	// 		let _currentClearAlpha = 0;
-	//
-	// 		//
-	//
-	// 		let _width = canvas.width;
-	// 		let _height = canvas.height;
-	//
-	// 		let _pixelRatio = 1;
+
+	this._width = this.canvas.Get("width").Int()
+	this._height = this.canvas.Get("height").Int()
+	this._pixelRatio = 1
+
+	//todo
 	// 		let _opaqueSort = null;
 	// 		let _transparentSort = null;
 	//
@@ -172,10 +183,13 @@ func NewWebGLRenderer(parameters WebGLRendererParams) *WebGLRenderer {
 	// 				powerPreference,
 	// 				failIfMajorPerformanceCaveat,
 	// 			};
-	//
-	// 			// OffscreenCanvas does not have setAttribute, see #22811
-	// 			if ( 'setAttribute' in canvas ) canvas.setAttribute( 'data-engine', `three.js r${REVISION}` );
-	//
+
+	// OffscreenCanvas does not have setAttribute, see #22811
+	if !this.canvas.Get("setAttribute").IsUndefined() {
+		this.canvas.Call("setAttribute", "data-engine", "three go wasm r"+three.Revision+"."+strconv.Itoa(three.WasmVersion))
+	}
+
+	//todo
 	// 			// event listeners must be registered before WebGL context is created, see #12753
 	// 			canvas.addEventListener( 'webglcontextlost', onContextLost, false );
 	// 			canvas.addEventListener( 'webglcontextrestored', onContextRestore, false );
@@ -334,32 +348,33 @@ func (r *WebGLRenderer) IsWebGLRenderer() bool { return true }
 //
 // 		};
 //
-// 		this.setSize = function ( width, height, updateStyle = true ) {
-//
-// 			if ( xr.isPresenting ) {
-//
-// 				console.warn( 'THREE.WebGLRenderer: Can\'t change size while VR device is presenting.' );
-// 				return;
-//
-// 			}
-//
-// 			_width = width;
-// 			_height = height;
-//
-// 			canvas.width = Math.floor( width * _pixelRatio );
-// 			canvas.height = Math.floor( height * _pixelRatio );
-//
-// 			if ( updateStyle === true ) {
-//
-// 				canvas.style.width = width + 'px';
-// 				canvas.style.height = height + 'px';
-//
-// 			}
-//
-// 			this.setViewport( 0, 0, width, height );
-//
-// 		};
-//
+
+func (r *WebGLRenderer) SetSize(width, height int) {
+	r.SetSizeAndUpdateStyles(width, height, true)
+}
+
+func (r *WebGLRenderer) SetSizeAndUpdateStyles(width, height int, updateStyle bool) {
+	// 			if ( xr.isPresenting ) { todo
+	// 				console.warn( 'THREE.WebGLRenderer: Can\'t change size while VR device is presenting.' ); todo
+	// 				return; todo
+	// 			} todo
+	//
+
+	r._width = width
+	r._height = height
+
+	r.canvas.Set("width", int(float64(width)*r._pixelRatio))
+	r.canvas.Set("height", int(float64(height)*r._pixelRatio))
+
+	if updateStyle {
+		r.canvas.Get("style").Set("width", strconv.Itoa(width)+"px")
+		r.canvas.Get("style").Set("height", strconv.Itoa(height)+"px")
+	}
+
+	// 			this.setViewport( 0, 0, width, height ); todo
+}
+
+//todo
 // 		this.getDrawingBufferSize = function ( target ) {
 //
 // 			return target.set( _width * _pixelRatio, _height * _pixelRatio ).floor();
@@ -1680,7 +1695,7 @@ func (r *WebGLRenderer) IsWebGLRenderer() bool { return true }
 // 				uniforms.spotLightMap.value = lights.state.spotLightMap;
 // 				uniforms.pointShadowMap.value = lights.state.pointShadowMap;
 // 				uniforms.pointShadowMatrix.value = lights.state.pointShadowMatrix;
-// 				// TODO (abelnation): add area lights shadow info to uniforms
+// 				// (abelnation): add area lights shadow info to uniforms
 //
 // 			}
 //
@@ -2876,7 +2891,6 @@ func (r *WebGLRenderer) IsWebGLRenderer() bool { return true }
 // 	}
 //
 // import {
-// 	REVISION,
 // 	BackSide,
 // 	FrontSide,
 // 	DoubleSide,

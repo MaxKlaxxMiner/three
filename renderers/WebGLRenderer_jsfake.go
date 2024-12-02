@@ -7,8 +7,12 @@ import (
 	"github.com/MaxKlaxxMiner/three/utils"
 )
 
-type localValues struct {
+type localJsValues struct {
 	canvas js.Value
+}
+
+type GlobalJsValues struct {
+	DomElement js.Value
 }
 
 type WebGLRendererParams struct {
