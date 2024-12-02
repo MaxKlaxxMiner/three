@@ -6,7 +6,7 @@ import (
 )
 
 type MeshBasicMaterial struct {
-	// Material todo
+	Material
 	Color math.Color
 }
 
@@ -16,8 +16,8 @@ type MeshBasicMaterialParameters struct {
 
 func NewMeshBasicMaterial(parameters MeshBasicMaterialParameters) *MeshBasicMaterial {
 	this := new(MeshBasicMaterial)
-	// 		super(); Material todo
-	// 		this.type = 'MeshBasicMaterial'; todo
+	this.Material = *NewMaterial()
+	this.Type = "MeshBasicMaterial"
 
 	this.Color = utils.NotNullOrDefault(parameters.Color, *math.NewColorHex(0xffffff)) // emissive
 

@@ -1,7 +1,7 @@
 package renderers
 
 import (
-	"github.com/MaxKlaxxMiner/three"
+	"github.com/MaxKlaxxMiner/three/consts"
 	"strconv"
 )
 
@@ -186,7 +186,7 @@ func NewWebGLRenderer(parameters WebGLRendererParams) *WebGLRenderer {
 
 	// OffscreenCanvas does not have setAttribute, see #22811
 	if !this.canvas.Get("setAttribute").IsUndefined() {
-		this.canvas.Call("setAttribute", "data-engine", "three go wasm r"+three.Revision+"."+strconv.Itoa(three.WasmVersion))
+		this.canvas.Call("setAttribute", "data-engine", "three go wasm r"+consts.Revision+"."+strconv.Itoa(consts.WasmVersion))
 	}
 
 	//todo

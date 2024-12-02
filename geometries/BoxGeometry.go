@@ -1,12 +1,13 @@
 package geometries
 
 import (
+	"github.com/MaxKlaxxMiner/three/core"
 	"github.com/MaxKlaxxMiner/three/math"
 	"github.com/MaxKlaxxMiner/three/utils"
 )
 
 type BoxGeometry struct {
-	// BufferGeometry todo
+	core.BufferGeometry
 	parameters boxGeometryParameters
 }
 
@@ -21,7 +22,7 @@ func NewBoxGeometry(width, height, depth float64) *BoxGeometry {
 
 func NewBoxGeometrySegments(width, height, depth float64, widthSegments, heightSegments, depthSegments int) *BoxGeometry {
 	this := new(BoxGeometry)
-	// 		super(); BufferGeometry todo
+	this.BufferGeometry = *core.NewBufferGeometry()
 	// 		this.type = 'BoxGeometry'; todo
 	this.parameters = boxGeometryParameters{
 		width:          width,

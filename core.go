@@ -5,6 +5,7 @@ import (
 	"github.com/MaxKlaxxMiner/three/geometries"
 	"github.com/MaxKlaxxMiner/three/materials"
 	"github.com/MaxKlaxxMiner/three/math"
+	"github.com/MaxKlaxxMiner/three/objects"
 	"github.com/MaxKlaxxMiner/three/renderers"
 	"github.com/MaxKlaxxMiner/three/scenes"
 )
@@ -30,7 +31,7 @@ var (
 	// export { SkinnedMesh } from './objects/SkinnedMesh.js';
 	// export { Skeleton } from './objects/Skeleton.js';
 	// export { Bone } from './objects/Bone.js';
-	// export { Mesh } from './objects/Mesh.js';
+	NewMesh = objects.NewMesh
 	// export { InstancedMesh } from './objects/InstancedMesh.js';
 	// export { BatchedMesh } from './objects/BatchedMesh.js';
 	// export { LineSegments } from './objects/LineSegments.js';

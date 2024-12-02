@@ -1,11 +1,16 @@
 [ 5%] cameras/PerspectiveCamera
-[64%] demos/demo1
+[ 2%] core/BufferGeometry
+[14%] core/EventDispatcher
+[68%] demos/demo1
 [83%] geometries/BoxGeometry
-[23%] materials/MeshBasicMaterial
+[ 5%] materials/Material
+[27%] materials/MeshBasicMaterial
 [ 5%] math/Color
+[ 7%] math/MathUtils
 [ 6%] math/Vector3
+[ 4%] objects/Mesh
 [ 3%] renderers/WebGLRenderer
 [15%] scenes/Scene
 [ 6%] utils/utils
 [ 2%] constants
-[ 5%] core
+[ 6%] core

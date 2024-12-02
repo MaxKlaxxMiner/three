@@ -28,7 +28,8 @@ func Main() {
 	geometry := three.NewBoxGeometry(1, 1, 1)
 	// const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
 	material := three.NewMeshBasicMaterial(materials.MeshBasicMaterialParameters{Color: three.NewColorHex(0x00ff00)})
-	//const cube = new THREE.Mesh( geometry, material );
+	// const cube = new THREE.Mesh( geometry, material );
+	cube := three.NewMesh(&geometry.BufferGeometry, &material.Material)
 	//scene.add( cube );
 	//
 	//camera.position.z = 5;
@@ -42,5 +43,5 @@ func Main() {
 	//
 	//}
 
-	_, _, _, _, _ = scene, camera, renderer, geometry, material
+	_, _, _, _ = scene, camera, renderer, cube
 }
