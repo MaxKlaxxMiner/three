@@ -6,7 +6,7 @@ import (
 	"syscall/js"
 )
 
-// --- Creating a scene ---
+// --- Demo 1: Creating a scene ---
 
 func Main() {
 	// const scene = new THREE.Scene();
@@ -36,14 +36,15 @@ func Main() {
 	// camera.position.z = 5;
 	camera.Position.Z = 5
 
-	//function animate() {
-	//
-	//	cube.rotation.x += 0.01;
-	//	cube.rotation.y += 0.01;
-	//
-	//	renderer.render( scene, camera );
-	//
-	//}
+	// function animate() {
+	animate := func() {
+		//	cube.rotation.x += 0.01;
+		cube.Rotation.SetX(cube.Rotation.GetX() + 0.01)
+		//	cube.rotation.y += 0.01;
+		cube.Rotation.SetY(cube.Rotation.GetY() + 0.01)
 
-	_ = renderer
+		//todo	renderer.render( scene, camera );
+	}
+
+	_, _ = renderer, animate
 }

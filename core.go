@@ -178,15 +178,16 @@ var (
 	// export { Box3 } from './math/Box3.js';
 	// export { Box2 } from './math/Box2.js';
 	// export { Line3 } from './math/Line3.js';
-	// export { Euler } from './math/Euler.js';
+	NewEuler          = math.NewEuler
+	NewEulerWithOrder = math.NewEulerWithOrder
 	// export { Vector4 } from './math/Vector4.js';
-	// export { Vector3 } from './math/Vector3.js';
 	NewVector3Defaults = math.NewVector3Defaults
 	NewVector3         = math.NewVector3
 	// export { Vector2 } from './math/Vector2.js';
-	// export { Quaternion } from './math/Quaternion.js';
-	NewColor    = math.NewColor
-	NewColorHex = math.NewColorHex
+	NewQuaternionDefaults = math.NewQuaternionDefaults
+	NewQuaternion         = math.NewQuaternion
+	NewColor              = math.NewColor
+	NewColorHex           = math.NewColorHex
 	// export { ColorManagement } from './math/ColorManagement.js';
 	// export { SphericalHarmonics3 } from './math/SphericalHarmonics3.js';
 	// export { SpotLightHelper } from './helpers/SpotLightHelper.js';

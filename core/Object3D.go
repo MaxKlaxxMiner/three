@@ -4,15 +4,17 @@ import "github.com/MaxKlaxxMiner/three/math"
 
 type Object3D struct {
 	EventDispatcher
-	Id       int
-	Uuid     math.UUID
-	Name     string
-	Type     string
-	Parent   *Object3D
-	Children []*Object3D
-	Up       math.Vector3
-	Position math.Vector3
-	Scale    math.Vector3
+	Id         int
+	Uuid       math.UUID
+	Name       string
+	Type       string
+	Parent     *Object3D
+	Children   []*Object3D
+	Up         math.Vector3
+	Position   math.Vector3
+	Rotation   math.Euler
+	Quaternion math.Quaternion
+	Scale      math.Vector3
 }
 
 var _object3DId = 0
@@ -31,10 +33,11 @@ func NewObject3D() *Object3D {
 
 	this.Up.Copy(Object3dDefaultUp)
 	this.Position = math.Vector3{}
-	// 		const rotation = new Euler();
-	// 		const quaternion = new Quaternion();
+	this.Rotation = *math.NewEuler(0, 0, 0)
+	this.Quaternion = *math.NewQuaternionDefaults()
 	this.Scale.SetScalar(1)
 
+	//todo
 	// 		function onRotationChange() {
 	// 			quaternion.setFromEuler( rotation, false );
 	// 		}
@@ -969,8 +972,6 @@ var Object3dDefaultMatrixAutoUpdate = true
 var Object3dDefaultMatrixWorldAutoUpdate = true
 
 //todo
-// import { Quaternion } from '../math/Quaternion.js';
-// import { Euler } from '../math/Euler.js';
 // import { Layers } from './Layers.js';
 //
 // const _v1 = /*@__PURE__*/ new Vector3();
