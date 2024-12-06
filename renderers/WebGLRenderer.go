@@ -1,7 +1,9 @@
 package renderers
 
 import (
+	"fmt"
 	"github.com/MaxKlaxxMiner/three/consts"
+	"github.com/MaxKlaxxMiner/three/utils"
 	"strconv"
 )
 
@@ -12,8 +14,19 @@ type WebGLRenderer struct {
 }
 
 type localValues struct {
-	_width, _height int
-	_pixelRatio     float64
+	gl                           GLContext
+	width, height                int
+	pixelRatio                   float64
+	depth                        bool
+	stencil                      bool
+	alpha                        bool
+	antialias                    bool
+	premultipliedAlpha           bool
+	preserveDrawingBuffer        bool
+	powerPreference              string
+	failIfMajorPerformanceCaveat bool
+	reverseDepthBuffer           bool
+	isContextLost                bool
 }
 
 func NewWebGLRendererDefaults() *WebGLRenderer {
@@ -24,25 +37,14 @@ func NewWebGLRenderer(parameters WebGLRendererParams) *WebGLRenderer {
 	this := new(WebGLRenderer)
 	this.initParameters(parameters)
 
+	if !this.context.IsNull() {
+		if utils.InstanceOf(&this.context, "WebGLRenderingContext") {
+			panic("THREE.WebGLRenderer: WebGL 1 is not supported since r163.")
+		}
+		this.alpha = this.context.Call("getContextAttributes").Get("alpha").Bool()
+	}
+
 	//todo
-	// 		let _alpha;
-	//
-	// 		if ( context !== null ) {
-	//
-	// 			if ( typeof WebGLRenderingContext !== 'undefined' && context instanceof WebGLRenderingContext ) {
-	//
-	// 				throw new Error( 'THREE.WebGLRenderer: WebGL 1 is not supported since r163.' );
-	//
-	// 			}
-	//
-	// 			_alpha = context.getContextAttributes().alpha;
-	//
-	// 		} else {
-	//
-	// 			_alpha = alpha;
-	//
-	// 		}
-	//
 	// 		const uintClearColor = new Uint32Array( 4 );
 	// 		const intClearColor = new Int32Array( 4 );
 	//
@@ -98,15 +100,12 @@ func NewWebGLRenderer(parameters WebGLRendererParams) *WebGLRenderer {
 	//
 	// 		this.toneMapping = NoToneMapping;
 	// 		this.toneMappingExposure = 1.0;
-	//
-	// 		// internal properties
-	//
-	// 		const _this = this;
-	//
-	// 		let _isContextLost = false;
-	//
-	// 		// internal state cache
-	//
+
+	// internal properties
+	this.isContextLost = false
+
+	// internal state cache
+	//todo
 	// 		let _currentActiveCubeFace = 0;
 	// 		let _currentActiveMipmapLevel = 0;
 	// 		let _currentRenderTarget = null;
@@ -121,9 +120,9 @@ func NewWebGLRenderer(parameters WebGLRendererParams) *WebGLRenderer {
 	// 		const _currentClearColor = new Color( 0x000000 );
 	// 		let _currentClearAlpha = 0;
 
-	this._width = this.canvas.Get("width").Int()
-	this._height = this.canvas.Get("height").Int()
-	this._pixelRatio = 1
+	this.width = this.canvas.Get("width").Int()
+	this.height = this.canvas.Get("height").Int()
+	this.pixelRatio = 1
 
 	//todo
 	// 		let _opaqueSort = null;
@@ -160,70 +159,76 @@ func NewWebGLRenderer(parameters WebGLRendererParams) *WebGLRenderer {
 	// 			return _currentRenderTarget === null ? _pixelRatio : 1;
 	//
 	// 		}
-	//
-	// 		// initialize
-	//
-	// 		let _gl = context;
-	//
-	// 		function getContext( contextName, contextAttributes ) {
-	//
-	// 			return canvas.getContext( contextName, contextAttributes );
-	//
-	// 		}
-	//
-	// 		try {
-	//
-	// 			const contextAttributes = {
-	// 				alpha: true,
-	// 				depth,
-	// 				stencil,
-	// 				antialias,
-	// 				premultipliedAlpha,
-	// 				preserveDrawingBuffer,
-	// 				powerPreference,
-	// 				failIfMajorPerformanceCaveat,
-	// 			};
+
+	// --- initialize ---
+
+	this.gl = GLContext{this.context, make(map[string]int)}
+
+	getContext := func(contextName string, contextAttributes utils.JsValue) GLContext {
+		return GLContext{this.canvas.Call("getContext", contextName, contextAttributes.AsJsValue()), make(map[string]int)}
+	}
+
+	contextAttributes := utils.JsGlobal.Get("Object").New()
+	contextAttributes.Set("alpha", true)
+	contextAttributes.Set("depth", this.depth)
+	contextAttributes.Set("stencil", this.stencil)
+	contextAttributes.Set("antialias", this.antialias)
+	contextAttributes.Set("premultipliedAlpha", this.premultipliedAlpha)
+	contextAttributes.Set("preserveDrawingBuffer", this.preserveDrawingBuffer)
+	contextAttributes.Set("powerPreference", this.powerPreference)
+	contextAttributes.Set("failIfMajorPerformanceCaveat", this.failIfMajorPerformanceCaveat)
 
 	// OffscreenCanvas does not have setAttribute, see #22811
 	if !this.canvas.Get("setAttribute").IsUndefined() {
 		this.canvas.Call("setAttribute", "data-engine", "three go wasm r"+consts.Revision+"."+strconv.Itoa(consts.WasmVersion))
 	}
 
+	// event listeners must be registered before WebGL context is created, see #12753
+	this.canvas.Call("addEventListener", "webglcontextlost", utils.FuncOf(func(_ utils.JsValue, args utils.JsValueSlice) any {
+		args[0].Call("preventDefault")
+		fmt.Println("THREE.WebGLRenderer: Context Lost.")
+		this.isContextLost = true
+		return nil
+	}), false)
+
+	this.canvas.Call("addEventListener", "webglcontextrestored", utils.FuncOf(func(_ utils.JsValue, _ utils.JsValueSlice) any {
+		fmt.Println("THREE.WebGLRenderer: Context Restored.")
+		this.isContextLost = false
+
+		panic("todo")
+		//			const infoAutoReset = info.autoReset; todo
+		//			const shadowMapEnabled = shadowMap.enabled; todo
+		//			const shadowMapAutoUpdate = shadowMap.autoUpdate; todo
+		//			const shadowMapNeedsUpdate = shadowMap.needsUpdate; todo
+		//			const shadowMapType = shadowMap.type; todo
+		//
+		//			initGLContext(); todo
+		//
+		//			info.autoReset = infoAutoReset; todo
+		//			shadowMap.enabled = shadowMapEnabled; todo
+		//			shadowMap.autoUpdate = shadowMapAutoUpdate; todo
+		//			shadowMap.needsUpdate = shadowMapNeedsUpdate; todo
+		//			shadowMap.type = shadowMapType; todo
+		return nil
+	}), false)
+
+	this.canvas.Call("addEventListener", "webglcontextcreationerror", utils.FuncOf(func(_ utils.JsValue, args utils.JsValueSlice) any {
+		fmt.Println("THREE.WebGLRenderer: A WebGL context could not be created. Reason:", args[0].Get("statusMessage").String())
+		return nil
+	}), false)
+
+	if this.gl.IsNull() {
+		const contextName = "webgl2"
+		if this.gl = getContext(contextName, utils.JsValue(contextAttributes)); this.gl.IsNull() {
+			if getContext(contextName, utils.JsValue(utils.JsUndefined())).Truthy() {
+				panic("Error creating WebGL context with your selected attributes.")
+			} else {
+				panic("Error creating WebGL context.")
+			}
+		}
+	}
+
 	//todo
-	// 			// event listeners must be registered before WebGL context is created, see #12753
-	// 			canvas.addEventListener( 'webglcontextlost', onContextLost, false );
-	// 			canvas.addEventListener( 'webglcontextrestored', onContextRestore, false );
-	// 			canvas.addEventListener( 'webglcontextcreationerror', onContextCreationError, false );
-	//
-	// 			if ( _gl === null ) {
-	//
-	// 				const contextName = 'webgl2';
-	//
-	// 				_gl = getContext( contextName, contextAttributes );
-	//
-	// 				if ( _gl === null ) {
-	//
-	// 					if ( getContext( contextName ) ) {
-	//
-	// 						throw new Error( 'Error creating WebGL context with your selected attributes.' );
-	//
-	// 					} else {
-	//
-	// 						throw new Error( 'Error creating WebGL context.' );
-	//
-	// 					}
-	//
-	// 				}
-	//
-	// 			}
-	//
-	// 		} catch ( error ) {
-	//
-	// 			console.error( 'THREE.WebGLRenderer: ' + error.message );
-	// 			throw error;
-	//
-	// 		}
-	//
 	// 		let extensions, capabilities, state, info;
 	// 		let properties, textures, cubemaps, cubeuvmaps, attributes, geometries, objects;
 	// 		let programCache, materials, renderLists, renderStates, clipping, shadowMap;
@@ -360,11 +365,11 @@ func (r *WebGLRenderer) SetSizeAndUpdateStyles(width, height int, updateStyle bo
 	// 			} todo
 	//
 
-	r._width = width
-	r._height = height
+	r.width = width
+	r.height = height
 
-	r.canvas.Set("width", int(float64(width)*r._pixelRatio))
-	r.canvas.Set("height", int(float64(height)*r._pixelRatio))
+	r.canvas.Set("width", int(float64(width)*r.pixelRatio))
+	r.canvas.Set("height", int(float64(height)*r.pixelRatio))
 
 	if updateStyle {
 		r.canvas.Get("style").Set("width", strconv.Itoa(width)+"px")
@@ -2910,11 +2915,7 @@ func (r *WebGLRenderer) SetSizeAndUpdateStyles(width, height int, updateStyle bo
 // 	UnsignedShort5551Type,
 // 	WebGLCoordinateSystem
 // } from '../constants.js';
-// import { Color } from '../math/Color.js';
 // import { Frustum } from '../math/Frustum.js';
-// import { Matrix4 } from '../math/Matrix4.js';
-// import { Vector3 } from '../math/Vector3.js';
-// import { Vector4 } from '../math/Vector4.js';
 // import { WebGLAnimation } from './webgl/WebGLAnimation.js';
 // import { WebGLAttributes } from './webgl/WebGLAttributes.js';
 // import { WebGLBackground } from './webgl/WebGLBackground.js';
@@ -2945,4 +2946,3 @@ func (r *WebGLRenderer) SetSizeAndUpdateStyles(width, height int, updateStyle bo
 // import { WebGLUniformsGroups } from './webgl/WebGLUniformsGroups.js';
 // import { probeAsync, toNormalizedProjectionMatrix, toReversedProjectionMatrix, warnOnce } from '../utils.js';
 // import { ColorManagement } from '../math/ColorManagement.js';
-//

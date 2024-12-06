@@ -13,3 +13,39 @@ func CreateCanvasElement() js.Value {
 	canvas.Get("style").Set("display", "block")
 	return canvas
 }
+
+// --- JS Helper ---
+
+var JsGlobal = js.Global()
+
+func InstanceOf(value *js.Value, className string) bool {
+	if value == nil || !value.Truthy() {
+		return false
+	}
+	class := JsGlobal.Get(className)
+	if !class.Truthy() {
+		return false
+	}
+	return value.InstanceOf(class)
+}
+
+func JsNull() js.Value {
+	return js.Null()
+}
+
+func JsUndefined() js.Value {
+	return js.Undefined()
+}
+
+type JsValue js.Value
+type JsValueSlice []js.Value
+
+func FuncOf(fn func(this JsValue, args JsValueSlice) any) js.Func {
+	return js.FuncOf(func(this js.Value, args []js.Value) any {
+		return fn(JsValue(this), JsValueSlice(args))
+	})
+}
+
+func (j JsValue) AsJsValue() js.Value {
+	return js.Value(j)
+}

@@ -12,7 +12,7 @@
 [ 2%] math/Quaternion
 [83%] math/Vector3
 [ 5%] objects/Mesh
-[ 3%] renderers/WebGLRenderer
+[ 6%] renderers/WebGLRenderer
 [21%] scenes/Scene
 [ 6%] utils/utils
 [ 2%] constants

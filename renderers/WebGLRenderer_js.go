@@ -8,7 +8,8 @@ import (
 )
 
 type localJsValues struct {
-	canvas js.Value
+	canvas  js.Value
+	context js.Value
 }
 
 type GlobalJsValues struct {
@@ -16,7 +17,17 @@ type GlobalJsValues struct {
 }
 
 type WebGLRendererParams struct {
-	Canvas *js.Value
+	Canvas                       *js.Value
+	Context                      *js.Value
+	Depth                        *bool
+	Stencil                      *bool
+	Alpha                        *bool
+	Antialias                    *bool
+	PremultipliedAlpha           *bool
+	PreserveDrawingBuffer        *bool
+	PowerPreference              string
+	FailIfMajorPerformanceCaveat *bool
+	ReverseDepthBuffer           *bool
 }
 
 func (r *WebGLRenderer) initParameters(parameters WebGLRendererParams) {
@@ -25,14 +36,14 @@ func (r *WebGLRenderer) initParameters(parameters WebGLRendererParams) {
 	} else {
 		r.canvas = utils.CreateCanvasElement()
 	}
-	// 			context = null, todo
-	// 			depth = true, todo
-	// 			stencil = false, todo
-	// 			alpha = false, todo
-	// 			antialias = false, todo
-	// 			premultipliedAlpha = true, todo
-	// 			preserveDrawingBuffer = false, todo
-	// 			powerPreference = 'default', todo
-	// 			failIfMajorPerformanceCaveat = false, todo
-	// 			reverseDepthBuffer = false, todo
+	r.context = utils.NotNullOrDefault(parameters.Context, js.Null())
+	r.depth = utils.NotNullOrDefault(parameters.Depth, true)
+	r.stencil = utils.NotNullOrDefault(parameters.Stencil, false)
+	r.alpha = utils.NotNullOrDefault(parameters.Alpha, false)
+	r.antialias = utils.NotNullOrDefault(parameters.Antialias, false)
+	r.premultipliedAlpha = utils.NotNullOrDefault(parameters.PremultipliedAlpha, true)
+	r.preserveDrawingBuffer = utils.NotNullOrDefault(parameters.PreserveDrawingBuffer, false)
+	r.powerPreference = utils.If(len(parameters.PowerPreference) != 0, parameters.PowerPreference, "default")
+	r.failIfMajorPerformanceCaveat = utils.NotNullOrDefault(parameters.FailIfMajorPerformanceCaveat, false)
+	r.reverseDepthBuffer = utils.NotNullOrDefault(parameters.ReverseDepthBuffer, false)
 }
