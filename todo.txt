@@ -20,3 +20,4 @@
 
 --- finished ---
 [100%] core/EventDispatcher
+[100%] renderers/wegl/WebGLExtensions

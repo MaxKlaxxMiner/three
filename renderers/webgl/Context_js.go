@@ -1,15 +1,15 @@
 //go:build js
 
-package renderers
+package webgl
 
 import "syscall/js"
 
-type GLContext struct {
+type Context struct {
 	js.Value
-	consts map[string]int
+	Consts map[string]int
 }
 
 type GLExtension struct {
 	js.Value
-	consts map[string]int
+	Consts map[string]int
 }

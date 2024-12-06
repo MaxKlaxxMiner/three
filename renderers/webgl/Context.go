@@ -1,21 +1,21 @@
-package renderers
+package webgl
 
 import "fmt"
 
-func (gl *GLContext) getExtension(name string) GLExtension {
+func (gl *Context) getExtension(name string) GLExtension {
 	return GLExtension{gl.Call("getExtension", name), map[string]int{}}
 }
 
-func (gl *GLContext) getParameterInt(id int) int {
+func (gl *Context) getParameterInt(id int) int {
 	return gl.Call("getParameter", id).Int()
 }
 
-func (gl *GLContext) getParameterStr(id int) string {
+func (gl *Context) getParameterStr(id int) string {
 	return gl.Call("getParameter", id).String()
 }
 
-func (gl *GLContext) Const(name string) int {
-	if r, ok := gl.consts[name]; ok {
+func (gl *Context) Const(name string) int {
+	if r, ok := gl.Consts[name]; ok {
 		return r
 	}
 	v := gl.Get(name)
@@ -25,12 +25,12 @@ func (gl *GLContext) Const(name string) int {
 	} else {
 		fmt.Println("warn const gl:", name)
 	}
-	gl.consts[name] = r
+	gl.Consts[name] = r
 	return r
 }
 
 func (e *GLExtension) Const(name string) int {
-	if r, ok := e.consts[name]; ok {
+	if r, ok := e.Consts[name]; ok {
 		return r
 	}
 	v := e.Get(name)
@@ -40,6 +40,6 @@ func (e *GLExtension) Const(name string) int {
 	} else {
 		fmt.Println("warn const extension:", name)
 	}
-	e.consts[name] = r
+	e.Consts[name] = r
 	return r
 }

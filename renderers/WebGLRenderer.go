@@ -3,6 +3,7 @@ package renderers
 import (
 	"fmt"
 	"github.com/MaxKlaxxMiner/three/consts"
+	"github.com/MaxKlaxxMiner/three/renderers/webgl"
 	"github.com/MaxKlaxxMiner/three/utils"
 	"strconv"
 )
@@ -14,9 +15,6 @@ type WebGLRenderer struct {
 }
 
 type localValues struct {
-	gl                           GLContext
-	width, height                int
-	pixelRatio                   float64
 	depth                        bool
 	stencil                      bool
 	alpha                        bool
@@ -26,7 +24,13 @@ type localValues struct {
 	powerPreference              string
 	failIfMajorPerformanceCaveat bool
 	reverseDepthBuffer           bool
-	isContextLost                bool
+
+	isContextLost bool
+	width, height int
+	pixelRatio    float64
+	gl            webgl.Context
+
+	extensions webgl.Extensions
 }
 
 func NewWebGLRendererDefaults() *WebGLRenderer {
@@ -162,10 +166,10 @@ func NewWebGLRenderer(parameters WebGLRendererParams) *WebGLRenderer {
 
 	// --- initialize ---
 
-	this.gl = GLContext{this.context, make(map[string]int)}
+	this.gl = webgl.Context{this.context, make(map[string]int)}
 
-	getContext := func(contextName string, contextAttributes utils.JsValue) GLContext {
-		return GLContext{this.canvas.Call("getContext", contextName, contextAttributes.AsJsValue()), make(map[string]int)}
+	getContext := func(contextName string, contextAttributes utils.JsValue) webgl.Context {
+		return webgl.Context{this.canvas.Call("getContext", contextName, contextAttributes.AsJsValue()), make(map[string]int)}
 	}
 
 	contextAttributes := utils.JsGlobal.Get("Object").New()
@@ -195,20 +199,20 @@ func NewWebGLRenderer(parameters WebGLRendererParams) *WebGLRenderer {
 		fmt.Println("THREE.WebGLRenderer: Context Restored.")
 		this.isContextLost = false
 
-		panic("todo")
 		//			const infoAutoReset = info.autoReset; todo
 		//			const shadowMapEnabled = shadowMap.enabled; todo
 		//			const shadowMapAutoUpdate = shadowMap.autoUpdate; todo
 		//			const shadowMapNeedsUpdate = shadowMap.needsUpdate; todo
 		//			const shadowMapType = shadowMap.type; todo
-		//
-		//			initGLContext(); todo
-		//
+
+		this.initGLContext()
+
 		//			info.autoReset = infoAutoReset; todo
 		//			shadowMap.enabled = shadowMapEnabled; todo
 		//			shadowMap.autoUpdate = shadowMapAutoUpdate; todo
 		//			shadowMap.needsUpdate = shadowMapNeedsUpdate; todo
 		//			shadowMap.type = shadowMapType; todo
+
 		return nil
 	}), false)
 
@@ -228,20 +232,32 @@ func NewWebGLRenderer(parameters WebGLRendererParams) *WebGLRenderer {
 		}
 	}
 
+	this.initGLContext()
+
+	// xr
 	//todo
-	// 		let extensions, capabilities, state, info;
+	// 		const xr = new WebXRManager( _this, _gl );
+	// 		this.xr = xr;
+	//
+	return this
+}
+
+func (r *WebGLRenderer) IsWebGLRenderer() bool { return r != nil }
+
+func (r *WebGLRenderer) initGLContext() {
+	//todo
+	// 		let capabilities, state, info;
 	// 		let properties, textures, cubemaps, cubeuvmaps, attributes, geometries, objects;
 	// 		let programCache, materials, renderLists, renderStates, clipping, shadowMap;
 	//
 	// 		let background, morphtargets, bufferRenderer, indexedBufferRenderer;
 	//
 	// 		let utils, bindingStates, uniformsGroups;
-	//
-	// 		function initGLContext() {
-	//
-	// 			extensions = new WebGLExtensions( _gl );
-	// 			extensions.init();
-	//
+
+	r.extensions = *webgl.NewWebGLExtensions(r.gl)
+	r.extensions.Init()
+
+	//todo
 	// 			utils = new WebGLUtils( _gl, extensions );
 	//
 	// 			capabilities = new WebGLCapabilities( _gl, extensions, parameters, utils );
@@ -286,25 +302,9 @@ func NewWebGLRenderer(parameters WebGLRendererParams) *WebGLRenderer {
 	// 			_this.state = state;
 	// 			_this.info = info;
 	//
-	// 		}
-	//
-	// 		initGLContext();
-	//
-	// 		// xr
-	//
-	// 		const xr = new WebXRManager( _this, _gl );
-	//
-	// 		this.xr = xr;
-	//
-	return this
 }
 
-func (r *WebGLRenderer) IsWebGLRenderer() bool { return r != nil }
-
 //todo
-// 	constructor( parameters = {} ) {
-// 		// API
-//
 // 		this.getContext = function () {
 //
 // 			return _gl;
