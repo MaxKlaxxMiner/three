@@ -8,6 +8,7 @@ import (
 	"github.com/MaxKlaxxMiner/three/math"
 	"github.com/MaxKlaxxMiner/three/objects"
 	"github.com/MaxKlaxxMiner/three/renderers"
+	"github.com/MaxKlaxxMiner/three/renderers/webgl"
 	"github.com/MaxKlaxxMiner/three/scenes"
 )
 
@@ -19,7 +20,7 @@ var (
 	// export { UniformsUtils } from './renderers/shaders/UniformsUtils.js';
 	// export { ShaderChunk } from './renderers/shaders/ShaderChunk.js';
 	// export { PMREMGenerator } from './extras/PMREMGenerator.js';
-	// export { WebGLUtils } from './renderers/webgl/WebGLUtils.js';
+	NewWebGLUtils = webgl.NewWebGLUtils
 	// export { WebGLArrayRenderTarget } from './renderers/WebGLArrayRenderTarget.js';
 	// export { WebGL3DRenderTarget } from './renderers/WebGL3DRenderTarget.js';
 	// export { WebGLCubeRenderTarget } from './renderers/WebGLCubeRenderTarget.js';

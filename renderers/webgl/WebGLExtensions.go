@@ -4,14 +4,14 @@ import "fmt"
 
 type Extensions struct {
 	gl         Context
-	extensions map[string]GLExtension
+	extensions map[string]Extension
 }
 
 func NewWebGLExtensions(gl Context) *Extensions {
-	return &Extensions{gl, make(map[string]GLExtension)}
+	return &Extensions{gl, make(map[string]Extension)}
 }
 
-func (e *Extensions) getExtension(name string) (ext GLExtension) {
+func (e *Extensions) getExtension(name string) (ext Extension) {
 	if ext, ok := e.extensions[name]; ok {
 		return ext
 	}
@@ -60,7 +60,7 @@ func (e *Extensions) Init() {
 	e.getExtension("WEBGL_render_shared_exponent")
 }
 
-func (e *Extensions) Get(name string) (ext GLExtension) {
+func (e *Extensions) Get(name string) (ext Extension) {
 	ext = e.getExtension(name)
 
 	if ext.IsNull() {

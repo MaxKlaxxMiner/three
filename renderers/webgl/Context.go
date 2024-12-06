@@ -2,8 +2,8 @@ package webgl
 
 import "fmt"
 
-func (gl *Context) getExtension(name string) GLExtension {
-	return GLExtension{gl.Call("getExtension", name), map[string]int{}}
+func (gl *Context) getExtension(name string) Extension {
+	return Extension{gl.Call("getExtension", name), map[string]int{}}
 }
 
 func (gl *Context) getParameterInt(id int) int {
@@ -29,7 +29,7 @@ func (gl *Context) Const(name string) int {
 	return r
 }
 
-func (e *GLExtension) Const(name string) int {
+func (e *Extension) Const(name string) int {
 	if r, ok := e.Consts[name]; ok {
 		return r
 	}

@@ -9,7 +9,7 @@ type Context struct {
 	Consts map[string]int
 }
 
-type GLExtension struct {
+type Extension struct {
 	js.Value
 	Consts map[string]int
 }

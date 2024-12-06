@@ -2,14 +2,10 @@ package consts
 
 const Revision = "171"
 
-const WasmVersion = 31
+const WasmVersion = 32
 
 //const MOUSE = { LEFT: 0, MIDDLE: 1, RIGHT: 2, ROTATE: 0, DOLLY: 1, PAN: 2 };
 //const TOUCH = { ROTATE: 0, PAN: 1, DOLLY_PAN: 2, DOLLY_ROTATE: 3 };
-//const CullFaceNone = 0;
-//const CullFaceBack = 1;
-//const CullFaceFront = 2;
-//const CullFaceFrontBack = 3;
 //const BasicShadowMap = 0;
 //const PCFShadowMap = 1;
 //const PCFSoftShadowMap = 2;
@@ -84,64 +80,7 @@ const WasmVersion = 31
 //const LinearMipMapNearestFilter = 1007;
 //const LinearMipmapLinearFilter = 1008;
 //const LinearMipMapLinearFilter = 1008;
-//const UnsignedByteType = 1009;
-//const ByteType = 1010;
-//const ShortType = 1011;
-//const UnsignedShortType = 1012;
-//const IntType = 1013;
-//const UnsignedIntType = 1014;
-//const FloatType = 1015;
-//const HalfFloatType = 1016;
-//const UnsignedShort4444Type = 1017;
-//const UnsignedShort5551Type = 1018;
-//const UnsignedInt248Type = 1020;
-//const UnsignedInt5999Type = 35902;
-//const AlphaFormat = 1021;
-//const RGBFormat = 1022;
-//const RGBAFormat = 1023;
-//const LuminanceFormat = 1024;
-//const LuminanceAlphaFormat = 1025;
-//const DepthFormat = 1026;
-//const DepthStencilFormat = 1027;
-//const RedFormat = 1028;
-//const RedIntegerFormat = 1029;
-//const RGFormat = 1030;
-//const RGIntegerFormat = 1031;
-//const RGBIntegerFormat = 1032;
-//const RGBAIntegerFormat = 1033;
-//
-//const RGB_S3TC_DXT1_Format = 33776;
-//const RGBA_S3TC_DXT1_Format = 33777;
-//const RGBA_S3TC_DXT3_Format = 33778;
-//const RGBA_S3TC_DXT5_Format = 33779;
-//const RGB_PVRTC_4BPPV1_Format = 35840;
-//const RGB_PVRTC_2BPPV1_Format = 35841;
-//const RGBA_PVRTC_4BPPV1_Format = 35842;
-//const RGBA_PVRTC_2BPPV1_Format = 35843;
-//const RGB_ETC1_Format = 36196;
-//const RGB_ETC2_Format = 37492;
-//const RGBA_ETC2_EAC_Format = 37496;
-//const RGBA_ASTC_4x4_Format = 37808;
-//const RGBA_ASTC_5x4_Format = 37809;
-//const RGBA_ASTC_5x5_Format = 37810;
-//const RGBA_ASTC_6x5_Format = 37811;
-//const RGBA_ASTC_6x6_Format = 37812;
-//const RGBA_ASTC_8x5_Format = 37813;
-//const RGBA_ASTC_8x6_Format = 37814;
-//const RGBA_ASTC_8x8_Format = 37815;
-//const RGBA_ASTC_10x5_Format = 37816;
-//const RGBA_ASTC_10x6_Format = 37817;
-//const RGBA_ASTC_10x8_Format = 37818;
-//const RGBA_ASTC_10x10_Format = 37819;
-//const RGBA_ASTC_12x10_Format = 37820;
-//const RGBA_ASTC_12x12_Format = 37821;
-//const RGBA_BPTC_Format = 36492;
-//const RGB_BPTC_SIGNED_Format = 36494;
-//const RGB_BPTC_UNSIGNED_Format = 36495;
-//const RED_RGTC1_Format = 36283;
-//const SIGNED_RED_RGTC1_Format = 36284;
-//const RED_GREEN_RGTC2_Format = 36285;
-//const SIGNED_RED_GREEN_RGTC2_Format = 36286;
+
 //const LoopOnce = 2200;
 //const LoopRepeat = 2201;
 //const LoopPingPong = 2202;
@@ -162,14 +101,6 @@ const WasmVersion = 31
 //const RGDepthPacking = 3203;
 //const TangentSpaceNormalMap = 0;
 //const ObjectSpaceNormalMap = 1;
-//
-//// Color space string identifiers, matching CSS Color Module Level 4 and WebGPU names where available.
-//const NoColorSpace = '';
-//const SRGBColorSpace = 'srgb';
-//const LinearSRGBColorSpace = 'srgb-linear';
-//
-//const LinearTransfer = 'linear';
-//const SRGBTransfer = 'srgb';
 //
 //const ZeroStencilOp = 0;
 //const KeepStencilOp = 7680;

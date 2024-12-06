@@ -31,6 +31,7 @@ type localValues struct {
 	gl            webgl.Context
 
 	extensions webgl.Extensions
+	utils      webgl.Utils
 }
 
 func NewWebGLRendererDefaults() *WebGLRenderer {
@@ -257,9 +258,9 @@ func (r *WebGLRenderer) initGLContext() {
 	r.extensions = *webgl.NewWebGLExtensions(r.gl)
 	r.extensions.Init()
 
+	r.utils = *webgl.NewWebGLUtils(r.gl, r.extensions)
+
 	//todo
-	// 			utils = new WebGLUtils( _gl, extensions );
-	//
 	// 			capabilities = new WebGLCapabilities( _gl, extensions, parameters, utils );
 	//
 	// 			state = new WebGLState( _gl, extensions );
@@ -2895,26 +2896,6 @@ func (r *WebGLRenderer) SetSizeAndUpdateStyles(width, height int, updateStyle bo
 //
 // 	}
 //
-// import {
-// 	BackSide,
-// 	FrontSide,
-// 	DoubleSide,
-// 	HalfFloatType,
-// 	UnsignedByteType,
-// 	NoToneMapping,
-// 	LinearMipmapLinearFilter,
-// 	SRGBColorSpace,
-// 	LinearSRGBColorSpace,
-// 	RGBAIntegerFormat,
-// 	RGIntegerFormat,
-// 	RedIntegerFormat,
-// 	UnsignedIntType,
-// 	UnsignedShortType,
-// 	UnsignedInt248Type,
-// 	UnsignedShort4444Type,
-// 	UnsignedShort5551Type,
-// 	WebGLCoordinateSystem
-// } from '../constants.js';
 // import { Frustum } from '../math/Frustum.js';
 // import { WebGLAnimation } from './webgl/WebGLAnimation.js';
 // import { WebGLAttributes } from './webgl/WebGLAttributes.js';
@@ -2925,7 +2906,6 @@ func (r *WebGLRenderer) SetSizeAndUpdateStyles(width, height int, updateStyle bo
 // import { WebGLClipping } from './webgl/WebGLClipping.js';
 // import { WebGLCubeMaps } from './webgl/WebGLCubeMaps.js';
 // import { WebGLCubeUVMaps } from './webgl/WebGLCubeUVMaps.js';
-// import { WebGLExtensions } from './webgl/WebGLExtensions.js';
 // import { WebGLGeometries } from './webgl/WebGLGeometries.js';
 // import { WebGLIndexedBufferRenderer } from './webgl/WebGLIndexedBufferRenderer.js';
 // import { WebGLInfo } from './webgl/WebGLInfo.js';
@@ -2940,7 +2920,6 @@ func (r *WebGLRenderer) SetSizeAndUpdateStyles(width, height int, updateStyle bo
 // import { WebGLState } from './webgl/WebGLState.js';
 // import { WebGLTextures } from './webgl/WebGLTextures.js';
 // import { WebGLUniforms } from './webgl/WebGLUniforms.js';
-// import { WebGLUtils } from './webgl/WebGLUtils.js';
 // import { WebXRManager } from './webxr/WebXRManager.js';
 // import { WebGLMaterials } from './webgl/WebGLMaterials.js';
 // import { WebGLUniformsGroups } from './webgl/WebGLUniformsGroups.js';
