@@ -3,6 +3,7 @@
 package renderers
 
 import (
+	"github.com/MaxKlaxxMiner/three/renderers/webgl"
 	"github.com/MaxKlaxxMiner/three/utils"
 	"syscall/js"
 )
@@ -16,21 +17,8 @@ type GlobalJsValues struct {
 	DomElement js.Value
 }
 
-type WebGLRendererParams struct {
-	Canvas                       *js.Value
-	Context                      *js.Value
-	Depth                        *bool
-	Stencil                      *bool
-	Alpha                        *bool
-	Antialias                    *bool
-	PremultipliedAlpha           *bool
-	PreserveDrawingBuffer        *bool
-	PowerPreference              string
-	FailIfMajorPerformanceCaveat *bool
-	ReverseDepthBuffer           *bool
-}
-
-func (r *WebGLRenderer) initParameters(parameters WebGLRendererParams) {
+func (r *WebGLRenderer) initParameters(parameters webgl.RendererParams) {
+	r.parameters = parameters
 	if parameters.Canvas != nil {
 		r.canvas = *parameters.Canvas
 	} else {

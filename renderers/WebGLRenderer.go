@@ -30,15 +30,17 @@ type localValues struct {
 	pixelRatio    float64
 	gl            webgl.Context
 
-	extensions webgl.Extensions
-	utils      webgl.Utils
+	parameters   webgl.RendererParams
+	capabilities webgl.Capabilities
+	extensions   webgl.Extensions
+	utils        webgl.Utils
 }
 
 func NewWebGLRendererDefaults() *WebGLRenderer {
-	return NewWebGLRenderer(WebGLRendererParams{})
+	return NewWebGLRenderer(webgl.RendererParams{})
 }
 
-func NewWebGLRenderer(parameters WebGLRendererParams) *WebGLRenderer {
+func NewWebGLRenderer(parameters webgl.RendererParams) *WebGLRenderer {
 	this := new(WebGLRenderer)
 	this.initParameters(parameters)
 
@@ -247,22 +249,22 @@ func (r *WebGLRenderer) IsWebGLRenderer() bool { return r != nil }
 
 func (r *WebGLRenderer) initGLContext() {
 	//todo
-	// 		let capabilities, state, info;
+	// 		let state, info;
 	// 		let properties, textures, cubemaps, cubeuvmaps, attributes, geometries, objects;
 	// 		let programCache, materials, renderLists, renderStates, clipping, shadowMap;
 	//
 	// 		let background, morphtargets, bufferRenderer, indexedBufferRenderer;
 	//
-	// 		let utils, bindingStates, uniformsGroups;
+	// 		let bindingStates, uniformsGroups;
 
 	r.extensions = *webgl.NewWebGLExtensions(r.gl)
 	r.extensions.Init()
 
 	r.utils = *webgl.NewWebGLUtils(r.gl, r.extensions)
 
+	r.capabilities = *webgl.NewWebGLCapabilities(r.gl, r.extensions, r.parameters, r.utils)
+
 	//todo
-	// 			capabilities = new WebGLCapabilities( _gl, extensions, parameters, utils );
-	//
 	// 			state = new WebGLState( _gl, extensions );
 	//
 	// 			if ( capabilities.reverseDepthBuffer && reverseDepthBuffer ) {
