@@ -16,9 +16,13 @@ type ContextConsts struct {
 	FRONT_AND_BACK                   int32
 	HALF_FLOAT                       int32
 	INT                              int32
+	LINE_LOOP                        int32
+	LINE_STRIP                       int32
+	LINES                            int32
 	LUMINANCE                        int32
 	LUMINANCE_ALPHA                  int32
 	MAX_COMBINED_TEXTURE_IMAGE_UNITS int32
+	POINTS                           int32
 	RED                              int32
 	RED_INTEGER                      int32
 	RG                               int32
@@ -28,6 +32,7 @@ type ContextConsts struct {
 	RGBA                             int32
 	RGBA_INTEGER                     int32
 	SHORT                            int32
+	TRIANGLES                        int32
 	UNSIGNED_BYTE                    int32
 	UNSIGNED_SHORT                   int32
 	UNSIGNED_SHORT_4_4_4_4           int32
@@ -53,9 +58,13 @@ func (gl *Context) InitContextConsts() {
 	gl.FRONT_AND_BACK = gl.Const("FRONT_AND_BACK")
 	gl.HALF_FLOAT = gl.Const("HALF_FLOAT")
 	gl.INT = gl.Const("INT")
+	gl.LINE_LOOP = gl.Const("LINE_LOOP")
+	gl.LINE_STRIP = gl.Const("LINE_STRIP")
+	gl.LINES = gl.Const("LINES")
 	gl.LUMINANCE = gl.Const("LUMINANCE")
 	gl.LUMINANCE_ALPHA = gl.Const("LUMINANCE_ALPHA")
 	gl.MAX_COMBINED_TEXTURE_IMAGE_UNITS = gl.Const("MAX_COMBINED_TEXTURE_IMAGE_UNITS")
+	gl.POINTS = gl.Const("POINTS")
 	gl.RED = gl.Const("RED")
 	gl.RED_INTEGER = gl.Const("RED_INTEGER")
 	gl.RG = gl.Const("RG")
@@ -65,6 +74,7 @@ func (gl *Context) InitContextConsts() {
 	gl.RGBA = gl.Const("RGBA")
 	gl.RGBA_INTEGER = gl.Const("RGBA_INTEGER")
 	gl.SHORT = gl.Const("SHORT")
+	gl.TRIANGLES = gl.Const("TRIANGLES")
 	gl.UNSIGNED_BYTE = gl.Const("UNSIGNED_BYTE")
 	gl.UNSIGNED_SHORT = gl.Const("UNSIGNED_SHORT")
 	gl.UNSIGNED_SHORT_4_4_4_4 = gl.Const("UNSIGNED_SHORT_4_4_4_4")

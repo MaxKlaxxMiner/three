@@ -35,6 +35,7 @@ type localValues struct {
 	utils        webgl.Utils
 	capabilities webgl.Capabilities
 	state        webgl.State
+	info         webgl.Info
 }
 
 func NewWebGLRendererDefaults() *WebGLRenderer {
@@ -274,9 +275,9 @@ func (r *WebGLRenderer) initGLContext() {
 	// 				state.buffers.depth.setReversed( true );
 	//
 	// 			}
-	//
-	// 			info = new WebGLInfo( _gl );
-	// 			properties = new WebGLProperties();
+
+	r.info = *webgl.NewWebGLInfo(r.gl)
+	// 			properties = new WebGLProperties(); todo
 	// 			textures = new WebGLTextures( _gl, extensions, state, properties, capabilities, utils, info );
 	// 			cubemaps = new WebGLCubeMaps( _this );
 	// 			cubeuvmaps = new WebGLCubeUVMaps( _this );

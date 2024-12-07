@@ -17,7 +17,7 @@ func (gl *Context) GetParameterStr(id int32) string {
 func (gl *Context) Const(name string) int32 {
 	v := gl.Get(name)
 	var r int32
-	if v.Truthy() {
+	if !v.IsUndefined() {
 		r = int32(v.Int())
 	} else {
 		fmt.Println("warn const gl:", name)
