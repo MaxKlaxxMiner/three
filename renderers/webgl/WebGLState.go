@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/MaxKlaxxMiner/three/consts"
 	"github.com/MaxKlaxxMiner/three/math"
-	"github.com/MaxKlaxxMiner/three/utils"
 	"strconv"
 	"strings"
 )
@@ -125,12 +124,11 @@ func NewWebGLState(gl Context, extensions Extensions) *State {
 	// 	let currentBoundTextures = {};
 	//
 	//scissorParam := r.gl.Call("getParameter", gl.SCISSOR_BOX)
-	viewportParam := r.gl.Call("getParameter", gl.VIEWPORT)
+	viewportParam := r.gl.GetParameterFloat64Array(gl.VIEWPORT)
 
 	//
 	// 	const currentScissor = new Vector4().fromArray( scissorParam ); todo
-	//r.currentViewport.Set(viewportParam.Index(0).Float(), viewportParam.Index(1).Float(), viewportParam.Index(2).Float(), viewportParam.Index(3).Float())
-	r.currentViewport.FromArray(utils.ConvertTypedArrayToFloat64Slice(viewportParam))
+	r.currentViewport.FromArray(viewportParam)
 
 	// 	const currentViewport = new Vector4().fromArray( viewportParam );
 	//

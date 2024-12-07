@@ -37,14 +37,15 @@ func Main() {
 	camera.Position.Z = 5
 
 	// function animate() {
-	animate := func() {
+	animate := func(time float64, frame int) {
 		//	cube.rotation.x += 0.01;
 		cube.Rotation.SetX(cube.Rotation.GetX() + 0.01)
 		//	cube.rotation.y += 0.01;
 		cube.Rotation.SetY(cube.Rotation.GetY() + 0.01)
 
-		//todo	renderer.render( scene, camera );
+		// renderer.render( scene, camera );
+		renderer.Render(scene, &camera.Camera)
 	}
 
-	_, _ = renderer, animate
+	renderer.SetAnimationLoop(animate)
 }

@@ -2,9 +2,11 @@ package renderers
 
 import (
 	"fmt"
+	"github.com/MaxKlaxxMiner/three/cameras"
 	"github.com/MaxKlaxxMiner/three/consts"
 	"github.com/MaxKlaxxMiner/three/math"
 	"github.com/MaxKlaxxMiner/three/renderers/webgl"
+	"github.com/MaxKlaxxMiner/three/scenes"
 	"github.com/MaxKlaxxMiner/three/utils"
 	"strconv"
 )
@@ -45,12 +47,14 @@ type localValues struct {
 	viewport      math.Vector4
 	gl            webgl.Context
 
-	parameters   webgl.RendererParams
-	Extensions   webgl.Extensions
-	utils        webgl.Utils
-	Capabilities webgl.Capabilities
-	State        webgl.State
-	Info         webgl.Info
+	parameters               webgl.RendererParams
+	Extensions               webgl.Extensions
+	utils                    webgl.Utils
+	Capabilities             webgl.Capabilities
+	State                    webgl.State
+	Info                     webgl.Info
+	animation                webgl.Animation
+	onAnimationFrameCallback func(time float64, frame int)
 }
 
 func NewWebGLRendererDefaults() *WebGLRenderer {
@@ -219,7 +223,7 @@ func NewWebGLRenderer(parameters webgl.RendererParams) *WebGLRenderer {
 		fmt.Println("THREE.WebGLRenderer: Context Restored.")
 		this.isContextLost = false
 
-		//			const infoAutoReset = info.autoReset; todo
+		infoAutoReset := this.Info.AutoReset
 		//			const shadowMapEnabled = shadowMap.enabled; todo
 		//			const shadowMapAutoUpdate = shadowMap.autoUpdate; todo
 		//			const shadowMapNeedsUpdate = shadowMap.needsUpdate; todo
@@ -227,7 +231,7 @@ func NewWebGLRenderer(parameters webgl.RendererParams) *WebGLRenderer {
 
 		this.initGLContext()
 
-		//			info.autoReset = infoAutoReset; todo
+		this.Info.AutoReset = infoAutoReset
 		//			shadowMap.enabled = shadowMapEnabled; todo
 		//			shadowMap.autoUpdate = shadowMapAutoUpdate; todo
 		//			shadowMap.needsUpdate = shadowMapNeedsUpdate; todo
@@ -250,6 +254,7 @@ func NewWebGLRenderer(parameters webgl.RendererParams) *WebGLRenderer {
 				panic("Error creating WebGL context.")
 			}
 		}
+		this.context = this.gl.Value
 	}
 	this.gl.InitContextConsts()
 
@@ -260,6 +265,14 @@ func NewWebGLRenderer(parameters webgl.RendererParams) *WebGLRenderer {
 	// 		const xr = new WebXRManager( _this, _gl );
 	// 		this.xr = xr;
 	//
+
+	this.animation = *webgl.NewWebGLAnimation()
+	this.animation.SetAnimationLoop(func(time float64, frame int) {
+		if this.onAnimationFrameCallback != nil {
+			this.onAnimationFrameCallback(time, frame)
+		}
+	})
+
 	return this
 }
 
@@ -267,7 +280,6 @@ func (r *WebGLRenderer) IsWebGLRenderer() bool { return r != nil }
 
 func (r *WebGLRenderer) initGLContext() {
 	//todo
-	// 		let info;
 	// 		let properties, textures, cubemaps, cubeuvmaps, attributes, geometries, objects;
 	// 		let programCache, materials, renderLists, renderStates, clipping, shadowMap;
 	//
@@ -1067,15 +1079,6 @@ func (r *WebGLRenderer) SetViewportVector4(v math.Vector4) {
 //
 // 		};
 //
-// 		// Animation Loop
-//
-// 		let onAnimationFrameCallback = null;
-//
-// 		function onAnimationFrame( time ) {
-//
-// 			if ( onAnimationFrameCallback ) onAnimationFrameCallback( time );
-//
-// 		}
 //
 // 		function onXRSessionStart() {
 //
@@ -1089,211 +1092,210 @@ func (r *WebGLRenderer) SetViewportVector4(v math.Vector4) {
 //
 // 		}
 //
-// 		const animation = new WebGLAnimation();
-// 		animation.setAnimationLoop( onAnimationFrame );
-//
-// 		if ( typeof self !== 'undefined' ) animation.setContext( self );
-//
-// 		this.setAnimationLoop = function ( callback ) {
-//
-// 			onAnimationFrameCallback = callback;
-// 			xr.setAnimationLoop( callback );
-//
-// 			( callback === null ) ? animation.stop() : animation.start();
-//
-// 		};
-//
 // 		xr.addEventListener( 'sessionstart', onXRSessionStart );
 // 		xr.addEventListener( 'sessionend', onXRSessionEnd );
-//
-// 		// Rendering
-//
-// 		this.render = function ( scene, camera ) {
-//
-// 			if ( camera !== undefined && camera.isCamera !== true ) {
-//
-// 				console.error( 'THREE.WebGLRenderer.render: camera is not an instance of THREE.Camera.' );
-// 				return;
-//
-// 			}
-//
-// 			if ( _isContextLost === true ) return;
-//
-// 			// update scene graph
-//
-// 			if ( scene.matrixWorldAutoUpdate === true ) scene.updateMatrixWorld();
-//
-// 			// update camera matrices and frustum
-//
-// 			if ( camera.parent === null && camera.matrixWorldAutoUpdate === true ) camera.updateMatrixWorld();
-//
-// 			if ( xr.enabled === true && xr.isPresenting === true ) {
-//
-// 				if ( xr.cameraAutoUpdate === true ) xr.updateCamera( camera );
-//
-// 				camera = xr.getCamera(); // use XR camera for rendering
-//
-// 			}
-//
-// 			//
-// 			if ( scene.isScene === true ) scene.onBeforeRender( _this, scene, camera, _currentRenderTarget );
-//
-// 			currentRenderState = renderStates.get( scene, renderStateStack.length );
-// 			currentRenderState.init( camera );
-//
-// 			renderStateStack.push( currentRenderState );
-//
-// 			_projScreenMatrix.multiplyMatrices( camera.projectionMatrix, camera.matrixWorldInverse );
-// 			_frustum.setFromProjectionMatrix( _projScreenMatrix );
-//
-// 			_localClippingEnabled = this.localClippingEnabled;
-// 			_clippingEnabled = clipping.init( this.clippingPlanes, _localClippingEnabled );
-//
-// 			currentRenderList = renderLists.get( scene, renderListStack.length );
-// 			currentRenderList.init();
-//
-// 			renderListStack.push( currentRenderList );
-//
-// 			if ( xr.enabled === true && xr.isPresenting === true ) {
-//
-// 				const depthSensingMesh = _this.xr.getDepthSensingMesh();
-//
-// 				if ( depthSensingMesh !== null ) {
-//
-// 					projectObject( depthSensingMesh, camera, - Infinity, _this.sortObjects );
-//
-// 				}
-//
-// 			}
-//
-// 			projectObject( scene, camera, 0, _this.sortObjects );
-//
-// 			currentRenderList.finish();
-//
-// 			if ( _this.sortObjects === true ) {
-//
-// 				currentRenderList.sort( _opaqueSort, _transparentSort );
-//
-// 			}
-//
-// 			_renderBackground = xr.enabled === false || xr.isPresenting === false || xr.hasDepthSensing() === false;
-// 			if ( _renderBackground ) {
-//
-// 				background.addToRenderList( currentRenderList, scene );
-//
-// 			}
-//
-// 			//
-//
-// 			this.info.render.frame ++;
-//
-// 			if ( _clippingEnabled === true ) clipping.beginShadows();
-//
-// 			const shadowsArray = currentRenderState.state.shadowsArray;
-//
-// 			shadowMap.render( shadowsArray, scene, camera );
-//
-// 			if ( _clippingEnabled === true ) clipping.endShadows();
-//
-// 			//
-//
-// 			if ( this.info.autoReset === true ) this.info.reset();
-//
-// 			// render scene
-//
-// 			const opaqueObjects = currentRenderList.opaque;
-// 			const transmissiveObjects = currentRenderList.transmissive;
-//
-// 			currentRenderState.setupLights();
-//
-// 			if ( camera.isArrayCamera ) {
-//
-// 				const cameras = camera.cameras;
-//
-// 				if ( transmissiveObjects.length > 0 ) {
-//
-// 					for ( let i = 0, l = cameras.length; i < l; i ++ ) {
-//
-// 						const camera2 = cameras[ i ];
-//
-// 						renderTransmissionPass( opaqueObjects, transmissiveObjects, scene, camera2 );
-//
-// 					}
-//
-// 				}
-//
-// 				if ( _renderBackground ) background.render( scene );
-//
-// 				for ( let i = 0, l = cameras.length; i < l; i ++ ) {
-//
-// 					const camera2 = cameras[ i ];
-//
-// 					renderScene( currentRenderList, scene, camera2, camera2.viewport );
-//
-// 				}
-//
-// 			} else {
-//
-// 				if ( transmissiveObjects.length > 0 ) renderTransmissionPass( opaqueObjects, transmissiveObjects, scene, camera );
-//
-// 				if ( _renderBackground ) background.render( scene );
-//
-// 				renderScene( currentRenderList, scene, camera );
-//
-// 			}
-//
-// 			//
-//
-// 			if ( _currentRenderTarget !== null ) {
-//
-// 				// resolve multisample renderbuffers to a single-sample texture if necessary
-//
-// 				textures.updateMultisampleRenderTarget( _currentRenderTarget );
-//
-// 				// Generate mipmap if we're using any kind of mipmap filtering
-//
-// 				textures.updateRenderTargetMipmap( _currentRenderTarget );
-//
-// 			}
-//
-// 			//
-//
-// 			if ( scene.isScene === true ) scene.onAfterRender( _this, scene, camera );
-//
-// 			// _gl.finish();
-//
-// 			bindingStates.resetDefaultState();
-// 			_currentMaterialId = - 1;
-// 			_currentCamera = null;
-//
-// 			renderStateStack.pop();
-//
-// 			if ( renderStateStack.length > 0 ) {
-//
-// 				currentRenderState = renderStateStack[ renderStateStack.length - 1 ];
-//
-// 				if ( _clippingEnabled === true ) clipping.setGlobalState( _this.clippingPlanes, currentRenderState.state.camera );
-//
-// 			} else {
-//
-// 				currentRenderState = null;
-//
-// 			}
-//
-// 			renderListStack.pop();
-//
-// 			if ( renderListStack.length > 0 ) {
-//
-// 				currentRenderList = renderListStack[ renderListStack.length - 1 ];
-//
-// 			} else {
-//
-// 				currentRenderList = null;
-//
-// 			}
-//
-// 		};
-//
+
+// --- Animation Loop ---
+
+func (r *WebGLRenderer) SetAnimationLoop(callback func(time float64, frame int)) {
+	r.onAnimationFrameCallback = callback
+	// 			xr.setAnimationLoop( callback ); todo
+
+	if callback != nil {
+		r.animation.Start()
+	} else {
+		r.animation.Stop()
+	}
+}
+
+// --- Rendering ---
+
+func (r *WebGLRenderer) Render(scene *scenes.Scene, camera *cameras.Camera) {
+	//todo
+	// 			if ( camera !== undefined && camera.isCamera !== true ) {
+	//
+	// 				console.error( 'THREE.WebGLRenderer.render: camera is not an instance of THREE.Camera.' );
+	// 				return;
+	//
+	// 			}
+	//
+	// 			if ( _isContextLost === true ) return;
+	//
+	// 			// update scene graph
+	//
+	// 			if ( scene.matrixWorldAutoUpdate === true ) scene.updateMatrixWorld();
+	//
+	// 			// update camera matrices and frustum
+	//
+	// 			if ( camera.parent === null && camera.matrixWorldAutoUpdate === true ) camera.updateMatrixWorld();
+	//
+	// 			if ( xr.enabled === true && xr.isPresenting === true ) {
+	//
+	// 				if ( xr.cameraAutoUpdate === true ) xr.updateCamera( camera );
+	//
+	// 				camera = xr.getCamera(); // use XR camera for rendering
+	//
+	// 			}
+	//
+	// 			//
+	// 			if ( scene.isScene === true ) scene.onBeforeRender( _this, scene, camera, _currentRenderTarget );
+	//
+	// 			currentRenderState = renderStates.get( scene, renderStateStack.length );
+	// 			currentRenderState.init( camera );
+	//
+	// 			renderStateStack.push( currentRenderState );
+	//
+	// 			_projScreenMatrix.multiplyMatrices( camera.projectionMatrix, camera.matrixWorldInverse );
+	// 			_frustum.setFromProjectionMatrix( _projScreenMatrix );
+	//
+	// 			_localClippingEnabled = this.localClippingEnabled;
+	// 			_clippingEnabled = clipping.init( this.clippingPlanes, _localClippingEnabled );
+	//
+	// 			currentRenderList = renderLists.get( scene, renderListStack.length );
+	// 			currentRenderList.init();
+	//
+	// 			renderListStack.push( currentRenderList );
+	//
+	// 			if ( xr.enabled === true && xr.isPresenting === true ) {
+	//
+	// 				const depthSensingMesh = _this.xr.getDepthSensingMesh();
+	//
+	// 				if ( depthSensingMesh !== null ) {
+	//
+	// 					projectObject( depthSensingMesh, camera, - Infinity, _this.sortObjects );
+	//
+	// 				}
+	//
+	// 			}
+	//
+	// 			projectObject( scene, camera, 0, _this.sortObjects );
+	//
+	// 			currentRenderList.finish();
+	//
+	// 			if ( _this.sortObjects === true ) {
+	//
+	// 				currentRenderList.sort( _opaqueSort, _transparentSort );
+	//
+	// 			}
+	//
+	// 			_renderBackground = xr.enabled === false || xr.isPresenting === false || xr.hasDepthSensing() === false;
+	// 			if ( _renderBackground ) {
+	//
+	// 				background.addToRenderList( currentRenderList, scene );
+	//
+	// 			}
+	//
+	// 			//
+	//
+	// 			this.info.render.frame ++;
+	//
+	// 			if ( _clippingEnabled === true ) clipping.beginShadows();
+	//
+	// 			const shadowsArray = currentRenderState.state.shadowsArray;
+	//
+	// 			shadowMap.render( shadowsArray, scene, camera );
+	//
+	// 			if ( _clippingEnabled === true ) clipping.endShadows();
+	//
+	// 			//
+	//
+	// 			if ( this.info.autoReset === true ) this.info.reset();
+	//
+	// 			// render scene
+	//
+	// 			const opaqueObjects = currentRenderList.opaque;
+	// 			const transmissiveObjects = currentRenderList.transmissive;
+	//
+	// 			currentRenderState.setupLights();
+	//
+	// 			if ( camera.isArrayCamera ) {
+	//
+	// 				const cameras = camera.cameras;
+	//
+	// 				if ( transmissiveObjects.length > 0 ) {
+	//
+	// 					for ( let i = 0, l = cameras.length; i < l; i ++ ) {
+	//
+	// 						const camera2 = cameras[ i ];
+	//
+	// 						renderTransmissionPass( opaqueObjects, transmissiveObjects, scene, camera2 );
+	//
+	// 					}
+	//
+	// 				}
+	//
+	// 				if ( _renderBackground ) background.render( scene );
+	//
+	// 				for ( let i = 0, l = cameras.length; i < l; i ++ ) {
+	//
+	// 					const camera2 = cameras[ i ];
+	//
+	// 					renderScene( currentRenderList, scene, camera2, camera2.viewport );
+	//
+	// 				}
+	//
+	// 			} else {
+	//
+	// 				if ( transmissiveObjects.length > 0 ) renderTransmissionPass( opaqueObjects, transmissiveObjects, scene, camera );
+	//
+	// 				if ( _renderBackground ) background.render( scene );
+	//
+	// 				renderScene( currentRenderList, scene, camera );
+	//
+	// 			}
+	//
+	// 			//
+	//
+	// 			if ( _currentRenderTarget !== null ) {
+	//
+	// 				// resolve multisample renderbuffers to a single-sample texture if necessary
+	//
+	// 				textures.updateMultisampleRenderTarget( _currentRenderTarget );
+	//
+	// 				// Generate mipmap if we're using any kind of mipmap filtering
+	//
+	// 				textures.updateRenderTargetMipmap( _currentRenderTarget );
+	//
+	// 			}
+	//
+	// 			//
+	//
+	// 			if ( scene.isScene === true ) scene.onAfterRender( _this, scene, camera );
+	//
+	// 			// _gl.finish();
+	//
+	// 			bindingStates.resetDefaultState();
+	// 			_currentMaterialId = - 1;
+	// 			_currentCamera = null;
+	//
+	// 			renderStateStack.pop();
+	//
+	// 			if ( renderStateStack.length > 0 ) {
+	//
+	// 				currentRenderState = renderStateStack[ renderStateStack.length - 1 ];
+	//
+	// 				if ( _clippingEnabled === true ) clipping.setGlobalState( _this.clippingPlanes, currentRenderState.state.camera );
+	//
+	// 			} else {
+	//
+	// 				currentRenderState = null;
+	//
+	// 			}
+	//
+	// 			renderListStack.pop();
+	//
+	// 			if ( renderListStack.length > 0 ) {
+	//
+	// 				currentRenderList = renderListStack[ renderListStack.length - 1 ];
+	//
+	// 			} else {
+	//
+	// 				currentRenderList = null;
+	//
+	// 			}
+}
+
+//todo
 // 		function projectObject( object, camera, groupOrder, sortObjects ) {
 //
 // 			if ( object.visible === false ) return;
@@ -2881,8 +2883,6 @@ func (r *WebGLRenderer) SetViewportVector4(v math.Vector4) {
 //
 // 		}
 //
-// 	}
-//
 // 	get coordinateSystem() {
 //
 // 		return WebGLCoordinateSystem;
@@ -2911,13 +2911,11 @@ func (r *WebGLRenderer) SetViewportVector4(v math.Vector4) {
 // import { WebGLBackground } from './webgl/WebGLBackground.js';
 // import { WebGLBindingStates } from './webgl/WebGLBindingStates.js';
 // import { WebGLBufferRenderer } from './webgl/WebGLBufferRenderer.js';
-// import { WebGLCapabilities } from './webgl/WebGLCapabilities.js';
 // import { WebGLClipping } from './webgl/WebGLClipping.js';
 // import { WebGLCubeMaps } from './webgl/WebGLCubeMaps.js';
 // import { WebGLCubeUVMaps } from './webgl/WebGLCubeUVMaps.js';
 // import { WebGLGeometries } from './webgl/WebGLGeometries.js';
 // import { WebGLIndexedBufferRenderer } from './webgl/WebGLIndexedBufferRenderer.js';
-// import { WebGLInfo } from './webgl/WebGLInfo.js';
 // import { WebGLMorphtargets } from './webgl/WebGLMorphtargets.js';
 // import { WebGLObjects } from './webgl/WebGLObjects.js';
 // import { WebGLPrograms } from './webgl/WebGLPrograms.js';
@@ -2926,7 +2924,6 @@ func (r *WebGLRenderer) SetViewportVector4(v math.Vector4) {
 // import { WebGLRenderStates } from './webgl/WebGLRenderStates.js';
 // import { WebGLRenderTarget } from './WebGLRenderTarget.js';
 // import { WebGLShadowMap } from './webgl/WebGLShadowMap.js';
-// import { WebGLState } from './webgl/WebGLState.js';
 // import { WebGLTextures } from './webgl/WebGLTextures.js';
 // import { WebGLUniforms } from './webgl/WebGLUniforms.js';
 // import { WebXRManager } from './webxr/WebXRManager.js';

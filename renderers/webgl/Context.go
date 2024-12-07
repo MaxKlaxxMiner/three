@@ -1,6 +1,9 @@
 package webgl
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/MaxKlaxxMiner/three/utils"
+)
 
 func (gl *Context) GetExtension(name string) Extension {
 	return Extension{gl.Call("getExtension", name), map[string]int32{}}
@@ -12,6 +15,10 @@ func (gl *Context) GetParameterInt(id int32) int {
 
 func (gl *Context) GetParameterStr(id int32) string {
 	return gl.Call("getParameter", id).String()
+}
+
+func (gl *Context) GetParameterFloat64Array(id int32) []float64 {
+	return utils.ConvertTypedArrayToFloat64Slice(gl.Call("getParameter", id))
 }
 
 func (gl *Context) Const(name string) int32 {

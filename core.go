@@ -179,9 +179,10 @@ var (
 	// export { Box3 } from './math/Box3.js';
 	// export { Box2 } from './math/Box2.js';
 	// export { Line3 } from './math/Line3.js';
-	NewEuler          = math.NewEuler
-	NewEulerWithOrder = math.NewEulerWithOrder
-	// export { Vector4 } from './math/Vector4.js';
+	NewEuler           = math.NewEuler
+	NewEulerWithOrder  = math.NewEulerWithOrder
+	NewVector4Defaults = math.NewVector4Defaults
+	NewVector4         = math.NewVector4
 	NewVector3Defaults = math.NewVector3Defaults
 	NewVector3         = math.NewVector3
 	// export { Vector2 } from './math/Vector2.js';
