@@ -21,6 +21,8 @@ func Undefined() Value {
 	return Value{}
 }
 
+func CopyBytesToGo(dst []byte, src Value) int { return 0 }
+
 func (v Value) IsNull() bool {
 	return true
 }

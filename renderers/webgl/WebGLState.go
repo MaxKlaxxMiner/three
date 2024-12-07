@@ -3,6 +3,8 @@ package webgl
 import (
 	"fmt"
 	"github.com/MaxKlaxxMiner/three/consts"
+	"github.com/MaxKlaxxMiner/three/math"
+	"github.com/MaxKlaxxMiner/three/utils"
 	"strconv"
 	"strings"
 )
@@ -38,6 +40,58 @@ type State struct {
 	// 	let currentPolygonOffsetUnits = null; todo
 	maxTextures        int
 	lineWidthAvailable bool
+	// 	let currentTextureSlot = null; todo
+	// 	let currentBoundTextures = {}; todo
+	// 	const scissorParam = gl.getParameter( gl.SCISSOR_BOX ); todo
+	// 	const viewportParam = gl.getParameter( gl.VIEWPORT ); todo
+	// 	const currentScissor = new Vector4().fromArray( scissorParam ); todo
+	currentViewport math.Vector4
+	// 	const emptyTextures = {}; todo
+	// 	emptyTextures[ gl.TEXTURE_2D ] = createTexture( gl.TEXTURE_2D, gl.TEXTURE_2D, 1 ); todo
+	// 	emptyTextures[ gl.TEXTURE_CUBE_MAP ] = createTexture( gl.TEXTURE_CUBE_MAP, gl.TEXTURE_CUBE_MAP_POSITIVE_X, 6 ); todo
+	// 	emptyTextures[ gl.TEXTURE_2D_ARRAY ] = createTexture( gl.TEXTURE_2D_ARRAY, gl.TEXTURE_2D_ARRAY, 1, 1 ); todo
+	// 	emptyTextures[ gl.TEXTURE_3D ] = createTexture( gl.TEXTURE_3D, gl.TEXTURE_3D, 1, 1 ); todo
+
+	//todo
+	// 		buffers: {
+	// 			color: colorBuffer,
+	// 			depth: depthBuffer,
+	// 			stencil: stencilBuffer
+	// 		},
+	//
+	// 		bindFramebuffer: bindFramebuffer,
+	// 		drawBuffers: drawBuffers,
+	//
+	// 		useProgram: useProgram,
+	//
+	// 		setBlending: setBlending,
+	// 		setMaterial: setMaterial,
+	//
+	// 		setLineWidth: setLineWidth,
+	// 		setPolygonOffset: setPolygonOffset,
+	//
+	// 		setScissorTest: setScissorTest,
+	//
+	// 		activeTexture: activeTexture,
+	// 		bindTexture: bindTexture,
+	// 		unbindTexture: unbindTexture,
+	// 		compressedTexImage2D: compressedTexImage2D,
+	// 		compressedTexImage3D: compressedTexImage3D,
+	// 		texImage2D: texImage2D,
+	// 		texImage3D: texImage3D,
+	//
+	// 		updateUBOMapping: updateUBOMapping,
+	// 		uniformBlockBinding: uniformBlockBinding,
+	//
+	// 		texStorage2D: texStorage2D,
+	// 		texStorage3D: texStorage3D,
+	// 		texSubImage2D: texSubImage2D,
+	// 		texSubImage3D: texSubImage3D,
+	// 		compressedTexSubImage2D: compressedTexSubImage2D,
+	// 		compressedTexSubImage3D: compressedTexSubImage3D,
+	//
+	// 		scissor: scissor,
+	// 		reset: reset
 }
 
 func NewWebGLState(gl Context, extensions Extensions) *State {
@@ -70,10 +124,14 @@ func NewWebGLState(gl Context, extensions Extensions) *State {
 	// 	let currentTextureSlot = null;
 	// 	let currentBoundTextures = {};
 	//
-	// 	const scissorParam = gl.getParameter( gl.SCISSOR_BOX );
-	// 	const viewportParam = gl.getParameter( gl.VIEWPORT );
+	//scissorParam := r.gl.Call("getParameter", gl.SCISSOR_BOX)
+	viewportParam := r.gl.Call("getParameter", gl.VIEWPORT)
+
 	//
-	// 	const currentScissor = new Vector4().fromArray( scissorParam );
+	// 	const currentScissor = new Vector4().fromArray( scissorParam ); todo
+	//r.currentViewport.Set(viewportParam.Index(0).Float(), viewportParam.Index(1).Float(), viewportParam.Index(2).Float(), viewportParam.Index(3).Float())
+	r.currentViewport.FromArray(utils.ConvertTypedArrayToFloat64Slice(viewportParam))
+
 	// 	const currentViewport = new Vector4().fromArray( viewportParam );
 	//
 	// 	const emptyTextures = {};
@@ -1184,17 +1242,15 @@ func (s *State) SetCullFace(cullFace consts.CullFace) {
 //
 // 	}
 //
-// 	function viewport( viewport ) {
-//
-// 		if ( currentViewport.equals( viewport ) === false ) {
-//
-// 			gl.viewport( viewport.x, viewport.y, viewport.z, viewport.w );
-// 			currentViewport.copy( viewport );
-//
-// 		}
-//
-// 	}
-//
+
+func (s *State) Viewport(viewport *math.Vector4) {
+	if !s.currentViewport.Equals(viewport) {
+		s.gl.Call("viewport", viewport.X, viewport.Y, viewport.Z, viewport.W)
+		s.currentViewport.Copy(viewport)
+	}
+}
+
+//todo
 // 	function updateUBOMapping( uniformsGroup, program ) {
 //
 // 		let mapping = uboProgramMap.get( program );

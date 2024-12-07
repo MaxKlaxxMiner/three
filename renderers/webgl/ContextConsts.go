@@ -31,6 +31,7 @@ type ContextConsts struct {
 	RGB_INTEGER                      int32
 	RGBA                             int32
 	RGBA_INTEGER                     int32
+	SCISSOR_BOX                      int32
 	SHORT                            int32
 	TRIANGLES                        int32
 	UNSIGNED_BYTE                    int32
@@ -41,6 +42,7 @@ type ContextConsts struct {
 	UNSIGNED_INT_24_8                int32
 	UNSIGNED_INT_5_9_9_9_REV         int32
 	VERSION                          int32
+	VIEWPORT                         int32
 }
 
 func (gl *Context) InitContextConsts() {
@@ -73,6 +75,7 @@ func (gl *Context) InitContextConsts() {
 	gl.RGB_INTEGER = gl.Const("RGB_INTEGER")
 	gl.RGBA = gl.Const("RGBA")
 	gl.RGBA_INTEGER = gl.Const("RGBA_INTEGER")
+	gl.SCISSOR_BOX = gl.Const("SCISSOR_BOX")
 	gl.SHORT = gl.Const("SHORT")
 	gl.TRIANGLES = gl.Const("TRIANGLES")
 	gl.UNSIGNED_BYTE = gl.Const("UNSIGNED_BYTE")
@@ -83,4 +86,5 @@ func (gl *Context) InitContextConsts() {
 	gl.UNSIGNED_INT_24_8 = gl.Const("UNSIGNED_INT_24_8")
 	gl.UNSIGNED_INT_5_9_9_9_REV = gl.Const("UNSIGNED_INT_5_9_9_9_REV")
 	gl.VERSION = gl.Const("VERSION")
+	gl.VIEWPORT = gl.Const("VIEWPORT")
 }

@@ -11,11 +11,12 @@
 [ 7%] math/MathUtils
 [ 2%] math/Quaternion
 [83%] math/Vector3
+[63%] math/Vector4
 [ 5%] objects/Mesh
 [22%] renderers/webgl/WebGLCapabilities
-[ 9%] renderers/webgl/WebGLState (113 / 1321)
+[ 9%] renderers/webgl/WebGLState (126 / 1353)
 [45%] renderers/webgl/WebGLUtils
-[ 7%] renderers/WebGLRenderer (188 / 2850)
+[ 7%] renderers/WebGLRenderer (207 / 2852)
 [21%] scenes/Scene
 [ 6%] utils/utils
 [ 2%] constants

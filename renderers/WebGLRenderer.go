@@ -3,6 +3,7 @@ package renderers
 import (
 	"fmt"
 	"github.com/MaxKlaxxMiner/three/consts"
+	"github.com/MaxKlaxxMiner/three/math"
 	"github.com/MaxKlaxxMiner/three/renderers/webgl"
 	"github.com/MaxKlaxxMiner/three/utils"
 	"strconv"
@@ -26,16 +27,30 @@ type localValues struct {
 	reverseDepthBuffer           bool
 
 	isContextLost bool
+	// 		let _currentActiveCubeFace = 0;
+	// 		let _currentActiveMipmapLevel = 0;
+	// 		let _currentRenderTarget = null;
+	// 		let _currentMaterialId = - 1;
+	//
+	// 		let _currentCamera = null;
+	//
+	currentViewport math.Vector4
+	// 		const _currentScissor = new Vector4();
+	// 		let _currentScissorTest = null;
+	//
+	// 		const _currentClearColor = new Color( 0x000000 );
+	// 		let _currentClearAlpha = 0;
 	width, height int
 	pixelRatio    float64
+	viewport      math.Vector4
 	gl            webgl.Context
 
 	parameters   webgl.RendererParams
-	extensions   webgl.Extensions
+	Extensions   webgl.Extensions
 	utils        webgl.Utils
-	capabilities webgl.Capabilities
-	state        webgl.State
-	info         webgl.Info
+	Capabilities webgl.Capabilities
+	State        webgl.State
+	Info         webgl.Info
 }
 
 func NewWebGLRendererDefaults() *WebGLRenderer {
@@ -137,8 +152,8 @@ func NewWebGLRenderer(parameters webgl.RendererParams) *WebGLRenderer {
 	// 		let _opaqueSort = null;
 	// 		let _transparentSort = null;
 	//
-	// 		const _viewport = new Vector4( 0, 0, _width, _height );
-	// 		const _scissor = new Vector4( 0, 0, _width, _height );
+	this.viewport = *math.NewVector4(0, 0, float64(this.width), float64(this.height))
+	// 		const _scissor = new Vector4( 0, 0, _width, _height ); todo
 	// 		let _scissorTest = false;
 	//
 	// 		// frustum
@@ -260,14 +275,14 @@ func (r *WebGLRenderer) initGLContext() {
 	//
 	// 		let bindingStates, uniformsGroups;
 
-	r.extensions = *webgl.NewWebGLExtensions(r.gl)
-	r.extensions.Init()
+	r.Extensions = *webgl.NewWebGLExtensions(r.gl)
+	r.Extensions.Init()
 
-	r.utils = *webgl.NewWebGLUtils(r.gl, r.extensions)
+	r.utils = *webgl.NewWebGLUtils(r.gl, r.Extensions)
 
-	r.capabilities = *webgl.NewWebGLCapabilities(r.gl, r.extensions, r.parameters, r.utils)
+	r.Capabilities = *webgl.NewWebGLCapabilities(r.gl, r.Extensions, r.parameters, r.utils)
 
-	r.state = *webgl.NewWebGLState(r.gl, r.extensions)
+	r.State = *webgl.NewWebGLState(r.gl, r.Extensions)
 
 	//todo
 	// 			if ( capabilities.reverseDepthBuffer && reverseDepthBuffer ) {
@@ -276,7 +291,7 @@ func (r *WebGLRenderer) initGLContext() {
 	//
 	// 			}
 
-	r.info = *webgl.NewWebGLInfo(r.gl)
+	r.Info = *webgl.NewWebGLInfo(r.gl)
 	// 			properties = new WebGLProperties(); todo
 	// 			textures = new WebGLTextures( _gl, extensions, state, properties, capabilities, utils, info );
 	// 			cubemaps = new WebGLCubeMaps( _this );
@@ -300,23 +315,16 @@ func (r *WebGLRenderer) initGLContext() {
 	//
 	// 			info.programs = programCache.programs;
 	//
-	// 			_this.capabilities = capabilities;
-	// 			_this.extensions = extensions;
 	// 			_this.properties = properties;
 	// 			_this.renderLists = renderLists;
 	// 			_this.shadowMap = shadowMap;
-	// 			_this.state = state;
-	// 			_this.info = info;
-	//
+}
+
+func (r *WebGLRenderer) GetContext() *webgl.Context {
+	return &r.gl
 }
 
 //todo
-// 		this.getContext = function () {
-//
-// 			return _gl;
-//
-// 		};
-//
 // 		this.getContextAttributes = function () {
 //
 // 			return _gl.getContextAttributes();
@@ -382,7 +390,7 @@ func (r *WebGLRenderer) SetSizeAndUpdateStyles(width, height int, updateStyle bo
 		r.canvas.Get("style").Set("height", strconv.Itoa(height)+"px")
 	}
 
-	// 			this.setViewport( 0, 0, width, height ); todo
+	r.SetViewport(0, 0, float64(width), float64(height))
 }
 
 //todo
@@ -418,22 +426,18 @@ func (r *WebGLRenderer) SetSizeAndUpdateStyles(width, height int, updateStyle bo
 //
 // 		};
 //
-// 		this.setViewport = function ( x, y, width, height ) {
-//
-// 			if ( x.isVector4 ) {
-//
-// 				_viewport.set( x.x, x.y, x.z, x.w );
-//
-// 			} else {
-//
-// 				_viewport.set( x, y, width, height );
-//
-// 			}
-//
-// 			state.viewport( _currentViewport.copy( _viewport ).multiplyScalar( _pixelRatio ).round() );
-//
-// 		};
-//
+
+func (r *WebGLRenderer) SetViewport(x, y, width, height float64) {
+	r.viewport.Set(x, y, width, height)
+
+	r.State.Viewport(r.currentViewport.Copy(&r.viewport).MultiplyScalar(r.pixelRatio).Round())
+}
+
+func (r *WebGLRenderer) SetViewportVector4(v math.Vector4) {
+	r.SetViewport(v.X, v.Y, v.Z, v.W)
+}
+
+//todo
 // 		this.getScissor = function ( target ) {
 //
 // 			return target.copy( _scissor );
