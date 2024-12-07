@@ -11,11 +11,11 @@ func NewWebGLUtils(gl Context, extensions Extensions) *Utils {
 	return &Utils{gl, extensions}
 }
 
-func (u *Utils) Convert(p Format) ConstValue {
+func (u *Utils) Convert(p Format) int32 {
 	return u.ConvertWithColorspace(p, NoColorSpace)
 }
 
-func (u *Utils) ConvertWithColorspace(p Format, colorSpace ColorSpace) ConstValue {
+func (u *Utils) ConvertWithColorspace(p Format, colorSpace ColorSpace) int32 {
 	switch p {
 	case UnsignedByteType:
 		return u.gl.UNSIGNED_BYTE

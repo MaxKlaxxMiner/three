@@ -1,6 +1,8 @@
 package webgl
 
 import (
+	"fmt"
+	"github.com/MaxKlaxxMiner/three/consts"
 	"strconv"
 	"strings"
 )
@@ -8,33 +10,32 @@ import (
 type State struct {
 	gl         Context
 	extensions Extensions
-	//todo
-	// 	const colorBuffer = new ColorBuffer();
-	// 	const depthBuffer = new DepthBuffer();
-	// 	const stencilBuffer = new StencilBuffer();
-	// 	const uboBindings = new WeakMap();
-	// 	const uboProgramMap = new WeakMap();
-	// 	let enabledCapabilities = {};
-	// 	let currentBoundFramebuffers = {};
-	// 	let currentDrawbuffers = new WeakMap();
-	// 	let defaultDrawbuffers = [];
-	// 	let currentProgram = null;
-	// 	let currentBlendingEnabled = false;
-	// 	let currentBlending = null;
-	// 	let currentBlendEquation = null;
-	// 	let currentBlendSrc = null;
-	// 	let currentBlendDst = null;
-	// 	let currentBlendEquationAlpha = null;
-	// 	let currentBlendSrcAlpha = null;
-	// 	let currentBlendDstAlpha = null;
-	// 	let currentBlendColor = new Color( 0, 0, 0 );
-	// 	let currentBlendAlpha = 0;
-	// 	let currentPremultipledAlpha = false;
-	// 	let currentFlipSided = null;
-	// 	let currentCullFace = null;
-	// 	let currentLineWidth = null;
-	// 	let currentPolygonOffsetFactor = null;
-	// 	let currentPolygonOffsetUnits = null;
+	// 	const colorBuffer = new ColorBuffer(); todo
+	// 	const depthBuffer = new DepthBuffer(); todo
+	// 	const stencilBuffer = new StencilBuffer(); todo
+	// 	const uboBindings = new WeakMap(); todo
+	// 	const uboProgramMap = new WeakMap(); todo
+	enabledCapabilities map[int32]bool
+	// 	let currentBoundFramebuffers = {}; todo
+	// 	let currentDrawbuffers = new WeakMap(); todo
+	// 	let defaultDrawbuffers = []; todo
+	// 	let currentProgram = null; todo
+	// 	let currentBlendingEnabled = false; todo
+	// 	let currentBlending = null; todo
+	// 	let currentBlendEquation = null; todo
+	// 	let currentBlendSrc = null; todo
+	// 	let currentBlendDst = null; todo
+	// 	let currentBlendEquationAlpha = null; todo
+	// 	let currentBlendSrcAlpha = null; todo
+	// 	let currentBlendDstAlpha = null; todo
+	// 	let currentBlendColor = new Color( 0, 0, 0 ); todo
+	// 	let currentBlendAlpha = 0; todo
+	// 	let currentPremultipledAlpha = false; todo
+	currentFlipSided bool
+	currentCullFace  consts.CullFace
+	// 	let currentLineWidth = null; todo
+	// 	let currentPolygonOffsetFactor = null; todo
+	// 	let currentPolygonOffsetUnits = null; todo
 	maxTextures        int
 	lineWidthAvailable bool
 }
@@ -49,7 +50,9 @@ func NewWebGLState(gl Context, extensions Extensions) *State {
 	//
 	// 	const uboBindings = new WeakMap();
 	// 	const uboProgramMap = new WeakMap();
-	//
+
+	r.enabledCapabilities = make(map[int32]bool)
+
 	r.maxTextures = gl.GetParameterInt(gl.MAX_COMBINED_TEXTURE_IMAGE_UNITS)
 
 	glVersion := gl.GetParameterStr(gl.VERSION)
@@ -84,14 +87,17 @@ func NewWebGLState(gl Context, extensions Extensions) *State {
 	// 	colorBuffer.setClear( 0, 0, 0, 1 );
 	// 	depthBuffer.setClear( 1 );
 	// 	stencilBuffer.setClear( 0 );
-	//
-	// 	enable( gl.DEPTH_TEST );
+
+	r.Enable(gl.DEPTH_TEST)
+	//todo
 	// 	depthBuffer.setFunc( LessEqualDepth );
-	//
-	// 	setFlipSided( false );
-	// 	setCullFace( CullFaceBack );
-	// 	enable( gl.CULL_FACE );
-	//
+
+	r.currentFlipSided = true
+	r.SetFlipSided(false)
+	r.SetCullFace(consts.CullFaceBack)
+	r.Enable(gl.CULL_FACE)
+
+	//todo
 	// 	setBlending( NoBlending );
 	//
 	// 	const equationToGL = {
@@ -129,9 +135,6 @@ func NewWebGLState(gl Context, extensions Extensions) *State {
 	// 			stencil: stencilBuffer
 	// 		},
 	//
-	// 		enable: enable,
-	// 		disable: disable,
-	//
 	// 		bindFramebuffer: bindFramebuffer,
 	// 		drawBuffers: drawBuffers,
 	//
@@ -139,9 +142,6 @@ func NewWebGLState(gl Context, extensions Extensions) *State {
 	//
 	// 		setBlending: setBlending,
 	// 		setMaterial: setMaterial,
-	//
-	// 		setFlipSided: setFlipSided,
-	// 		setCullFace: setCullFace,
 	//
 	// 		setLineWidth: setLineWidth,
 	// 		setPolygonOffset: setPolygonOffset,
@@ -175,6 +175,7 @@ func NewWebGLState(gl Context, extensions Extensions) *State {
 	return r
 }
 
+//todo
 // const reversedFuncs = {
 // 	[ NeverDepth ]: AlwaysDepth,
 // 	[ LessDepth ]: GreaterDepth,
@@ -550,28 +551,46 @@ func NewWebGLState(gl Context, extensions Extensions) *State {
 //
 // 	}
 //
-// 	function enable( id ) {
-//
-// 		if ( enabledCapabilities[ id ] !== true ) {
-//
-// 			gl.enable( id );
-// 			enabledCapabilities[ id ] = true;
-//
-// 		}
-//
-// 	}
-//
-// 	function disable( id ) {
-//
-// 		if ( enabledCapabilities[ id ] !== false ) {
-//
-// 			gl.disable( id );
-// 			enabledCapabilities[ id ] = false;
-//
-// 		}
-//
-// 	}
-//
+
+func (s *State) Enable(id int32) {
+	if s.enabledCapabilities[id] {
+		return
+	}
+	if id == 0 {
+		fmt.Println("Enable: Capabilities-ID = 0")
+		panic("Enable: Capabilities-ID is 0")
+	}
+	s.gl.Call("enable", id)
+	s.enabledCapabilities[id] = true
+}
+
+func (s *State) Disable(id int32) {
+	if !s.enabledCapabilities[id] {
+		return
+	}
+	if id == 0 {
+		fmt.Println("Disable: Capabilities-ID = 0")
+		panic("Disable: Capabilities-ID is 0")
+	}
+	s.gl.Call("disable", id)
+	s.enabledCapabilities[id] = false
+}
+
+func (s *State) IsEnabled(id int32) bool {
+	if b, ok := s.enabledCapabilities[id]; ok {
+		return b
+	} else {
+		b = s.IsEnabledDirect(id)
+		s.enabledCapabilities[id] = b
+		return b
+	}
+}
+
+func (s *State) IsEnabledDirect(id int32) bool {
+	return s.gl.Call("isEnabled", id).Bool()
+}
+
+//todo
 // 	function bindFramebuffer( target, framebuffer ) {
 //
 // 		if ( currentBoundFramebuffers[ target ] !== framebuffer ) {
@@ -854,62 +873,42 @@ func NewWebGLState(gl Context, extensions Extensions) *State {
 //
 // 	}
 //
-// 	//
-//
-// 	function setFlipSided( flipSided ) {
-//
-// 		if ( currentFlipSided !== flipSided ) {
-//
-// 			if ( flipSided ) {
-//
-// 				gl.frontFace( gl.CW );
-//
-// 			} else {
-//
-// 				gl.frontFace( gl.CCW );
-//
-// 			}
-//
-// 			currentFlipSided = flipSided;
-//
-// 		}
-//
-// 	}
-//
-// 	function setCullFace( cullFace ) {
-//
-// 		if ( cullFace !== CullFaceNone ) {
-//
-// 			enable( gl.CULL_FACE );
-//
-// 			if ( cullFace !== currentCullFace ) {
-//
-// 				if ( cullFace === CullFaceBack ) {
-//
-// 					gl.cullFace( gl.BACK );
-//
-// 				} else if ( cullFace === CullFaceFront ) {
-//
-// 					gl.cullFace( gl.FRONT );
-//
-// 				} else {
-//
-// 					gl.cullFace( gl.FRONT_AND_BACK );
-//
-// 				}
-//
-// 			}
-//
-// 		} else {
-//
-// 			disable( gl.CULL_FACE );
-//
-// 		}
-//
-// 		currentCullFace = cullFace;
-//
-// 	}
-//
+
+func (s *State) SetFlipSided(flipSided bool) {
+	if s.currentFlipSided == flipSided {
+		return
+	}
+	if flipSided {
+		s.gl.Call("frontFace", s.gl.CW)
+	} else {
+		s.gl.Call("frontFace", s.gl.CCW)
+	}
+	s.currentFlipSided = flipSided
+}
+
+func (s *State) SetCullFace(cullFace consts.CullFace) {
+	if s.currentCullFace == cullFace {
+		return
+	}
+
+	if cullFace != consts.CullFaceNone {
+		s.Enable(s.gl.CULL_FACE)
+
+		if cullFace == consts.CullFaceBack {
+			s.gl.Call("cullFace", s.gl.BACK)
+		} else if cullFace == consts.CullFaceFront {
+			s.gl.Call("cullFace", s.gl.FRONT)
+		} else {
+			s.gl.Call("cullFace", s.gl.FRONT_AND_BACK)
+		}
+	} else {
+		s.Disable(s.gl.CULL_FACE)
+	}
+
+	s.currentCullFace = cullFace
+}
+
+//todo
 // 	function setLineWidth( width ) {
 //
 // 		if ( width !== currentLineWidth ) {

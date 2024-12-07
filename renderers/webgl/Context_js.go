@@ -11,5 +11,5 @@ type Context struct {
 
 type Extension struct {
 	js.Value
-	Consts map[string]ConstValue
+	Consts map[string]int32
 }

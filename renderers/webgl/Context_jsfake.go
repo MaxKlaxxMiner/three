@@ -8,11 +8,10 @@ import (
 
 type Context struct {
 	js.Value
-	Consts map[string]ConstValue
 	ContextConsts
 }
 
 type Extension struct {
 	js.Value
-	Consts map[string]ConstValue
+	Consts map[string]int32
 }

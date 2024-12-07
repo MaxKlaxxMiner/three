@@ -3,38 +3,36 @@ package webgl
 import "fmt"
 
 func (gl *Context) GetExtension(name string) Extension {
-	return Extension{gl.Call("getExtension", name), map[string]ConstValue{}}
+	return Extension{gl.Call("getExtension", name), map[string]int32{}}
 }
 
-func (gl *Context) GetParameterInt(id ConstValue) int {
-	return gl.Call("getParameter", int(id)).Int()
+func (gl *Context) GetParameterInt(id int32) int {
+	return gl.Call("getParameter", id).Int()
 }
 
-func (gl *Context) GetParameterStr(id ConstValue) string {
-	return gl.Call("getParameter", int(id)).String()
+func (gl *Context) GetParameterStr(id int32) string {
+	return gl.Call("getParameter", id).String()
 }
 
-type ConstValue int32
-
-func (gl *Context) Const(name string) ConstValue {
+func (gl *Context) Const(name string) int32 {
 	v := gl.Get(name)
-	var r ConstValue
+	var r int32
 	if v.Truthy() {
-		r = ConstValue(v.Int())
+		r = int32(v.Int())
 	} else {
 		fmt.Println("warn const gl:", name)
 	}
 	return r
 }
 
-func (e *Extension) Const(name string) ConstValue {
+func (e *Extension) Const(name string) int32 {
 	if r, ok := e.Consts[name]; ok {
 		return r
 	}
 	v := e.Get(name)
-	var r ConstValue
+	var r int32
 	if v.Truthy() {
-		r = ConstValue(v.Int())
+		r = int32(v.Int())
 	} else {
 		fmt.Println("warn const extension:", name)
 	}

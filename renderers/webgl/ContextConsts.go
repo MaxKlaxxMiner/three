@@ -2,41 +2,55 @@ package webgl
 
 //goland:noinspection GoSnakeCaseUsage
 type ContextConsts struct {
-	ALPHA                            ConstValue
-	BYTE                             ConstValue
-	DEPTH_COMPONENT                  ConstValue
-	DEPTH_STENCIL                    ConstValue
-	FLOAT                            ConstValue
-	HALF_FLOAT                       ConstValue
-	INT                              ConstValue
-	LUMINANCE                        ConstValue
-	LUMINANCE_ALPHA                  ConstValue
-	MAX_COMBINED_TEXTURE_IMAGE_UNITS ConstValue
-	RED                              ConstValue
-	RED_INTEGER                      ConstValue
-	RG                               ConstValue
-	RG_INTEGER                       ConstValue
-	RGB                              ConstValue
-	RGB_INTEGER                      ConstValue
-	RGBA                             ConstValue
-	RGBA_INTEGER                     ConstValue
-	SHORT                            ConstValue
-	UNSIGNED_BYTE                    ConstValue
-	UNSIGNED_SHORT                   ConstValue
-	UNSIGNED_SHORT_4_4_4_4           ConstValue
-	UNSIGNED_SHORT_5_5_5_1           ConstValue
-	UNSIGNED_INT                     ConstValue
-	UNSIGNED_INT_24_8                ConstValue
-	UNSIGNED_INT_5_9_9_9_REV         ConstValue
-	VERSION                          ConstValue
+	ALPHA                            int32
+	BACK                             int32
+	BYTE                             int32
+	CCW                              int32
+	CULL_FACE                        int32
+	CW                               int32
+	DEPTH_COMPONENT                  int32
+	DEPTH_STENCIL                    int32
+	DEPTH_TEST                       int32
+	FLOAT                            int32
+	FRONT                            int32
+	FRONT_AND_BACK                   int32
+	HALF_FLOAT                       int32
+	INT                              int32
+	LUMINANCE                        int32
+	LUMINANCE_ALPHA                  int32
+	MAX_COMBINED_TEXTURE_IMAGE_UNITS int32
+	RED                              int32
+	RED_INTEGER                      int32
+	RG                               int32
+	RG_INTEGER                       int32
+	RGB                              int32
+	RGB_INTEGER                      int32
+	RGBA                             int32
+	RGBA_INTEGER                     int32
+	SHORT                            int32
+	UNSIGNED_BYTE                    int32
+	UNSIGNED_SHORT                   int32
+	UNSIGNED_SHORT_4_4_4_4           int32
+	UNSIGNED_SHORT_5_5_5_1           int32
+	UNSIGNED_INT                     int32
+	UNSIGNED_INT_24_8                int32
+	UNSIGNED_INT_5_9_9_9_REV         int32
+	VERSION                          int32
 }
 
 func (gl *Context) InitContextConsts() {
 	gl.ALPHA = gl.Const("ALPHA")
+	gl.BACK = gl.Const("BACK")
 	gl.BYTE = gl.Const("BYTE")
+	gl.CCW = gl.Const("CCW")
+	gl.CULL_FACE = gl.Const("CULL_FACE")
+	gl.CW = gl.Const("CW")
 	gl.DEPTH_COMPONENT = gl.Const("DEPTH_COMPONENT")
 	gl.DEPTH_STENCIL = gl.Const("DEPTH_STENCIL")
+	gl.DEPTH_TEST = gl.Const("DEPTH_TEST")
 	gl.FLOAT = gl.Const("FLOAT")
+	gl.FRONT = gl.Const("FRONT")
+	gl.FRONT_AND_BACK = gl.Const("FRONT_AND_BACK")
 	gl.HALF_FLOAT = gl.Const("HALF_FLOAT")
 	gl.INT = gl.Const("INT")
 	gl.LUMINANCE = gl.Const("LUMINANCE")
