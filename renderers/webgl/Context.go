@@ -2,41 +2,39 @@ package webgl
 
 import "fmt"
 
-func (gl *Context) getExtension(name string) Extension {
-	return Extension{gl.Call("getExtension", name), map[string]int{}}
+func (gl *Context) GetExtension(name string) Extension {
+	return Extension{gl.Call("getExtension", name), map[string]ConstValue{}}
 }
 
-func (gl *Context) getParameterInt(id int) int {
-	return gl.Call("getParameter", id).Int()
+func (gl *Context) GetParameterInt(id ConstValue) int {
+	return gl.Call("getParameter", int(id)).Int()
 }
 
-func (gl *Context) getParameterStr(id int) string {
-	return gl.Call("getParameter", id).String()
+func (gl *Context) GetParameterStr(id ConstValue) string {
+	return gl.Call("getParameter", int(id)).String()
 }
 
-func (gl *Context) Const(name string) int {
-	if r, ok := gl.Consts[name]; ok {
-		return r
-	}
+type ConstValue int32
+
+func (gl *Context) Const(name string) ConstValue {
 	v := gl.Get(name)
-	r := 0
+	var r ConstValue
 	if v.Truthy() {
-		r = v.Int()
+		r = ConstValue(v.Int())
 	} else {
 		fmt.Println("warn const gl:", name)
 	}
-	gl.Consts[name] = r
 	return r
 }
 
-func (e *Extension) Const(name string) int {
+func (e *Extension) Const(name string) ConstValue {
 	if r, ok := e.Consts[name]; ok {
 		return r
 	}
 	v := e.Get(name)
-	r := 0
+	var r ConstValue
 	if v.Truthy() {
-		r = v.Int()
+		r = ConstValue(v.Int())
 	} else {
 		fmt.Println("warn const extension:", name)
 	}

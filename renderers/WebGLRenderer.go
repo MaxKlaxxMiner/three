@@ -31,9 +31,10 @@ type localValues struct {
 	gl            webgl.Context
 
 	parameters   webgl.RendererParams
-	capabilities webgl.Capabilities
 	extensions   webgl.Extensions
 	utils        webgl.Utils
+	capabilities webgl.Capabilities
+	state        webgl.State
 }
 
 func NewWebGLRendererDefaults() *WebGLRenderer {
@@ -169,10 +170,10 @@ func NewWebGLRenderer(parameters webgl.RendererParams) *WebGLRenderer {
 
 	// --- initialize ---
 
-	this.gl = webgl.Context{this.context, make(map[string]int)}
+	this.gl = webgl.Context{this.context, webgl.ContextConsts{}}
 
 	getContext := func(contextName string, contextAttributes utils.JsValue) webgl.Context {
-		return webgl.Context{this.canvas.Call("getContext", contextName, contextAttributes.AsJsValue()), make(map[string]int)}
+		return webgl.Context{this.canvas.Call("getContext", contextName, contextAttributes.AsJsValue()), webgl.ContextConsts{}}
 	}
 
 	contextAttributes := utils.JsGlobal.Get("Object").New()
@@ -234,6 +235,7 @@ func NewWebGLRenderer(parameters webgl.RendererParams) *WebGLRenderer {
 			}
 		}
 	}
+	this.gl.InitContextConsts()
 
 	this.initGLContext()
 
@@ -249,7 +251,7 @@ func (r *WebGLRenderer) IsWebGLRenderer() bool { return r != nil }
 
 func (r *WebGLRenderer) initGLContext() {
 	//todo
-	// 		let state, info;
+	// 		let info;
 	// 		let properties, textures, cubemaps, cubeuvmaps, attributes, geometries, objects;
 	// 		let programCache, materials, renderLists, renderStates, clipping, shadowMap;
 	//
@@ -264,9 +266,9 @@ func (r *WebGLRenderer) initGLContext() {
 
 	r.capabilities = *webgl.NewWebGLCapabilities(r.gl, r.extensions, r.parameters, r.utils)
 
+	r.state = *webgl.NewWebGLState(r.gl, r.extensions)
+
 	//todo
-	// 			state = new WebGLState( _gl, extensions );
-	//
 	// 			if ( capabilities.reverseDepthBuffer && reverseDepthBuffer ) {
 	//
 	// 				state.buffers.depth.setReversed( true );

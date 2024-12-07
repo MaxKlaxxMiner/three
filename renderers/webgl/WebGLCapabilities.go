@@ -82,7 +82,7 @@ func (c *Capabilities) GetMaxAnisotropy() int {
 	if c.maxAnisotropy < 0 {
 		if c.extensions.Has("EXT_texture_filter_anisotropic") {
 			extension := c.extensions.Get("EXT_texture_filter_anisotropic")
-			c.maxAnisotropy = c.gl.getParameterInt(extension.Const("MAX_TEXTURE_MAX_ANISOTROPY_EXT"))
+			c.maxAnisotropy = c.gl.GetParameterInt(extension.Const("MAX_TEXTURE_MAX_ANISOTROPY_EXT"))
 		} else {
 			c.maxAnisotropy = 0
 		}

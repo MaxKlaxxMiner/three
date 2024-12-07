@@ -13,8 +13,9 @@
 [83%] math/Vector3
 [ 5%] objects/Mesh
 [22%] renderers/webgl/WebGLCapabilities
+[ 2%] renderers/webgl/WebGLState (26 / 1325)
 [45%] renderers/webgl/WebGLUtils
-[ 6%] renderers/WebGLRenderer (181 / 2847)
+[ 6%] renderers/WebGLRenderer (185 / 2849)
 [21%] scenes/Scene
 [ 6%] utils/utils
 [ 2%] constants

@@ -16,26 +16,26 @@ func (e *Extensions) getExtension(name string) (ext Extension) {
 		return ext
 	}
 
-	ext = e.gl.getExtension(name)
+	ext = e.gl.GetExtension(name)
 	if !ext.Truthy() {
 		switch name {
 		case "WEBGL_depth_texture":
-			ext = e.gl.getExtension("MOZ_WEBGL_depth_texture")
+			ext = e.gl.GetExtension("MOZ_WEBGL_depth_texture")
 			if !ext.Truthy() {
-				ext = e.gl.getExtension("WEBKIT_WEBGL_depth_texture")
+				ext = e.gl.GetExtension("WEBKIT_WEBGL_depth_texture")
 			}
 		case "EXT_texture_filter_anisotropic":
-			ext = e.gl.getExtension("MOZ_EXT_texture_filter_anisotropic")
+			ext = e.gl.GetExtension("MOZ_EXT_texture_filter_anisotropic")
 			if !ext.Truthy() {
-				ext = e.gl.getExtension("WEBKIT_EXT_texture_filter_anisotropic")
+				ext = e.gl.GetExtension("WEBKIT_EXT_texture_filter_anisotropic")
 			}
 		case "WEBGL_compressed_texture_s3tc":
-			ext = e.gl.getExtension("MOZ_WEBGL_compressed_texture_s3tc")
+			ext = e.gl.GetExtension("MOZ_WEBGL_compressed_texture_s3tc")
 			if !ext.Truthy() {
-				ext = e.gl.getExtension("WEBKIT_WEBGL_compressed_texture_s3tc")
+				ext = e.gl.GetExtension("WEBKIT_WEBGL_compressed_texture_s3tc")
 			}
 		case "WEBGL_compressed_texture_pvrtc":
-			ext = e.gl.getExtension("WEBKIT_WEBGL_compressed_texture_pvrtc")
+			ext = e.gl.GetExtension("WEBKIT_WEBGL_compressed_texture_pvrtc")
 		}
 	}
 

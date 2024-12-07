@@ -11,66 +11,66 @@ func NewWebGLUtils(gl Context, extensions Extensions) *Utils {
 	return &Utils{gl, extensions}
 }
 
-func (u *Utils) Convert(p Format) int {
+func (u *Utils) Convert(p Format) ConstValue {
 	return u.ConvertWithColorspace(p, NoColorSpace)
 }
 
-func (u *Utils) ConvertWithColorspace(p Format, colorSpace ColorSpace) int {
+func (u *Utils) ConvertWithColorspace(p Format, colorSpace ColorSpace) ConstValue {
 	switch p {
 	case UnsignedByteType:
-		return u.gl.Const("UNSIGNED_BYTE")
+		return u.gl.UNSIGNED_BYTE
 	case UnsignedShort4444Type:
-		return u.gl.Const("UNSIGNED_SHORT_4_4_4_4")
+		return u.gl.UNSIGNED_SHORT_4_4_4_4
 	case UnsignedShort5551Type:
-		return u.gl.Const("UNSIGNED_SHORT_5_5_5_1")
+		return u.gl.UNSIGNED_SHORT_5_5_5_1
 	case UnsignedInt248Type:
-		return u.gl.Const("UNSIGNED_INT_24_8")
+		return u.gl.UNSIGNED_INT_24_8
 	case UnsignedInt5999Type:
-		return u.gl.Const("UNSIGNED_INT_5_9_9_9_REV")
+		return u.gl.UNSIGNED_INT_5_9_9_9_REV
 
 	case ByteType:
-		return u.gl.Const("BYTE")
+		return u.gl.BYTE
 	case ShortType:
-		return u.gl.Const("SHORT")
+		return u.gl.SHORT
 	case UnsignedShortType:
-		return u.gl.Const("UNSIGNED_SHORT")
+		return u.gl.UNSIGNED_SHORT
 	case IntType:
-		return u.gl.Const("INT")
+		return u.gl.INT
 	case UnsignedIntType:
-		return u.gl.Const("UNSIGNED_INT")
+		return u.gl.UNSIGNED_INT
 	case FloatType:
-		return u.gl.Const("FLOAT")
+		return u.gl.FLOAT
 	case HalfFloatType:
-		return u.gl.Const("HALF_FLOAT")
+		return u.gl.HALF_FLOAT
 
 	case AlphaFormat:
-		return u.gl.Const("ALPHA")
+		return u.gl.ALPHA
 	case RGBFormat:
-		return u.gl.Const("RGB")
+		return u.gl.RGB
 	case RGBAFormat:
-		return u.gl.Const("RGBA")
+		return u.gl.RGBA
 	case LuminanceFormat:
-		return u.gl.Const("LUMINANCE")
+		return u.gl.LUMINANCE
 	case LuminanceAlphaFormat:
-		return u.gl.Const("LUMINANCE_ALPHA")
+		return u.gl.LUMINANCE_ALPHA
 	case DepthFormat:
-		return u.gl.Const("DEPTH_COMPONENT")
+		return u.gl.DEPTH_COMPONENT
 	case DepthStencilFormat:
-		return u.gl.Const("DEPTH_STENCIL")
+		return u.gl.DEPTH_STENCIL
 
 	// --- WebGL2 formats ---
 	case RedFormat:
-		return u.gl.Const("RED")
+		return u.gl.RED
 	case RedIntegerFormat:
-		return u.gl.Const("RED_INTEGER")
+		return u.gl.RED_INTEGER
 	case RGFormat:
-		return u.gl.Const("RG")
+		return u.gl.RG
 	case RGIntegerFormat:
-		return u.gl.Const("RG_INTEGER")
+		return u.gl.RG_INTEGER
 	case RGBIntegerFormat:
-		return u.gl.Const("RGB_INTEGER")
+		return u.gl.RGB_INTEGER
 	case RGBAIntegerFormat:
-		return u.gl.Const("RGBA_INTEGER")
+		return u.gl.RGBA_INTEGER
 
 	// --- S3TC ---
 	case RGB_S3TC_DXT1_Format, RGBA_S3TC_DXT1_Format, RGBA_S3TC_DXT3_Format, RGBA_S3TC_DXT5_Format:
