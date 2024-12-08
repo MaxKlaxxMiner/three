@@ -1122,24 +1122,23 @@ func (r *WebGLRenderer) Render(scene *scenes.Scene, camera *cameras.Camera) {
 	}
 
 	// --- update scene graph ---
+	if scene.MatrixWorldAutoUpdate {
+		scene.UpdateMatrixWorld()
+	}
+
+	// --- update camera matrices and frustum ---
+	if camera.Parent == nil && camera.MatrixWorldAutoUpdate {
+		camera.UpdateMatrixWorld()
+	}
+
 	//todo
-	// 			if ( scene.matrixWorldAutoUpdate === true ) scene.updateMatrixWorld();
-	//
-	// 			// update camera matrices and frustum
-	//
-	// 			if ( camera.parent === null && camera.matrixWorldAutoUpdate === true ) camera.updateMatrixWorld();
-	//
 	// 			if ( xr.enabled === true && xr.isPresenting === true ) {
-	//
 	// 				if ( xr.cameraAutoUpdate === true ) xr.updateCamera( camera );
-	//
 	// 				camera = xr.getCamera(); // use XR camera for rendering
-	//
 	// 			}
-	//
-	// 			//
-	// 			if ( scene.isScene === true ) scene.onBeforeRender( _this, scene, camera, _currentRenderTarget );
-	//
+
+	scene.OnBeforeRender() //  _this, scene, camera, _currentRenderTarget
+
 	// 			currentRenderState = renderStates.get( scene, renderStateStack.length );
 	// 			currentRenderState.init( camera );
 	//

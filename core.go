@@ -157,7 +157,7 @@ var (
 	// export * from './core/BufferAttribute.js';
 	NewObject3D = core.NewObject3D
 	// export { Raycaster } from './core/Raycaster.js';
-	// export { Layers } from './core/Layers.js';
+	NewLayers          = core.NewLayers
 	NewEventDispatcher = core.NewEventDispatcher
 	// export { Clock } from './core/Clock.js';
 	// export { QuaternionLinearInterpolant } from './math/interpolants/QuaternionLinearInterpolant.js';
@@ -166,15 +166,18 @@ var (
 	// export { CubicInterpolant } from './math/interpolants/CubicInterpolant.js';
 	// export { Interpolant } from './math/Interpolant.js';
 	// export { Triangle } from './math/Triangle.js';
-	// export { MathUtils } from './math/MathUtils.js';
-	// export { Spherical } from './math/Spherical.js';
-	// export { Cylindrical } from './math/Cylindrical.js';
+	NewSphericalDefaults   = math.NewSphericalDefaults
+	NewSpherical           = math.NewSpherical
+	NewCylindricalDefaults = math.NewCylindricalDefaults
+	NewCylindrical         = math.NewCylindrical
 	// export { Plane } from './math/Plane.js';
 	// export { Frustum } from './math/Frustum.js';
 	// export { Sphere } from './math/Sphere.js';
 	// export { Ray } from './math/Ray.js';
-	// export { Matrix4 } from './math/Matrix4.js';
-	// export { Matrix3 } from './math/Matrix3.js';
+	NewMatrix4Identity = math.NewMatrix4Identity
+	NewMatrix4         = math.NewMatrix4
+	NewMatrix3Identity = math.NewMatrix3Identity
+	NewMatrix3         = math.NewMatrix3
 	// export { Matrix2 } from './math/Matrix2.js';
 	// export { Box3 } from './math/Box3.js';
 	// export { Box2 } from './math/Box2.js';

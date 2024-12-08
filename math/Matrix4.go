@@ -305,47 +305,42 @@ func (m *Matrix4) ExtractRotation(v *Matrix4) *Matrix4 {
 // 		return this.multiplyMatrices( m, this );
 //
 // 	}
-//
-// 	multiplyMatrices( a, b ) {
-//
-// 		const ae = a.elements;
-// 		const be = b.elements;
-// 		const te = this.elements;
-//
-// 		const a11 = ae[ 0 ], a12 = ae[ 4 ], a13 = ae[ 8 ], a14 = ae[ 12 ];
-// 		const a21 = ae[ 1 ], a22 = ae[ 5 ], a23 = ae[ 9 ], a24 = ae[ 13 ];
-// 		const a31 = ae[ 2 ], a32 = ae[ 6 ], a33 = ae[ 10 ], a34 = ae[ 14 ];
-// 		const a41 = ae[ 3 ], a42 = ae[ 7 ], a43 = ae[ 11 ], a44 = ae[ 15 ];
-//
-// 		const b11 = be[ 0 ], b12 = be[ 4 ], b13 = be[ 8 ], b14 = be[ 12 ];
-// 		const b21 = be[ 1 ], b22 = be[ 5 ], b23 = be[ 9 ], b24 = be[ 13 ];
-// 		const b31 = be[ 2 ], b32 = be[ 6 ], b33 = be[ 10 ], b34 = be[ 14 ];
-// 		const b41 = be[ 3 ], b42 = be[ 7 ], b43 = be[ 11 ], b44 = be[ 15 ];
-//
-// 		te[ 0 ] = a11 * b11 + a12 * b21 + a13 * b31 + a14 * b41;
-// 		te[ 4 ] = a11 * b12 + a12 * b22 + a13 * b32 + a14 * b42;
-// 		te[ 8 ] = a11 * b13 + a12 * b23 + a13 * b33 + a14 * b43;
-// 		te[ 12 ] = a11 * b14 + a12 * b24 + a13 * b34 + a14 * b44;
-//
-// 		te[ 1 ] = a21 * b11 + a22 * b21 + a23 * b31 + a24 * b41;
-// 		te[ 5 ] = a21 * b12 + a22 * b22 + a23 * b32 + a24 * b42;
-// 		te[ 9 ] = a21 * b13 + a22 * b23 + a23 * b33 + a24 * b43;
-// 		te[ 13 ] = a21 * b14 + a22 * b24 + a23 * b34 + a24 * b44;
-//
-// 		te[ 2 ] = a31 * b11 + a32 * b21 + a33 * b31 + a34 * b41;
-// 		te[ 6 ] = a31 * b12 + a32 * b22 + a33 * b32 + a34 * b42;
-// 		te[ 10 ] = a31 * b13 + a32 * b23 + a33 * b33 + a34 * b43;
-// 		te[ 14 ] = a31 * b14 + a32 * b24 + a33 * b34 + a34 * b44;
-//
-// 		te[ 3 ] = a41 * b11 + a42 * b21 + a43 * b31 + a44 * b41;
-// 		te[ 7 ] = a41 * b12 + a42 * b22 + a43 * b32 + a44 * b42;
-// 		te[ 11 ] = a41 * b13 + a42 * b23 + a43 * b33 + a44 * b43;
-// 		te[ 15 ] = a41 * b14 + a42 * b24 + a43 * b34 + a44 * b44;
-//
-// 		return this;
-//
-// 	}
-//
+
+func (m *Matrix4) MultiplyMatrices(a, b *Matrix4) *Matrix4 {
+	a11, a12, a13, a14 := a.N[0], a.N[4], a.N[8], a.N[12]
+	a21, a22, a23, a24 := a.N[1], a.N[5], a.N[9], a.N[13]
+	a31, a32, a33, a34 := a.N[2], a.N[6], a.N[10], a.N[14]
+	a41, a42, a43, a44 := a.N[3], a.N[7], a.N[11], a.N[15]
+
+	b11, b12, b13, b14 := b.N[0], b.N[4], b.N[8], b.N[12]
+	b21, b22, b23, b24 := b.N[1], b.N[5], b.N[9], b.N[13]
+	b31, b32, b33, b34 := b.N[2], b.N[6], b.N[10], b.N[14]
+	b41, b42, b43, b44 := b.N[3], b.N[7], b.N[11], b.N[15]
+
+	m.N[0] = a11*b11 + a12*b21 + a13*b31 + a14*b41
+	m.N[4] = a11*b12 + a12*b22 + a13*b32 + a14*b42
+	m.N[8] = a11*b13 + a12*b23 + a13*b33 + a14*b43
+	m.N[12] = a11*b14 + a12*b24 + a13*b34 + a14*b44
+
+	m.N[1] = a21*b11 + a22*b21 + a23*b31 + a24*b41
+	m.N[5] = a21*b12 + a22*b22 + a23*b32 + a24*b42
+	m.N[9] = a21*b13 + a22*b23 + a23*b33 + a24*b43
+	m.N[13] = a21*b14 + a22*b24 + a23*b34 + a24*b44
+
+	m.N[2] = a31*b11 + a32*b21 + a33*b31 + a34*b41
+	m.N[6] = a31*b12 + a32*b22 + a33*b32 + a34*b42
+	m.N[10] = a31*b13 + a32*b23 + a33*b33 + a34*b43
+	m.N[14] = a31*b14 + a32*b24 + a33*b34 + a34*b44
+
+	m.N[3] = a41*b11 + a42*b21 + a43*b31 + a44*b41
+	m.N[7] = a41*b12 + a42*b22 + a43*b32 + a44*b42
+	m.N[11] = a41*b13 + a42*b23 + a43*b33 + a44*b43
+	m.N[15] = a41*b14 + a42*b24 + a43*b34 + a44*b44
+
+	return m
+}
+
+//todo
 // 	multiplyScalar( s ) {
 //
 // 		const te = this.elements;
@@ -651,43 +646,40 @@ func (m *Matrix4) Invert() *Matrix4 {
 //	return this;
 //
 // }
-//
-// compose( position, quaternion, scale ) {
-//
-//	const te = this.elements;
-//
-//	const x = quaternion._x, y = quaternion._y, z = quaternion._z, w = quaternion._w;
-//	const x2 = x + x,	y2 = y + y, z2 = z + z;
-//	const xx = x * x2, xy = x * y2, xz = x * z2;
-//	const yy = y * y2, yz = y * z2, zz = z * z2;
-//	const wx = w * x2, wy = w * y2, wz = w * z2;
-//
-//	const sx = scale.x, sy = scale.y, sz = scale.z;
-//
-//	te[ 0 ] = ( 1 - ( yy + zz ) ) * sx;
-//	te[ 1 ] = ( xy + wz ) * sx;
-//	te[ 2 ] = ( xz - wy ) * sx;
-//	te[ 3 ] = 0;
-//
-//	te[ 4 ] = ( xy - wz ) * sy;
-//	te[ 5 ] = ( 1 - ( xx + zz ) ) * sy;
-//	te[ 6 ] = ( yz + wx ) * sy;
-//	te[ 7 ] = 0;
-//
-//	te[ 8 ] = ( xz + wy ) * sz;
-//	te[ 9 ] = ( yz - wx ) * sz;
-//	te[ 10 ] = ( 1 - ( xx + yy ) ) * sz;
-//	te[ 11 ] = 0;
-//
-//	te[ 12 ] = position.x;
-//	te[ 13 ] = position.y;
-//	te[ 14 ] = position.z;
-//	te[ 15 ] = 1;
-//
-//	return this;
-//
-// }
-//
+
+func (m *Matrix4) Compose(position *Vector3, quaternion *Quaternion, scale *Vector3) *Matrix4 {
+	x, y, z, w := quaternion.x, quaternion.y, quaternion.z, quaternion.w
+	x2, y2, z2 := x+x, y+y, z+z
+	xx, xy, xz := x*x2, x*y2, x*z2
+	yy, yz, zz := y*y2, y*z2, z*z2
+	wx, wy, wz := w*x2, w*y2, w*z2
+
+	sx, sy, sz := scale.X, scale.Y, scale.Z
+
+	m.N[0] = (1 - (yy + zz)) * sx
+	m.N[1] = (xy + wz) * sx
+	m.N[2] = (xz - wy) * sx
+	m.N[3] = 0
+
+	m.N[4] = (xy - wz) * sy
+	m.N[5] = (1 - (xx + zz)) * sy
+	m.N[6] = (yz + wx) * sy
+	m.N[7] = 0
+
+	m.N[8] = (xz + wy) * sz
+	m.N[9] = (yz - wx) * sz
+	m.N[10] = (1 - (xx + yy)) * sz
+	m.N[11] = 0
+
+	m.N[12] = position.X
+	m.N[13] = position.Y
+	m.N[14] = position.Z
+	m.N[15] = 1
+
+	return m
+}
+
+// todo
 // decompose( position, quaternion, scale ) {
 //
 //	const te = this.elements;
@@ -862,7 +854,7 @@ func (m *Matrix4) Invert() *Matrix4 {
 // }
 var v1 = NewVector3Defaults()
 
-// const _m1 = /*@__PURE__*/ new Matrix4();
+// const _m1 = /*@__PURE__*/ new Matrix4(); todo
 // const _zero = /*@__PURE__*/ new Vector3( 0, 0, 0 );
 // const _one = /*@__PURE__*/ new Vector3( 1, 1, 1 );
 // const _x = /*@__PURE__*/ new Vector3();

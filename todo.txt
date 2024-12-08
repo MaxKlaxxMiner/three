@@ -1,7 +1,7 @@
 [23%] cameras/Camera
 [11%] cameras/PerspectiveCamera
 [ 2%] core/BufferGeometry
-[ 7%] core/Object3D
+[14%] core/Object3D (134 / 987)
 [85%] geometries/BoxGeometry
 [ 5%] materials/Material
 [27%] materials/MeshBasicMaterial
@@ -9,7 +9,7 @@
 [26%] math/Euler
 [ 7%] math/MathUtils
 [14%] math/Matrix3
-[19%] math/Matrix4
+[27%] math/Matrix4 (232 / 860)
 [14%] math/Quaternion
 [99%] math/Vector3
 [63%] math/Vector4
@@ -17,14 +17,15 @@
 [22%] renderers/webgl/WebGLCapabilities
 [ 9%] renderers/webgl/WebGLState (126 / 1352)
 [45%] renderers/webgl/WebGLUtils
-[ 9%] renderers/WebGLRenderer (250 / 2846)
+[ 9%] renderers/WebGLRenderer (262 / 2845)
 [21%] scenes/Scene
 [ 6%] utils/utils
 [ 2%] constants
-[12%] core (25 / 205)
+[16%] core (34 / 208)
 
 --- finished ---
 [100%] core/EventDispatcher
+[100%] core/Layers
 [100%] demos/demo1
 [100%] math/Cylindrical
 [100%] math/Spherical

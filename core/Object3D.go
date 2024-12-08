@@ -4,17 +4,33 @@ import "github.com/MaxKlaxxMiner/three/math"
 
 type Object3D struct {
 	EventDispatcher
-	Id         int
-	Uuid       math.UUID
-	Name       string
-	Type       string
-	Parent     *Object3D
-	Children   []*Object3D
-	Up         math.Vector3
-	Position   math.Vector3
-	Rotation   math.Euler
-	Quaternion math.Quaternion
-	Scale      math.Vector3
+	Id                     int
+	Uuid                   math.UUID
+	Name                   string
+	Type                   string
+	Parent                 *Object3D
+	Children               []*Object3D
+	Up                     math.Vector3
+	Position               math.Vector3
+	Rotation               math.Euler
+	Quaternion             math.Quaternion
+	Scale                  math.Vector3
+	Matrix                 math.Matrix4
+	MatrixWorld            math.Matrix4
+	MatrixAutoUpdate       bool
+	MatrixWorldAutoUpdate  bool
+	MatrixWorldNeedsUpdate bool
+	Layers                 Layers
+	Visible                bool
+	CastShadow             bool
+	ReceiveShadow          bool
+	FrustumCulled          bool
+	RenderOrder            int
+
+	OnBeforeShadow func() // renderer, object, camera, shadowCamera, geometry, depthMaterial, group
+	OnAfterShadow  func() // renderer, object, camera, shadowCamera, geometry, depthMaterial, group
+	OnBeforeRender func() // renderer, scene, camera, geometry, material, group
+	OnAfterRender  func() // renderer, scene, camera, geometry, material, group
 }
 
 var _object3DId = 0
@@ -68,41 +84,38 @@ func NewObject3D() *Object3D {
 	// 			}
 	// 		} );
 	//
-	// 		this.matrix = new Matrix4();
-	// 		this.matrixWorld = new Matrix4();
-	//
-	// 		this.matrixAutoUpdate = Object3D.DEFAULT_MATRIX_AUTO_UPDATE;
-	//
-	// 		this.matrixWorldAutoUpdate = Object3D.DEFAULT_MATRIX_WORLD_AUTO_UPDATE; // checked by the renderer
-	// 		this.matrixWorldNeedsUpdate = false;
-	//
-	// 		this.layers = new Layers();
-	// 		this.visible = true;
-	//
-	// 		this.castShadow = false;
-	// 		this.receiveShadow = false;
-	//
-	// 		this.frustumCulled = true;
-	// 		this.renderOrder = 0;
-	//
-	// 		this.animations = [];
-	//
-	// 		this.userData = {};
-	//
+
+	this.Matrix = *math.NewMatrix4Identity()
+	this.MatrixWorld = *math.NewMatrix4Identity()
+
+	this.MatrixAutoUpdate = Object3dDefaultMatrixAutoUpdate
+
+	this.MatrixWorldAutoUpdate = Object3dDefaultMatrixWorldAutoUpdate // checked by the renderer
+	this.MatrixWorldNeedsUpdate = false
+
+	this.Layers = *NewLayers()
+	this.Visible = true
+
+	this.CastShadow = false
+	this.ReceiveShadow = false
+
+	this.FrustumCulled = true
+	this.RenderOrder = 0
+
+	// 		this.animations = []; todo
+	// 		this.userData = {}; todo
+
+	this.OnBeforeShadow = func() {}
+	this.OnAfterShadow = func() {}
+	this.OnBeforeRender = func() {}
+	this.OnAfterRender = func() {}
+
 	return this
 }
 
 func (o *Object3D) IsObject3D() bool { return o != nil }
 
 //todo
-// 	onBeforeShadow( /* renderer, object, camera, shadowCamera, geometry, depthMaterial, group */ ) {}
-//
-// 	onAfterShadow( /* renderer, object, camera, shadowCamera, geometry, depthMaterial, group */ ) {}
-//
-// 	onBeforeRender( /* renderer, scene, camera, geometry, material, group */ ) {}
-//
-// 	onAfterRender( /* renderer, scene, camera, geometry, material, group */ ) {}
-//
 // 	applyMatrix4( matrix ) {
 //
 // 		if ( this.matrixAutoUpdate ) this.updateMatrix();
@@ -526,55 +539,41 @@ func (o *Object3D) Add(objects ...*Object3D) *Object3D {
 // 		}
 //
 // 	}
-//
-// 	updateMatrix() {
-//
-// 		this.matrix.compose( this.position, this.quaternion, this.scale );
-//
-// 		this.matrixWorldNeedsUpdate = true;
-//
-// 	}
-//
-// 	updateMatrixWorld( force ) {
-//
-// 		if ( this.matrixAutoUpdate ) this.updateMatrix();
-//
-// 		if ( this.matrixWorldNeedsUpdate || force ) {
-//
-// 			if ( this.matrixWorldAutoUpdate === true ) {
-//
-// 				if ( this.parent === null ) {
-//
-// 					this.matrixWorld.copy( this.matrix );
-//
-// 				} else {
-//
-// 					this.matrixWorld.multiplyMatrices( this.parent.matrixWorld, this.matrix );
-//
-// 				}
-//
-// 			}
-//
-// 			this.matrixWorldNeedsUpdate = false;
-//
-// 			force = true;
-//
-// 		}
-//
-// 		// make sure descendants are updated if required
-//
-// 		const children = this.children;
-//
-// 		for ( let i = 0, l = children.length; i < l; i ++ ) {
-//
-// 			const child = children[ i ];
-//
-// 			child.updateMatrixWorld( force );
-//
-// 		}
-//
-// 	}
-//
+
+func (o *Object3D) UpdateMatrix() {
+	o.Matrix.Compose(&o.Position, &o.Quaternion, &o.Scale)
+	o.MatrixWorldNeedsUpdate = true
+}
+
+func (o *Object3D) UpdateMatrixWorld() {
+	o.UpdateMatrixWorldForce(false)
+}
+
+func (o *Object3D) UpdateMatrixWorldForce(force bool) {
+	if o.MatrixAutoUpdate {
+		o.UpdateMatrix()
+	}
+
+	if o.MatrixWorldNeedsUpdate || force {
+		if o.MatrixWorldAutoUpdate {
+			if o.Parent == nil {
+				o.MatrixWorld.Copy(&o.Matrix)
+			} else {
+				o.MatrixWorld.MultiplyMatrices(&o.Parent.MatrixWorld, &o.Matrix)
+			}
+		}
+		o.MatrixWorldNeedsUpdate = false
+		force = true
+	}
+
+	// --- make sure descendants are updated if required ---
+
+	for _, child := range o.Children {
+		child.UpdateMatrixWorldForce(force)
+	}
+}
+
+//todo
 // 	updateWorldMatrix( updateParents, updateChildren ) {
 //
 // 		const parent = this.parent;
@@ -972,8 +971,6 @@ var Object3dDefaultMatrixAutoUpdate = true
 var Object3dDefaultMatrixWorldAutoUpdate = true
 
 //todo
-// import { Layers } from './Layers.js';
-//
 // const _v1 = /*@__PURE__*/ new Vector3();
 // const _q1 = /*@__PURE__*/ new Quaternion();
 // const _m1 = /*@__PURE__*/ new Matrix4();
