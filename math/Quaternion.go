@@ -1,15 +1,21 @@
 package math
 
+import (
+	"fmt"
+	"math"
+)
+
 type Quaternion struct {
-	X, Y, Z, W float64
+	x, y, z, w        float64
+	_onChangeCallback func()
 }
 
 func NewQuaternionDefaults() *Quaternion {
-	return &Quaternion{0, 0, 0, 1}
+	return &Quaternion{0, 0, 0, 1, func() {}}
 }
 
 func NewQuaternion(x, y, z, w float64) *Quaternion {
-	return &Quaternion{x, y, z, w}
+	return &Quaternion{x, y, z, w, func() {}}
 }
 
 func (q *Quaternion) IsQuaternion() bool { return q != nil }
@@ -200,99 +206,86 @@ func (q *Quaternion) IsQuaternion() bool { return q != nil }
 //
 // 	}
 //
-// 	setFromEuler( euler, update = true ) {
-//
-// 		const x = euler._x, y = euler._y, z = euler._z, order = euler._order;
-//
-// 		// http://www.mathworks.com/matlabcentral/fileexchange/
-// 		// 	20696-function-to-convert-between-dcm-euler-angles-quaternions-and-euler-vectors/
-// 		//	content/SpinCalc.m
-//
-// 		const cos = Math.cos;
-// 		const sin = Math.sin;
-//
-// 		const c1 = cos( x / 2 );
-// 		const c2 = cos( y / 2 );
-// 		const c3 = cos( z / 2 );
-//
-// 		const s1 = sin( x / 2 );
-// 		const s2 = sin( y / 2 );
-// 		const s3 = sin( z / 2 );
-//
-// 		switch ( order ) {
-//
-// 			case 'XYZ':
-// 				this._x = s1 * c2 * c3 + c1 * s2 * s3;
-// 				this._y = c1 * s2 * c3 - s1 * c2 * s3;
-// 				this._z = c1 * c2 * s3 + s1 * s2 * c3;
-// 				this._w = c1 * c2 * c3 - s1 * s2 * s3;
-// 				break;
-//
-// 			case 'YXZ':
-// 				this._x = s1 * c2 * c3 + c1 * s2 * s3;
-// 				this._y = c1 * s2 * c3 - s1 * c2 * s3;
-// 				this._z = c1 * c2 * s3 - s1 * s2 * c3;
-// 				this._w = c1 * c2 * c3 + s1 * s2 * s3;
-// 				break;
-//
-// 			case 'ZXY':
-// 				this._x = s1 * c2 * c3 - c1 * s2 * s3;
-// 				this._y = c1 * s2 * c3 + s1 * c2 * s3;
-// 				this._z = c1 * c2 * s3 + s1 * s2 * c3;
-// 				this._w = c1 * c2 * c3 - s1 * s2 * s3;
-// 				break;
-//
-// 			case 'ZYX':
-// 				this._x = s1 * c2 * c3 - c1 * s2 * s3;
-// 				this._y = c1 * s2 * c3 + s1 * c2 * s3;
-// 				this._z = c1 * c2 * s3 - s1 * s2 * c3;
-// 				this._w = c1 * c2 * c3 + s1 * s2 * s3;
-// 				break;
-//
-// 			case 'YZX':
-// 				this._x = s1 * c2 * c3 + c1 * s2 * s3;
-// 				this._y = c1 * s2 * c3 + s1 * c2 * s3;
-// 				this._z = c1 * c2 * s3 - s1 * s2 * c3;
-// 				this._w = c1 * c2 * c3 - s1 * s2 * s3;
-// 				break;
-//
-// 			case 'XZY':
-// 				this._x = s1 * c2 * c3 - c1 * s2 * s3;
-// 				this._y = c1 * s2 * c3 - s1 * c2 * s3;
-// 				this._z = c1 * c2 * s3 + s1 * s2 * c3;
-// 				this._w = c1 * c2 * c3 + s1 * s2 * s3;
-// 				break;
-//
-// 			default:
-// 				console.warn( 'THREE.Quaternion: .setFromEuler() encountered an unknown order: ' + order );
-//
-// 		}
-//
-// 		if ( update === true ) this._onChangeCallback();
-//
-// 		return this;
-//
-// 	}
-//
-// 	setFromAxisAngle( axis, angle ) {
-//
-// 		// http://www.euclideanspace.com/maths/geometry/rotations/conversions/angleToQuaternion/index.htm
-//
-// 		// assumes axis is normalized
-//
-// 		const halfAngle = angle / 2, s = Math.sin( halfAngle );
-//
-// 		this._x = axis.x * s;
-// 		this._y = axis.y * s;
-// 		this._z = axis.z * s;
-// 		this._w = Math.cos( halfAngle );
-//
-// 		this._onChangeCallback();
-//
-// 		return this;
-//
-// 	}
-//
+
+func (q *Quaternion) SetFromEuler(euler *Euler) *Quaternion {
+	return q.SetFromEulerUpdate(euler, true)
+}
+
+func (q *Quaternion) SetFromEulerUpdate(euler *Euler, update bool) *Quaternion {
+	x, y, z, order := euler.x, euler.y, euler.z, euler.order
+
+	// http://www.mathworks.com/matlabcentral/fileexchange/
+	// 	20696-function-to-convert-between-dcm-euler-angles-quaternions-and-euler-vectors/
+	//	content/SpinCalc.m
+
+	c1 := math.Cos(x / 2)
+	c2 := math.Cos(y / 2)
+	c3 := math.Cos(z / 2)
+
+	s1 := math.Sin(x / 2)
+	s2 := math.Sin(y / 2)
+	s3 := math.Sin(z / 2)
+
+	switch order {
+	case EulerOrderXYZ:
+		q.x = s1*c2*c3 + c1*s2*s3
+		q.y = c1*s2*c3 - s1*c2*s3
+		q.z = c1*c2*s3 + s1*s2*c3
+		q.w = c1*c2*c3 - s1*s2*s3
+	case EulerOrderYXZ:
+		q.x = s1*c2*c3 + c1*s2*s3
+		q.y = c1*s2*c3 - s1*c2*s3
+		q.z = c1*c2*s3 - s1*s2*c3
+		q.w = c1*c2*c3 + s1*s2*s3
+	case EulerOrderZXY:
+		q.x = s1*c2*c3 - c1*s2*s3
+		q.y = c1*s2*c3 + s1*c2*s3
+		q.z = c1*c2*s3 + s1*s2*c3
+		q.w = c1*c2*c3 - s1*s2*s3
+	case EulerOrderZYX:
+		q.x = s1*c2*c3 - c1*s2*s3
+		q.y = c1*s2*c3 + s1*c2*s3
+		q.z = c1*c2*s3 - s1*s2*c3
+		q.w = c1*c2*c3 + s1*s2*s3
+	case EulerOrderYZX:
+		q.x = s1*c2*c3 + c1*s2*s3
+		q.y = c1*s2*c3 + s1*c2*s3
+		q.z = c1*c2*s3 - s1*s2*c3
+		q.w = c1*c2*c3 - s1*s2*s3
+	case EulerOrderXZY:
+		q.x = s1*c2*c3 - c1*s2*s3
+		q.y = c1*s2*c3 - s1*c2*s3
+		q.z = c1*c2*s3 + s1*s2*c3
+		q.w = c1*c2*c3 + s1*s2*s3
+	default:
+		fmt.Println("THREE.Quaternion: .setFromEuler() encountered an unknown order: ", order)
+	}
+
+	if update {
+		q._onChangeCallback()
+	}
+
+	return q
+}
+
+func (q *Quaternion) SetFromAxisAngle(axis *Vector3, angle float64) *Quaternion {
+	// http://www.euclideanspace.com/maths/geometry/rotations/conversions/angleToQuaternion/index.htm
+	// assumes axis is normalized
+
+	halfAngle := angle / 2
+	s := math.Sin(halfAngle)
+
+	q.x = axis.X * s
+	q.y = axis.Y * s
+	q.z = axis.Z * s
+	q.w = math.Cos(halfAngle)
+
+	q._onChangeCallback()
+
+	return q
+}
+
+//todo
 // 	setFromRotationMatrix( m ) {
 //
 // 		// http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/index.htm

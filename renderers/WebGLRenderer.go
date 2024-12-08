@@ -1111,18 +1111,18 @@ func (r *WebGLRenderer) SetAnimationLoop(callback func(time float64, frame int))
 // --- Rendering ---
 
 func (r *WebGLRenderer) Render(scene *scenes.Scene, camera *cameras.Camera) {
+	if !scene.IsScene() {
+		panic("THREE.WebGLRenderer.render: scene ist not defined")
+	}
+	if !camera.IsCamera() {
+		panic("THREE.WebGLRenderer.render: camera ist not defined")
+	}
+	if r.isContextLost {
+		return
+	}
+
+	// --- update scene graph ---
 	//todo
-	// 			if ( camera !== undefined && camera.isCamera !== true ) {
-	//
-	// 				console.error( 'THREE.WebGLRenderer.render: camera is not an instance of THREE.Camera.' );
-	// 				return;
-	//
-	// 			}
-	//
-	// 			if ( _isContextLost === true ) return;
-	//
-	// 			// update scene graph
-	//
 	// 			if ( scene.matrixWorldAutoUpdate === true ) scene.updateMatrixWorld();
 	//
 	// 			// update camera matrices and frustum

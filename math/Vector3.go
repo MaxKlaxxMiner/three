@@ -147,102 +147,78 @@ func (v *Vector3) MultiplyVectors(a, b *Vector3) *Vector3 {
 	return v
 }
 
+func (v *Vector3) ApplyEuler(euler *Euler) *Vector3 {
+	return v.ApplyQuaternion(_quaternion.SetFromEuler(euler))
+}
+
+func (v *Vector3) ApplyAxisAngle(axis *Vector3, angle float64) *Vector3 {
+	return v.ApplyQuaternion(_quaternion.SetFromAxisAngle(axis, angle))
+}
+
+func (v *Vector3) ApplyMatrix3(m *Matrix3) *Vector3 {
+	x, y, z := v.X, v.Y, v.Z
+
+	v.X = m.N[0]*x + m.N[3]*y + m.N[6]*z
+	v.Y = m.N[1]*x + m.N[4]*y + m.N[7]*z
+	v.Z = m.N[2]*x + m.N[5]*y + m.N[8]*z
+
+	return v
+}
+
+func (v *Vector3) ApplyNormalMatrix(m *Matrix3) *Vector3 {
+	return v.ApplyMatrix3(m).Normalize()
+}
+
+func (v *Vector3) ApplyMatrix4(m *Matrix4) *Vector3 {
+	x, y, z := v.X, v.Y, v.Z
+
+	w := 1.0 / (m.N[3]*x + m.N[7]*y + m.N[11]*z + m.N[15])
+
+	v.X = (m.N[0]*x + m.N[4]*y + m.N[8]*z + m.N[12]) * w
+	v.Y = (m.N[1]*x + m.N[5]*y + m.N[9]*z + m.N[13]) * w
+	v.Z = (m.N[2]*x + m.N[6]*y + m.N[10]*z + m.N[14]) * w
+
+	return v
+}
+
+func (v *Vector3) ApplyQuaternion(q *Quaternion) *Vector3 {
+	// quaternion q is assumed to have unit length
+
+	vx, vy, vz := v.X, v.Y, v.Z
+	qx, qy, qz, qw := q.x, q.y, q.z, q.w
+
+	// t = 2 * cross( q.xyz, v );
+	tx := 2 * (qy*vz - qz*vy)
+	ty := 2 * (qz*vx - qx*vz)
+	tz := 2 * (qx*vy - qy*vx)
+
+	// v + q.w * t + cross( q.xyz, t );
+	v.X = vx + qw*tx + qy*tz - qz*ty
+	v.Y = vy + qw*ty + qz*tx - qx*tz
+	v.Z = vz + qw*tz + qx*ty - qy*tx
+
+	return v
+}
+
 //todo
-// 	applyEuler( euler ) {
-//
-// 		return this.applyQuaternion( _quaternion.setFromEuler( euler ) );
-//
-// 	}
-//
-// 	applyAxisAngle( axis, angle ) {
-//
-// 		return this.applyQuaternion( _quaternion.setFromAxisAngle( axis, angle ) );
-//
-// 	}
-//
-// 	applyMatrix3( m ) {
-//
-// 		const x = this.x, y = this.y, z = this.z;
-// 		const e = m.elements;
-//
-// 		this.x = e[ 0 ] * x + e[ 3 ] * y + e[ 6 ] * z;
-// 		this.y = e[ 1 ] * x + e[ 4 ] * y + e[ 7 ] * z;
-// 		this.z = e[ 2 ] * x + e[ 5 ] * y + e[ 8 ] * z;
-//
-// 		return this;
-//
-// 	}
-//
-// 	applyNormalMatrix( m ) {
-//
-// 		return this.applyMatrix3( m ).normalize();
-//
-// 	}
-//
-// 	applyMatrix4( m ) {
-//
-// 		const x = this.x, y = this.y, z = this.z;
-// 		const e = m.elements;
-//
-// 		const w = 1 / ( e[ 3 ] * x + e[ 7 ] * y + e[ 11 ] * z + e[ 15 ] );
-//
-// 		this.x = ( e[ 0 ] * x + e[ 4 ] * y + e[ 8 ] * z + e[ 12 ] ) * w;
-// 		this.y = ( e[ 1 ] * x + e[ 5 ] * y + e[ 9 ] * z + e[ 13 ] ) * w;
-// 		this.z = ( e[ 2 ] * x + e[ 6 ] * y + e[ 10 ] * z + e[ 14 ] ) * w;
-//
-// 		return this;
-//
-// 	}
-//
-// 	applyQuaternion( q ) {
-//
-// 		// quaternion q is assumed to have unit length
-//
-// 		const vx = this.x, vy = this.y, vz = this.z;
-// 		const qx = q.x, qy = q.y, qz = q.z, qw = q.w;
-//
-// 		// t = 2 * cross( q.xyz, v );
-// 		const tx = 2 * ( qy * vz - qz * vy );
-// 		const ty = 2 * ( qz * vx - qx * vz );
-// 		const tz = 2 * ( qx * vy - qy * vx );
-//
-// 		// v + q.w * t + cross( q.xyz, t );
-// 		this.x = vx + qw * tx + qy * tz - qz * ty;
-// 		this.y = vy + qw * ty + qz * tx - qx * tz;
-// 		this.z = vz + qw * tz + qx * ty - qy * tx;
-//
-// 		return this;
-//
-// 	}
-//
-// 	project( camera ) {
-//
-// 		return this.applyMatrix4( camera.matrixWorldInverse ).applyMatrix4( camera.projectionMatrix );
-//
-// 	}
-//
-// 	unproject( camera ) {
-//
-// 		return this.applyMatrix4( camera.projectionMatrixInverse ).applyMatrix4( camera.matrixWorld );
-//
-// 	}
-//
-// 	transformDirection( m ) {
-//
-// 		// input: THREE.Matrix4 affine matrix
-// 		// vector interpreted as a direction
-//
-// 		const x = this.x, y = this.y, z = this.z;
-// 		const e = m.elements;
-//
-// 		this.x = e[ 0 ] * x + e[ 4 ] * y + e[ 8 ] * z;
-// 		this.y = e[ 1 ] * x + e[ 5 ] * y + e[ 9 ] * z;
-// 		this.z = e[ 2 ] * x + e[ 6 ] * y + e[ 10 ] * z;
-//
-// 		return this.normalize();
-//
-// 	}
-//
+// func (v *Vector3) Project(camera *cameras.Camera) *Vector3 {
+//	return v.ApplyMatrix4(camera.matrixWorldInverse).ApplyMatrix4(camera.projectionMatrix)
+// }
+// func (v *Vector3) Unproject(camera *cameras.Camera) *Vector3 {
+//	return v.ApplyMatrix4(camera.projectionMatrixInverse).ApplyMatrix4(camera.matrixWorld)
+// }
+
+func (v *Vector3) TransformDirection(m *Matrix4) *Vector3 {
+	// input: THREE.Matrix4 affine matrix
+	// vector interpreted as a direction
+
+	x, y, z := v.X, v.Y, v.Z
+
+	v.X = m.N[0]*x + m.N[4]*y + m.N[8]*z
+	v.Y = m.N[1]*x + m.N[5]*y + m.N[9]*z
+	v.Z = m.N[2]*x + m.N[6]*y + m.N[10]*z
+	return v.Normalize()
+}
 
 func (v *Vector3) Divide(a *Vector3) *Vector3 {
 	v.X /= a.X
@@ -423,13 +399,9 @@ func (v *Vector3) ManhattanDistanceTo(a *Vector3) float64 {
 	return math.Abs(v.X-a.X) + math.Abs(v.Y-a.Y) + math.Abs(v.Z-a.Z)
 }
 
-//todo
-// setFromSpherical( s ) {
-//
-//	return this.setFromSphericalCoords( s.radius, s.phi, s.theta );
-//
-// }
-//
+func (v *Vector3) SetFromSpherical(s *Spherical) *Vector3 {
+	return v.SetFromSphericalCoords(s.Radius, s.Phi, s.Theta)
+}
 
 func (v *Vector3) SetFromSphericalCoords(radius, phi, theta float64) *Vector3 {
 	sinPhiRadius := math.Sin(phi) * radius
@@ -439,13 +411,9 @@ func (v *Vector3) SetFromSphericalCoords(radius, phi, theta float64) *Vector3 {
 	return v
 }
 
-//todo
-// setFromCylindrical( c ) {
-//
-//	return this.setFromCylindricalCoords( c.radius, c.theta, c.y );
-//
-// }
-//
+func (v *Vector3) SetFromCylindrical(c *Cylindrical) *Vector3 {
+	return v.SetFromCylindricalCoords(c.Radius, c.Theta, c.Y)
+}
 
 func (v *Vector3) SetFromCylindricalCoords(radius, theta, y float64) *Vector3 {
 	v.X = radius * math.Sin(theta)
@@ -454,65 +422,35 @@ func (v *Vector3) SetFromCylindricalCoords(radius, theta, y float64) *Vector3 {
 	return v
 }
 
-//todo
-// setFromCylindricalCoords( radius, theta, y ) {
-//
-//	this.x = radius * Math.sin( theta );
-//	this.y = y;
-//	this.z = radius * Math.cos( theta );
-//
-//	return this;
-//
-// }
-//
-// setFromMatrixPosition( m ) {
-//
-//	const e = m.elements;
-//
-//	this.x = e[ 12 ];
-//	this.y = e[ 13 ];
-//	this.z = e[ 14 ];
-//
-//	return this;
-//
-// }
-//
-// setFromMatrixScale( m ) {
-//
-//	const sx = this.setFromMatrixColumn( m, 0 ).length();
-//	const sy = this.setFromMatrixColumn( m, 1 ).length();
-//	const sz = this.setFromMatrixColumn( m, 2 ).length();
-//
-//	this.x = sx;
-//	this.y = sy;
-//	this.z = sz;
-//
-//	return this;
-//
-// }
-//
-// setFromMatrixColumn( m, index ) {
-//
-//	return this.fromArray( m.elements, index * 4 );
-//
-// }
-//
-// setFromMatrix3Column( m, index ) {
-//
-//	return this.fromArray( m.elements, index * 3 );
-//
-// }
-//
-// setFromEuler( e ) {
-//
-//	this.x = e._x;
-//	this.y = e._y;
-//	this.z = e._z;
-//
-//	return this;
-//
-// }
-//
+func (v *Vector3) SetFromMatrixPosition(m *Matrix4) *Vector3 {
+	v.X, v.Y, v.Z = m.N[12], m.N[13], m.N[14]
+	return v
+}
+
+func (v *Vector3) SetFromMatrixScale(m *Matrix4) *Vector3 {
+	sx := v.SetFromMatrixColumn(m, 0).Length()
+	sy := v.SetFromMatrixColumn(m, 1).Length()
+	sz := v.SetFromMatrixColumn(m, 2).Length()
+
+	v.X, v.Y, v.Z = sx, sy, sz
+
+	return v
+}
+
+func (v *Vector3) SetFromMatrixColumn(m *Matrix4, index int) *Vector3 {
+	v.X, v.Y, v.Z = m.N[index*4], m.N[index*4+1], m.N[index*4+2]
+	return v
+}
+
+func (v *Vector3) SetFromMatrix3Column(m *Matrix3, index int) *Vector3 {
+	v.X, v.Y, v.Z = m.N[index*3], m.N[index*3+1], m.N[index*3+2]
+	return v
+}
+
+func (v *Vector3) SetFromEuler(e *Euler) *Vector3 {
+	v.X, v.Y, v.Z = e.x, e.y, e.z
+	return v
+}
 
 func (v *Vector3) SetFromColor(color *Color) *Vector3 {
 	v.X, v.Y, v.Z = color.R, color.G, color.B
@@ -571,3 +509,4 @@ func (v *Vector3) Append(buf []float64) []float64 {
 }
 
 var _vector = NewVector3Defaults()
+var _quaternion = NewQuaternionDefaults()
