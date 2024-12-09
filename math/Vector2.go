@@ -1,5 +1,11 @@
 package math
 
+import (
+	"github.com/MaxKlaxxMiner/three/utils"
+	"math"
+	"strconv"
+)
+
 type Vector2 struct {
 	X, Y float64
 }
@@ -14,468 +20,303 @@ func NewVector2(x, y float64) *Vector2 {
 
 func (v *Vector2) IsVector2() bool { return v != nil }
 
-// 	get width() {
-//
-// 		return this.x;
-//
-// 	}
-//
-// 	set width( value ) {
-//
-// 		this.x = value;
-//
-// 	}
-//
-// 	get height() {
-//
-// 		return this.y;
-//
-// 	}
-//
-// 	set height( value ) {
-//
-// 		this.y = value;
-//
-// 	}
-//
-// 	set( x, y ) {
-//
-// 		this.x = x;
-// 		this.y = y;
-//
-// 		return this;
-//
-// 	}
-//
-// 	setScalar( scalar ) {
-//
-// 		this.x = scalar;
-// 		this.y = scalar;
-//
-// 		return this;
-//
-// 	}
-//
-// 	setX( x ) {
-//
-// 		this.x = x;
-//
-// 		return this;
-//
-// 	}
-//
-// 	setY( y ) {
-//
-// 		this.y = y;
-//
-// 		return this;
-//
-// 	}
-//
-// 	setComponent( index, value ) {
-//
-// 		switch ( index ) {
-//
-// 			case 0: this.x = value; break;
-// 			case 1: this.y = value; break;
-// 			default: throw new Error( 'index is out of range: ' + index );
-//
-// 		}
-//
-// 		return this;
-//
-// 	}
-//
-// 	getComponent( index ) {
-//
-// 		switch ( index ) {
-//
-// 			case 0: return this.x;
-// 			case 1: return this.y;
-// 			default: throw new Error( 'index is out of range: ' + index );
-//
-// 		}
-//
-// 	}
-//
-// 	clone() {
-//
-// 		return new this.constructor( this.x, this.y );
-//
-// 	}
-//
-// 	copy( v ) {
-//
-// 		this.x = v.x;
-// 		this.y = v.y;
-//
-// 		return this;
-//
-// 	}
-//
-// 	add( v ) {
-//
-// 		this.x += v.x;
-// 		this.y += v.y;
-//
-// 		return this;
-//
-// 	}
-//
-// 	addScalar( s ) {
-//
-// 		this.x += s;
-// 		this.y += s;
-//
-// 		return this;
-//
-// 	}
-//
-// 	addVectors( a, b ) {
-//
-// 		this.x = a.x + b.x;
-// 		this.y = a.y + b.y;
-//
-// 		return this;
-//
-// 	}
-//
-// 	addScaledVector( v, s ) {
-//
-// 		this.x += v.x * s;
-// 		this.y += v.y * s;
-//
-// 		return this;
-//
-// 	}
-//
-// 	sub( v ) {
-//
-// 		this.x -= v.x;
-// 		this.y -= v.y;
-//
-// 		return this;
-//
-// 	}
-//
-// 	subScalar( s ) {
-//
-// 		this.x -= s;
-// 		this.y -= s;
-//
-// 		return this;
-//
-// 	}
-//
-// 	subVectors( a, b ) {
-//
-// 		this.x = a.x - b.x;
-// 		this.y = a.y - b.y;
-//
-// 		return this;
-//
-// 	}
-//
-// 	multiply( v ) {
-//
-// 		this.x *= v.x;
-// 		this.y *= v.y;
-//
-// 		return this;
-//
-// 	}
-//
-// 	multiplyScalar( scalar ) {
-//
-// 		this.x *= scalar;
-// 		this.y *= scalar;
-//
-// 		return this;
-//
-// 	}
-//
-// 	divide( v ) {
-//
-// 		this.x /= v.x;
-// 		this.y /= v.y;
-//
-// 		return this;
-//
-// 	}
-//
-// 	divideScalar( scalar ) {
-//
-// 		return this.multiplyScalar( 1 / scalar );
-//
-// 	}
-//
-// 	applyMatrix3( m ) {
-//
-// 		const x = this.x, y = this.y;
-// 		const e = m.elements;
-//
-// 		this.x = e[ 0 ] * x + e[ 3 ] * y + e[ 6 ];
-// 		this.y = e[ 1 ] * x + e[ 4 ] * y + e[ 7 ];
-//
-// 		return this;
-//
-// 	}
-//
-// 	min( v ) {
-//
-// 		this.x = Math.min( this.x, v.x );
-// 		this.y = Math.min( this.y, v.y );
-//
-// 		return this;
-//
-// 	}
-//
-// 	max( v ) {
-//
-// 		this.x = Math.max( this.x, v.x );
-// 		this.y = Math.max( this.y, v.y );
-//
-// 		return this;
-//
-// 	}
-//
-// 	clamp( min, max ) {
-//
-// 		// assumes min < max, componentwise
-//
-// 		this.x = clamp( this.x, min.x, max.x );
-// 		this.y = clamp( this.y, min.y, max.y );
-//
-// 		return this;
-//
-// 	}
-//
-// 	clampScalar( minVal, maxVal ) {
-//
-// 		this.x = clamp( this.x, minVal, maxVal );
-// 		this.y = clamp( this.y, minVal, maxVal );
-//
-// 		return this;
-//
-// 	}
-//
-// 	clampLength( min, max ) {
-//
-// 		const length = this.length();
-//
-// 		return this.divideScalar( length || 1 ).multiplyScalar( clamp( length, min, max ) );
-//
-// 	}
-//
-// 	floor() {
-//
-// 		this.x = Math.floor( this.x );
-// 		this.y = Math.floor( this.y );
-//
-// 		return this;
-//
-// 	}
-//
-// 	ceil() {
-//
-// 		this.x = Math.ceil( this.x );
-// 		this.y = Math.ceil( this.y );
-//
-// 		return this;
-//
-// 	}
-//
-// 	round() {
-//
-// 		this.x = Math.round( this.x );
-// 		this.y = Math.round( this.y );
-//
-// 		return this;
-//
-// 	}
-//
-// 	roundToZero() {
-//
-// 		this.x = Math.trunc( this.x );
-// 		this.y = Math.trunc( this.y );
-//
-// 		return this;
-//
-// 	}
-//
-// 	negate() {
-//
-// 		this.x = - this.x;
-// 		this.y = - this.y;
-//
-// 		return this;
-//
-// 	}
-//
-// 	dot( v ) {
-//
-// 		return this.x * v.x + this.y * v.y;
-//
-// 	}
-//
-// 	cross( v ) {
-//
-// 		return this.x * v.y - this.y * v.x;
-//
-// 	}
-//
-// 	lengthSq() {
-//
-// 		return this.x * this.x + this.y * this.y;
-//
-// 	}
-//
-// 	length() {
-//
-// 		return Math.sqrt( this.x * this.x + this.y * this.y );
-//
-// 	}
-//
-// 	manhattanLength() {
-//
-// 		return Math.abs( this.x ) + Math.abs( this.y );
-//
-// 	}
-//
-// 	normalize() {
-//
-// 		return this.divideScalar( this.length() || 1 );
-//
-// 	}
-//
-// 	angle() {
-//
-// 		// computes the angle in radians with respect to the positive x-axis
-//
-// 		const angle = Math.atan2( - this.y, - this.x ) + Math.PI;
-//
-// 		return angle;
-//
-// 	}
-//
-// 	angleTo( v ) {
-//
-// 		const denominator = Math.sqrt( this.lengthSq() * v.lengthSq() );
-//
-// 		if ( denominator === 0 ) return Math.PI / 2;
-//
-// 		const theta = this.dot( v ) / denominator;
-//
-// 		// clamp, to handle numerical problems
-//
-// 		return Math.acos( clamp( theta, - 1, 1 ) );
-//
-// 	}
-//
-// 	distanceTo( v ) {
-//
-// 		return Math.sqrt( this.distanceToSquared( v ) );
-//
-// 	}
-//
-// 	distanceToSquared( v ) {
-//
-// 		const dx = this.x - v.x, dy = this.y - v.y;
-// 		return dx * dx + dy * dy;
-//
-// 	}
-//
-// 	manhattanDistanceTo( v ) {
-//
-// 		return Math.abs( this.x - v.x ) + Math.abs( this.y - v.y );
-//
-// 	}
-//
-// 	setLength( length ) {
-//
-// 		return this.normalize().multiplyScalar( length );
-//
-// 	}
-//
-// 	lerp( v, alpha ) {
-//
-// 		this.x += ( v.x - this.x ) * alpha;
-// 		this.y += ( v.y - this.y ) * alpha;
-//
-// 		return this;
-//
-// 	}
-//
-// 	lerpVectors( v1, v2, alpha ) {
-//
-// 		this.x = v1.x + ( v2.x - v1.x ) * alpha;
-// 		this.y = v1.y + ( v2.y - v1.y ) * alpha;
-//
-// 		return this;
-//
-// 	}
-//
-// 	equals( v ) {
-//
-// 		return ( ( v.x === this.x ) && ( v.y === this.y ) );
-//
-// 	}
-//
-// 	fromArray( array, offset = 0 ) {
-//
-// 		this.x = array[ offset ];
-// 		this.y = array[ offset + 1 ];
-//
-// 		return this;
-//
-// 	}
-//
-// 	toArray( array = [], offset = 0 ) {
-//
-// 		array[ offset ] = this.x;
-// 		array[ offset + 1 ] = this.y;
-//
-// 		return array;
-//
-// 	}
-//
+func (v *Vector2) GetWidth() float64       { return v.X }
+func (v *Vector2) SetWidth(value float64)  { v.X = value }
+func (v *Vector2) GetHeight() float64      { return v.Y }
+func (v *Vector2) SetHeight(value float64) { v.Y = value }
+
+func (v *Vector2) Set(x, y float64) *Vector2 {
+	v.X, v.Y = x, y
+	return v
+}
+
+func (v *Vector2) SetScalar(scalar float64) *Vector2 {
+	v.X, v.Y = scalar, scalar
+	return v
+}
+
+func (v *Vector2) SetX(x float64) *Vector2 {
+	v.X = x
+	return v
+}
+
+func (v *Vector2) SetY(y float64) *Vector2 {
+	v.Y = y
+	return v
+}
+
+func (v *Vector2) SetComponent(index int, value float64) *Vector2 {
+	switch index {
+	case 0, 'x', 'X':
+		v.X = value
+	case 1, 'y', 'Y':
+		v.Y = value
+	default:
+		panic("index is out of range: " + strconv.Itoa(index))
+	}
+	return v
+}
+
+func (v *Vector2) GetComponent(index int) float64 {
+	switch index {
+	case 0, 'x', 'X':
+		return v.X
+	case 1, 'y', 'Y':
+		return v.Y
+	default:
+		panic("index is out of range: " + strconv.Itoa(index))
+	}
+}
+
+func (v *Vector2) Clone() *Vector2 {
+	return NewVector2(v.X, v.Y)
+}
+
+func (v *Vector2) Copy(a *Vector2) *Vector2 {
+	v.X, v.Y = a.X, a.Y
+	return v
+}
+
+func (v *Vector2) Add(a *Vector2) *Vector2 {
+	v.X += a.X
+	v.Y += a.Y
+	return v
+}
+
+func (v *Vector2) AddScalar(s float64) *Vector2 {
+	v.X += s
+	v.Y += s
+	return v
+}
+
+func (v *Vector2) AddVectors(a, b *Vector2) *Vector2 {
+	return v.Set(a.X+b.X, a.Y+b.Y)
+}
+
+func (v *Vector2) AddScaledVector(a *Vector2, s float64) *Vector2 {
+	v.X += a.X * s
+	v.Y += a.Y * s
+	return v
+}
+
+func (v *Vector2) Sub(a *Vector2) *Vector2 {
+	v.X -= a.X
+	v.Y -= a.Y
+	return v
+}
+
+func (v *Vector2) SubScalar(s float64) *Vector2 {
+	v.X -= s
+	v.Y -= s
+	return v
+}
+
+func (v *Vector2) SubVectors(a, b *Vector2) *Vector2 {
+	return v.Set(a.X-b.X, a.Y-b.Y)
+}
+
+func (v *Vector2) Multiply(a *Vector2) *Vector2 {
+	v.X *= a.X
+	v.Y *= a.Y
+	return v
+}
+
+func (v *Vector2) MultiplyScalar(s float64) *Vector2 {
+	v.X *= s
+	v.Y *= s
+	return v
+}
+
+func (v *Vector2) Divide(a *Vector2) *Vector2 {
+	v.X /= a.X
+	v.Y /= a.Y
+	return v
+}
+
+func (v *Vector2) DivideScalar(s float64) *Vector2 {
+	return v.MultiplyScalar(1 / s)
+}
+
+func (v *Vector2) ApplyMatrix3(m *Matrix3) *Vector2 {
+	x, y := v.X, v.Y
+	v.X = m.N[0]*x + m.N[3]*y + m.N[6]
+	v.Y = m.N[1]*x + m.N[4]*y + m.N[7]
+	return v
+}
+
+func (v *Vector2) Min(a *Vector2) *Vector2 {
+	v.X = math.Min(v.X, a.X)
+	v.Y = math.Min(v.Y, a.Y)
+	return v
+}
+
+func (v *Vector2) Max(a *Vector2) *Vector2 {
+	v.X = math.Max(v.X, a.X)
+	v.Y = math.Max(v.Y, a.Y)
+	return v
+}
+
+func (v *Vector2) Clamp(min, max *Vector2) *Vector2 {
+	// assumes min < max, componentwise
+	v.X = Clamp(v.X, min.X, max.X)
+	v.Y = Clamp(v.Y, min.Y, max.Y)
+	return v
+}
+
+func (v *Vector2) ClampScalar(minVal, maxVal float64) *Vector2 {
+	v.X = Clamp(v.X, minVal, maxVal)
+	v.Y = Clamp(v.Y, minVal, maxVal)
+	return v
+}
+
+func (v *Vector2) ClampLength(minVal, maxVal float64) *Vector2 {
+	length := v.Length()
+	return v.DivideScalar(utils.If(length > 0, length, 1)).MultiplyScalar(Clamp(length, minVal, maxVal))
+}
+
+func (v *Vector2) Floor() *Vector2 {
+	v.X = math.Floor(v.X)
+	v.Y = math.Floor(v.Y)
+	return v
+}
+
+func (v *Vector2) Ceil() *Vector2 {
+	v.X = math.Ceil(v.X)
+	v.Y = math.Ceil(v.Y)
+	return v
+}
+
+func (v *Vector2) Round() *Vector2 {
+	v.X = math.Round(v.X)
+	v.Y = math.Round(v.Y)
+	return v
+}
+
+func (v *Vector2) RoundToZero() *Vector2 {
+	v.X = math.Trunc(v.X)
+	v.Y = math.Trunc(v.Y)
+	return v
+}
+
+func (v *Vector2) Negate() *Vector2 {
+	v.X = -v.X
+	v.Y = -v.Y
+	return v
+}
+
+func (v *Vector2) Dot(a *Vector2) float64 {
+	return v.X*a.X + v.Y*a.Y
+}
+
+func (v *Vector2) Cross(a *Vector2) float64 {
+	return v.X*a.Y - v.Y*a.X
+}
+
+func (v *Vector2) LengthSq() float64 {
+	return v.X*v.X + v.Y*v.Y
+}
+
+func (v *Vector2) Length() float64 {
+	return math.Sqrt(v.LengthSq())
+}
+
+func (v *Vector2) LengthOrOne() float64 {
+	if l := v.Length(); l > 0 {
+		return l
+	}
+	return 1
+}
+
+func (v *Vector2) ManhattanLength() float64 {
+	return math.Abs(v.X) + math.Abs(v.Y)
+}
+
+func (v *Vector2) Normalize() *Vector2 {
+	return v.DivideScalar(v.LengthOrOne())
+}
+
+func (v *Vector2) Angle() float64 {
+	// computes the angle in radians with respect to the positive x-axis
+	return math.Atan2(-v.Y, -v.X) + math.Pi
+}
+
+func (v *Vector2) AngleTo(a *Vector2) float64 {
+	denominator := math.Sqrt(v.LengthSq() * a.LengthSq())
+	if denominator == 0 {
+		return math.Pi / 2
+	}
+	theta := v.Dot(v) / denominator
+
+	// clamp, to handle numerical problems
+	return math.Acos(Clamp(theta, -1, 1))
+}
+
+func (v *Vector2) DistanceTo(a *Vector2) float64 {
+	return math.Sqrt(v.DistanceToSquared(a))
+}
+
+func (v *Vector2) DistanceToSquared(a *Vector2) float64 {
+	dx, dy := v.X-a.X, v.Y-a.Y
+	return dx*dx + dy*dy
+}
+
+func (v *Vector2) ManhattanDistanceTo(a *Vector2) float64 {
+	return math.Abs(v.X-a.X) + math.Abs(v.Y-a.Y)
+}
+
+func (v *Vector2) SetLength(length float64) *Vector2 {
+	return v.Normalize().MultiplyScalar(length)
+}
+
+func (v *Vector2) Lerp(a *Vector2, alpha float64) *Vector2 {
+	v.X += (a.X - v.X) * alpha
+	v.Y += (a.Y - v.Y) * alpha
+	return v
+}
+
+func (v *Vector2) LerpVectors(a, b *Vector2, alpha float64) *Vector2 {
+	v.X = a.X + (b.X-a.X)*alpha
+	v.Y = a.Y + (b.Y-a.Y)*alpha
+	return v
+}
+
+func (v *Vector2) Equals(a *Vector2) bool {
+	return *v == *a
+}
+
+func (v *Vector2) FromArray(array []float64) *Vector2 {
+	_ = array[1]
+	v.X, v.Y = array[0], array[1]
+	return v
+}
+
+func (v *Vector2) ToArray(array []float64) []float64 {
+	_ = array[1]
+	array[0], array[1] = v.X, v.Y
+	return array
+}
+
+//todo
 // 	fromBufferAttribute( attribute, index ) {
-//
 // 		this.x = attribute.getX( index );
 // 		this.y = attribute.getY( index );
-//
 // 		return this;
-//
 // 	}
-//
-// 	rotateAround( center, angle ) {
-//
-// 		const c = Math.cos( angle ), s = Math.sin( angle );
-//
-// 		const x = this.x - center.x;
-// 		const y = this.y - center.y;
-//
-// 		this.x = x * c - y * s + center.x;
-// 		this.y = x * s + y * c + center.y;
-//
-// 		return this;
-//
-// 	}
-//
-// 	random() {
-//
-// 		this.x = Math.random();
-// 		this.y = Math.random();
-//
-// 		return this;
-//
-// 	}
-//
-// 	*[ Symbol.iterator ]() {
-//
-// 		yield this.x;
-// 		yield this.y;
-//
-// 	}
-//
-// }
+
+func (v *Vector2) RotateAround(center *Vector2, angle float64) *Vector2 {
+	c, s := math.Cos(angle), math.Sin(angle)
+	x, y := v.X-center.X, v.Y-center.Y
+	v.X = x*c - y*s + center.X
+	v.Y = x*s + y*c + center.Y
+	return v
+}
+
+func (v *Vector2) Random() *Vector2 {
+	v.X = RandomFloat()
+	v.Y = RandomFloat()
+	return v
+}
+
+func (v *Vector2) Append(buf []float64) []float64 {
+	return append(buf, v.X, v.Y)
+}

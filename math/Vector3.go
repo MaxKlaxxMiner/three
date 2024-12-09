@@ -463,17 +463,13 @@ func (v *Vector3) Equals(a *Vector3) bool {
 
 func (v *Vector3) FromArray(array []float64) *Vector3 {
 	_ = array[2]
-	v.X = array[0]
-	v.Y = array[1]
-	v.Z = array[2]
+	v.X, v.Y, v.Z = array[0], array[1], array[2]
 	return v
 }
 
 func (v *Vector3) ToArray(array []float64) []float64 {
 	_ = array[2]
-	array[0] = v.X
-	array[1] = v.Y
-	array[2] = v.Z
+	array[0], array[1], array[2] = v.X, v.Y, v.Z
 	return array
 }
 

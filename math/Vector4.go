@@ -435,19 +435,13 @@ func (v *Vector4) Equals(a *Vector4) bool {
 
 func (v *Vector4) FromArray(array []float64) *Vector4 {
 	_ = array[3]
-	v.X = array[0]
-	v.Y = array[1]
-	v.Z = array[2]
-	v.W = array[3]
+	v.X, v.Y, v.Z, v.W = array[0], array[1], array[2], array[3]
 	return v
 }
 
 func (v *Vector4) ToArray(array []float64) []float64 {
 	_ = array[3]
-	array[0] = v.X
-	array[1] = v.Y
-	array[2] = v.Z
-	array[3] = v.W
+	array[0], array[1], array[2], array[3] = v.X, v.Y, v.Z, v.W
 	return array
 }
 

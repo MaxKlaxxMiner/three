@@ -9,7 +9,7 @@
 [ 8%] math/MathUtils
 [28%] math/Matrix4 (243 / 858)
 [98%] math/Quaternion
-[ 3%] math/Vector2
+[98%] math/Vector2
 [99%] math/Vector3
 [98%] math/Vector4
 [ 5%] objects/Mesh
