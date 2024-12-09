@@ -174,20 +174,14 @@ func (v *Vector4) MultiplyVectors(a, b *Vector4) *Vector4 {
 	return v
 }
 
-//todo
-// 	applyMatrix4( m ) {
-//
-// 		const x = this.x, y = this.y, z = this.z, w = this.w;
-// 		const e = m.elements;
-//
-// 		this.x = e[ 0 ] * x + e[ 4 ] * y + e[ 8 ] * z + e[ 12 ] * w;
-// 		this.y = e[ 1 ] * x + e[ 5 ] * y + e[ 9 ] * z + e[ 13 ] * w;
-// 		this.z = e[ 2 ] * x + e[ 6 ] * y + e[ 10 ] * z + e[ 14 ] * w;
-// 		this.w = e[ 3 ] * x + e[ 7 ] * y + e[ 11 ] * z + e[ 15 ] * w;
-//
-// 		return this;
-//
-// 	}
+func (v *Vector4) ApplyMatrix4(m *Matrix4) *Vector4 {
+	x, y, z, w := v.X, v.Y, v.Z, v.W
+	v.X = m.N[0]*x + m.N[4]*y + m.N[8]*z + m.N[12]*w
+	v.Y = m.N[1]*x + m.N[5]*y + m.N[9]*z + m.N[13]*w
+	v.Z = m.N[2]*x + m.N[6]*y + m.N[10]*z + m.N[14]*w
+	v.W = m.N[3]*x + m.N[7]*y + m.N[11]*z + m.N[15]*w
+	return v
+}
 
 func (v *Vector4) Divide(a *Vector4) *Vector4 {
 	v.X /= a.X
@@ -201,177 +195,115 @@ func (v *Vector4) DivideScalar(s float64) *Vector4 {
 	return v.MultiplyScalar(1 / s)
 }
 
-//todo
-// 	setAxisAngleFromQuaternion( q ) {
-//
-// 		// http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToAngle/index.htm
-//
-// 		// q is assumed to be normalized
-//
-// 		this.w = 2 * Math.acos( q.w );
-//
-// 		const s = Math.sqrt( 1 - q.w * q.w );
-//
-// 		if ( s < 0.0001 ) {
-//
-// 			this.x = 1;
-// 			this.y = 0;
-// 			this.z = 0;
-//
-// 		} else {
-//
-// 			this.x = q.x / s;
-// 			this.y = q.y / s;
-// 			this.z = q.z / s;
-//
-// 		}
-//
-// 		return this;
-//
-// 	}
-//
-// 	setAxisAngleFromRotationMatrix( m ) {
-//
-// 		// http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToAngle/index.htm
-//
-// 		// assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)
-//
-// 		let angle, x, y, z; // variables for result
-// 		const epsilon = 0.01,		// margin to allow for rounding errors
-// 			epsilon2 = 0.1,		// margin to distinguish between 0 and 180 degrees
-//
-// 			te = m.elements,
-//
-// 			m11 = te[ 0 ], m12 = te[ 4 ], m13 = te[ 8 ],
-// 			m21 = te[ 1 ], m22 = te[ 5 ], m23 = te[ 9 ],
-// 			m31 = te[ 2 ], m32 = te[ 6 ], m33 = te[ 10 ];
-//
-// 		if ( ( Math.abs( m12 - m21 ) < epsilon ) &&
-// 		     ( Math.abs( m13 - m31 ) < epsilon ) &&
-// 		     ( Math.abs( m23 - m32 ) < epsilon ) ) {
-//
-// 			// singularity found
-// 			// first check for identity matrix which must have +1 for all terms
-// 			// in leading diagonal and zero in other terms
-//
-// 			if ( ( Math.abs( m12 + m21 ) < epsilon2 ) &&
-// 			     ( Math.abs( m13 + m31 ) < epsilon2 ) &&
-// 			     ( Math.abs( m23 + m32 ) < epsilon2 ) &&
-// 			     ( Math.abs( m11 + m22 + m33 - 3 ) < epsilon2 ) ) {
-//
-// 				// this singularity is identity matrix so angle = 0
-//
-// 				this.set( 1, 0, 0, 0 );
-//
-// 				return this; // zero angle, arbitrary axis
-//
-// 			}
-//
-// 			// otherwise this singularity is angle = 180
-//
-// 			angle = Math.PI;
-//
-// 			const xx = ( m11 + 1 ) / 2;
-// 			const yy = ( m22 + 1 ) / 2;
-// 			const zz = ( m33 + 1 ) / 2;
-// 			const xy = ( m12 + m21 ) / 4;
-// 			const xz = ( m13 + m31 ) / 4;
-// 			const yz = ( m23 + m32 ) / 4;
-//
-// 			if ( ( xx > yy ) && ( xx > zz ) ) {
-//
-// 				// m11 is the largest diagonal term
-//
-// 				if ( xx < epsilon ) {
-//
-// 					x = 0;
-// 					y = 0.707106781;
-// 					z = 0.707106781;
-//
-// 				} else {
-//
-// 					x = Math.sqrt( xx );
-// 					y = xy / x;
-// 					z = xz / x;
-//
-// 				}
-//
-// 			} else if ( yy > zz ) {
-//
-// 				// m22 is the largest diagonal term
-//
-// 				if ( yy < epsilon ) {
-//
-// 					x = 0.707106781;
-// 					y = 0;
-// 					z = 0.707106781;
-//
-// 				} else {
-//
-// 					y = Math.sqrt( yy );
-// 					x = xy / y;
-// 					z = yz / y;
-//
-// 				}
-//
-// 			} else {
-//
-// 				// m33 is the largest diagonal term so base result on this
-//
-// 				if ( zz < epsilon ) {
-//
-// 					x = 0.707106781;
-// 					y = 0.707106781;
-// 					z = 0;
-//
-// 				} else {
-//
-// 					z = Math.sqrt( zz );
-// 					x = xz / z;
-// 					y = yz / z;
-//
-// 				}
-//
-// 			}
-//
-// 			this.set( x, y, z, angle );
-//
-// 			return this; // return 180 deg rotation
-//
-// 		}
-//
-// 		// as we have reached here there are no singularities so we can handle normally
-//
-// 		let s = Math.sqrt( ( m32 - m23 ) * ( m32 - m23 ) +
-// 			( m13 - m31 ) * ( m13 - m31 ) +
-// 			( m21 - m12 ) * ( m21 - m12 ) ); // used to normalize
-//
-// 		if ( Math.abs( s ) < 0.001 ) s = 1;
-//
-// 		// prevent divide by zero, should not happen if matrix is orthogonal and should be
-// 		// caught by singularity test above, but I've left it in just in case
-//
-// 		this.x = ( m32 - m23 ) / s;
-// 		this.y = ( m13 - m31 ) / s;
-// 		this.z = ( m21 - m12 ) / s;
-// 		this.w = Math.acos( ( m11 + m22 + m33 - 1 ) / 2 );
-//
-// 		return this;
-//
-// 	}
-//
-// 	setFromMatrixPosition( m ) {
-//
-// 		const e = m.elements;
-//
-// 		this.x = e[ 12 ];
-// 		this.y = e[ 13 ];
-// 		this.z = e[ 14 ];
-// 		this.w = e[ 15 ];
-//
-// 		return this;
-//
-// 	}
+func (v *Vector4) SetAxisAngleFromQuaternion(q *Quaternion) *Vector4 {
+	// http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToAngle/index.htm
+
+	// q is assumed to be normalized
+	v.W = 2 * math.Acos(q.w)
+
+	s := math.Sqrt(1 - q.w*q.w)
+	if s < 0.0001 {
+		v.X, v.Y, v.Z = 1, 0, 0
+	} else {
+		v.X, v.Y, v.Z = q.x/s, q.y/s, q.z/s
+	}
+	return v
+}
+
+func (v *Vector4) SetAxisAngleFromRotationMatrix(m *Matrix4) *Vector4 {
+	// http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToAngle/index.htm
+
+	// assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)
+
+	const epsilon = 0.01 // margin to allow for rounding errors
+	const epsilon2 = 0.1 // margin to distinguish between 0 and 180 degrees
+
+	m11, m12, m13 := m.N[0], m.N[4], m.N[8]
+	m21, m22, m23 := m.N[1], m.N[5], m.N[9]
+	m31, m32, m33 := m.N[2], m.N[6], m.N[10]
+
+	if math.Abs(m12-m21) < epsilon && math.Abs(m13-m31) < epsilon && math.Abs(m23-m32) < epsilon {
+		var angle, x, y, z float64 // variables for result
+
+		// singularity found
+		// first check for identity matrix which must have +1 for all terms
+		// in leading diagonal and zero in other terms
+
+		if math.Abs(m12+m21) < epsilon2 && math.Abs(m13+m31) < epsilon2 && math.Abs(m23+m32) < epsilon2 && math.Abs(m11+m22+m33-3) < epsilon2 {
+			// this singularity is identity matrix so angle = 0
+			return v.Set(1, 0, 0, 0) // zero angle, arbitrary axis
+		}
+
+		// otherwise this singularity is angle = 180
+		angle = math.Pi
+
+		xx := (m11 + 1) / 2
+		yy := (m22 + 1) / 2
+		zz := (m33 + 1) / 2
+		xy := (m12 + m21) / 4
+		xz := (m13 + m31) / 4
+		yz := (m23 + m32) / 4
+
+		if xx > yy && xx > zz {
+			// m11 is the largest diagonal term
+			if xx < epsilon {
+				x = 0
+				y = 0.707106781
+				z = 0.707106781
+			} else {
+				x = math.Sqrt(xx)
+				y = xy / x
+				z = xz / x
+			}
+		} else if yy > zz {
+			// m22 is the largest diagonal term
+			if yy < epsilon {
+				x = 0.707106781
+				y = 0
+				z = 0.707106781
+			} else {
+				y = math.Sqrt(yy)
+				x = xy / y
+				z = yz / y
+			}
+		} else {
+			// m33 is the largest diagonal term so base result on this
+			if zz < epsilon {
+				x = 0.707106781
+				y = 0.707106781
+				z = 0
+			} else {
+				z = math.Sqrt(zz)
+				x = xz / z
+				y = yz / z
+			}
+		}
+		return v.Set(x, y, z, angle) // return 180 deg rotation
+	}
+
+	// as we have reached here there are no singularities so we can handle normally
+
+	s := math.Sqrt((m32-m23)*(m32-m23) + (m13-m31)*(m13-m31) + (m21-m12)*(m21-m12)) // used to normalize
+
+	if math.Abs(s) < 0.001 {
+		s = 1
+	}
+
+	// prevent divide by zero, should not happen if matrix is orthogonal and should be
+	// caught by singularity test above, but I've left it in just in case
+
+	v.X = (m32 - m23) / s
+	v.Y = (m13 - m31) / s
+	v.Z = (m21 - m12) / s
+	v.W = math.Acos((m11 + m22 + m33 - 1) / 2)
+
+	return v
+}
+
+func (v *Vector4) SetFromMatrixPosition(m *Matrix4) *Vector4 {
+	v.X, v.Y, v.Z, v.W = m.N[12], m.N[13], m.N[14], m.N[15]
+	return v
+}
 
 func (v *Vector4) Min(a *Vector4) *Vector4 {
 	v.X = math.Min(v.X, a.X)
@@ -521,14 +453,11 @@ func (v *Vector4) ToArray(array []float64) []float64 {
 
 //todo
 // 	fromBufferAttribute( attribute, index ) {
-//
 // 		this.x = attribute.getX( index );
 // 		this.y = attribute.getY( index );
 // 		this.z = attribute.getZ( index );
 // 		this.w = attribute.getW( index );
-//
 // 		return this;
-//
 // 	}
 
 func (v *Vector4) Random() *Vector4 {

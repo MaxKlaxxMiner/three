@@ -11,7 +11,7 @@
 [28%] math/Matrix4 (243 / 858)
 [98%] math/Quaternion
 [99%] math/Vector3
-[63%] math/Vector4
+[98%] math/Vector4
 [ 5%] objects/Mesh
 [22%] renderers/webgl/WebGLCapabilities
 [ 9%] renderers/webgl/WebGLState (126 / 1352)
