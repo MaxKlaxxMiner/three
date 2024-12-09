@@ -7,7 +7,6 @@
 [27%] materials/MeshBasicMaterial
 [ 5%] math/Color
 [ 8%] math/MathUtils
-[28%] math/Matrix4 (243 / 858)
 [98%] math/Quaternion
 [98%] math/Vector2
 [99%] math/Vector3
@@ -28,7 +27,9 @@
 [100%] demos/demo1
 [100%] math/Cylindrical
 [100%] math/Euler
+[100%] math/Matrix2
 [100%] math/Matrix3
+[100%] math/Matrix4
 [100%] math/Spherical
 [100%] renderers/webgl/WebGLAnimation
 [100%] renderers/webgl/WebGLInfo

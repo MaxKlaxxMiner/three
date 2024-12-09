@@ -1,5 +1,7 @@
 package math
 
+import "math"
+
 type Matrix4 struct {
 	N [4 * 4]float64
 }
@@ -118,191 +120,137 @@ func (m *Matrix4) ExtractRotation(v *Matrix4) *Matrix4 {
 	return m
 }
 
-//todo
-// 	makeRotationFromEuler( euler ) {
-//
-// 		const te = this.elements;
-//
-// 		const x = euler.x, y = euler.y, z = euler.z;
-// 		const a = Math.cos( x ), b = Math.sin( x );
-// 		const c = Math.cos( y ), d = Math.sin( y );
-// 		const e = Math.cos( z ), f = Math.sin( z );
-//
-// 		if ( euler.order === 'XYZ' ) {
-//
-// 			const ae = a * e, af = a * f, be = b * e, bf = b * f;
-//
-// 			te[ 0 ] = c * e;
-// 			te[ 4 ] = - c * f;
-// 			te[ 8 ] = d;
-//
-// 			te[ 1 ] = af + be * d;
-// 			te[ 5 ] = ae - bf * d;
-// 			te[ 9 ] = - b * c;
-//
-// 			te[ 2 ] = bf - ae * d;
-// 			te[ 6 ] = be + af * d;
-// 			te[ 10 ] = a * c;
-//
-// 		} else if ( euler.order === 'YXZ' ) {
-//
-// 			const ce = c * e, cf = c * f, de = d * e, df = d * f;
-//
-// 			te[ 0 ] = ce + df * b;
-// 			te[ 4 ] = de * b - cf;
-// 			te[ 8 ] = a * d;
-//
-// 			te[ 1 ] = a * f;
-// 			te[ 5 ] = a * e;
-// 			te[ 9 ] = - b;
-//
-// 			te[ 2 ] = cf * b - de;
-// 			te[ 6 ] = df + ce * b;
-// 			te[ 10 ] = a * c;
-//
-// 		} else if ( euler.order === 'ZXY' ) {
-//
-// 			const ce = c * e, cf = c * f, de = d * e, df = d * f;
-//
-// 			te[ 0 ] = ce - df * b;
-// 			te[ 4 ] = - a * f;
-// 			te[ 8 ] = de + cf * b;
-//
-// 			te[ 1 ] = cf + de * b;
-// 			te[ 5 ] = a * e;
-// 			te[ 9 ] = df - ce * b;
-//
-// 			te[ 2 ] = - a * d;
-// 			te[ 6 ] = b;
-// 			te[ 10 ] = a * c;
-//
-// 		} else if ( euler.order === 'ZYX' ) {
-//
-// 			const ae = a * e, af = a * f, be = b * e, bf = b * f;
-//
-// 			te[ 0 ] = c * e;
-// 			te[ 4 ] = be * d - af;
-// 			te[ 8 ] = ae * d + bf;
-//
-// 			te[ 1 ] = c * f;
-// 			te[ 5 ] = bf * d + ae;
-// 			te[ 9 ] = af * d - be;
-//
-// 			te[ 2 ] = - d;
-// 			te[ 6 ] = b * c;
-// 			te[ 10 ] = a * c;
-//
-// 		} else if ( euler.order === 'YZX' ) {
-//
-// 			const ac = a * c, ad = a * d, bc = b * c, bd = b * d;
-//
-// 			te[ 0 ] = c * e;
-// 			te[ 4 ] = bd - ac * f;
-// 			te[ 8 ] = bc * f + ad;
-//
-// 			te[ 1 ] = f;
-// 			te[ 5 ] = a * e;
-// 			te[ 9 ] = - b * e;
-//
-// 			te[ 2 ] = - d * e;
-// 			te[ 6 ] = ad * f + bc;
-// 			te[ 10 ] = ac - bd * f;
-//
-// 		} else if ( euler.order === 'XZY' ) {
-//
-// 			const ac = a * c, ad = a * d, bc = b * c, bd = b * d;
-//
-// 			te[ 0 ] = c * e;
-// 			te[ 4 ] = - f;
-// 			te[ 8 ] = d * e;
-//
-// 			te[ 1 ] = ac * f + bd;
-// 			te[ 5 ] = a * e;
-// 			te[ 9 ] = ad * f - bc;
-//
-// 			te[ 2 ] = bc * f - ad;
-// 			te[ 6 ] = b * e;
-// 			te[ 10 ] = bd * f + ac;
-//
-// 		}
-//
-// 		// bottom row
-// 		te[ 3 ] = 0;
-// 		te[ 7 ] = 0;
-// 		te[ 11 ] = 0;
-//
-// 		// last column
-// 		te[ 12 ] = 0;
-// 		te[ 13 ] = 0;
-// 		te[ 14 ] = 0;
-// 		te[ 15 ] = 1;
-//
-// 		return this;
-//
-// 	}
+func (m *Matrix4) MakeRotationFromEuler(euler *Euler) *Matrix4 {
+	x, y, z := euler.x, euler.y, euler.z
+	a, b := math.Cos(x), math.Sin(x)
+	c, d := math.Cos(y), math.Sin(y)
+	e, f := math.Cos(z), math.Sin(z)
+
+	switch euler.order {
+
+	case EulerOrderXYZ:
+		ae, af, be, bf := a*e, a*f, b*e, b*f
+		m.N[0] = c * e
+		m.N[4] = -c * f
+		m.N[8] = d
+		m.N[1] = af + be*d
+		m.N[5] = ae - bf*d
+		m.N[9] = -b * c
+		m.N[2] = bf - ae*d
+		m.N[6] = be + af*d
+		m.N[10] = a * c
+	case EulerOrderYXZ:
+		ce, cf, de, df := c*e, c*f, d*e, d*f
+		m.N[0] = ce + df*b
+		m.N[4] = de*b - cf
+		m.N[8] = a * d
+		m.N[1] = a * f
+		m.N[5] = a * e
+		m.N[9] = -b
+		m.N[2] = cf*b - de
+		m.N[6] = df + ce*b
+		m.N[10] = a * c
+	case EulerOrderZXY:
+		ce, cf, de, df := c*e, c*f, d*e, d*f
+		m.N[0] = ce - df*b
+		m.N[4] = -a * f
+		m.N[8] = de + cf*b
+		m.N[1] = cf + de*b
+		m.N[5] = a * e
+		m.N[9] = df - ce*b
+		m.N[2] = -a * d
+		m.N[6] = b
+		m.N[10] = a * c
+	case EulerOrderZYX:
+		ae, af, be, bf := a*e, a*f, b*e, b*f
+		m.N[0] = c * e
+		m.N[4] = be*d - af
+		m.N[8] = ae*d + bf
+		m.N[1] = c * f
+		m.N[5] = bf*d + ae
+		m.N[9] = af*d - be
+		m.N[2] = -d
+		m.N[6] = b * c
+		m.N[10] = a * c
+	case EulerOrderYZX:
+		ac, ad, bc, bd := a*c, a*d, b*c, b*d
+		m.N[0] = c * e
+		m.N[4] = bd - ac*f
+		m.N[8] = bc*f + ad
+		m.N[1] = f
+		m.N[5] = a * e
+		m.N[9] = -b * e
+		m.N[2] = -d * e
+		m.N[6] = ad*f + bc
+		m.N[10] = ac - bd*f
+	case EulerOrderXZY:
+		ac, ad, bc, bd := a*c, a*d, b*c, b*d
+		m.N[0] = c * e
+		m.N[4] = -f
+		m.N[8] = d * e
+		m.N[1] = ac*f + bd
+		m.N[5] = a * e
+		m.N[9] = ad*f - bc
+		m.N[2] = bc*f - ad
+		m.N[6] = b * e
+		m.N[10] = bd*f + ac
+	}
+
+	// bottom row
+	m.N[3] = 0
+	m.N[7] = 0
+	m.N[11] = 0
+
+	// last column
+	m.N[12] = 0
+	m.N[13] = 0
+	m.N[14] = 0
+	m.N[15] = 1
+
+	return m
+}
 
 func (m *Matrix4) MakeRotationFromQuaternion(q *Quaternion) *Matrix4 {
 	return m.Compose(_zeroMatrix4, q, _oneMatrix4)
 }
 
-// 	lookAt( eye, target, up ) {
-//
-// 		const te = this.elements;
-//
-// 		_z.subVectors( eye, target );
-//
-// 		if ( _z.lengthSq() === 0 ) {
-//
-// 			// eye and target are in the same position
-//
-// 			_z.z = 1;
-//
-// 		}
-//
-// 		_z.normalize();
-// 		_x.crossVectors( up, _z );
-//
-// 		if ( _x.lengthSq() === 0 ) {
-//
-// 			// up and z are parallel
-//
-// 			if ( Math.abs( up.z ) === 1 ) {
-//
-// 				_z.x += 0.0001;
-//
-// 			} else {
-//
-// 				_z.z += 0.0001;
-//
-// 			}
-//
-// 			_z.normalize();
-// 			_x.crossVectors( up, _z );
-//
-// 		}
-//
-// 		_x.normalize();
-// 		_y.crossVectors( _z, _x );
-//
-// 		te[ 0 ] = _x.x; te[ 4 ] = _y.x; te[ 8 ] = _z.x;
-// 		te[ 1 ] = _x.y; te[ 5 ] = _y.y; te[ 9 ] = _z.y;
-// 		te[ 2 ] = _x.z; te[ 6 ] = _y.z; te[ 10 ] = _z.z;
-//
-// 		return this;
-//
-// 	}
-//
-// 	multiply( m ) {
-//
-// 		return this.multiplyMatrices( this, m );
-//
-// 	}
-//
-// 	premultiply( m ) {
-//
-// 		return this.multiplyMatrices( m, this );
-//
-// 	}
+func (m *Matrix4) LookAt(eye, target, up *Vector3) *Matrix4 {
+	_zMatrix4.SubVectors(eye, target)
+	if _zMatrix4.LengthSq() == 0 {
+		// eye and target are in the same position
+		_zMatrix4.Z = 1
+	}
+	_zMatrix4.Normalize()
+	_xMatrix4.CrossVectors(up, _zMatrix4)
+
+	if _xMatrix4.LengthSq() == 0 {
+		// up and z are parallel
+		if math.Abs(up.Z) == 1 {
+			_zMatrix4.X += 0.0001
+		} else {
+			_zMatrix4.Z += 0.0001
+		}
+		_zMatrix4.Normalize()
+		_xMatrix4.CrossVectors(up, _zMatrix4)
+	}
+
+	_xMatrix4.Normalize()
+	_yMatrix4.CrossVectors(_zMatrix4, _xMatrix4)
+
+	m.N[0], m.N[4], m.N[8] = _xMatrix4.X, _yMatrix4.X, _zMatrix4.X
+	m.N[1], m.N[5], m.N[9] = _xMatrix4.Y, _yMatrix4.Y, _zMatrix4.Y
+	m.N[2], m.N[6], m.N[10] = _xMatrix4.Z, _yMatrix4.Z, _zMatrix4.Z
+
+	return m
+}
+
+func (m *Matrix4) Multiply(v *Matrix4) *Matrix4 {
+	return m.MultiplyMatrices(m, v)
+}
+
+func (m *Matrix4) Premultiply(v *Matrix4) *Matrix4 {
+	return m.MultiplyMatrices(v, m)
+}
 
 func (m *Matrix4) MultiplyMatrices(a, b *Matrix4) *Matrix4 {
 	a11, a12, a13, a14 := a.N[0], a.N[4], a.N[8], a.N[12]
@@ -338,108 +286,63 @@ func (m *Matrix4) MultiplyMatrices(a, b *Matrix4) *Matrix4 {
 	return m
 }
 
-//todo
-// 	multiplyScalar( s ) {
-//
-// 		const te = this.elements;
-//
-// 		te[ 0 ] *= s; te[ 4 ] *= s; te[ 8 ] *= s; te[ 12 ] *= s;
-// 		te[ 1 ] *= s; te[ 5 ] *= s; te[ 9 ] *= s; te[ 13 ] *= s;
-// 		te[ 2 ] *= s; te[ 6 ] *= s; te[ 10 ] *= s; te[ 14 ] *= s;
-// 		te[ 3 ] *= s; te[ 7 ] *= s; te[ 11 ] *= s; te[ 15 ] *= s;
-//
-// 		return this;
-//
-// 	}
-//
-// 	determinant() {
-//
-// 		const te = this.elements;
-//
-// 		const n11 = te[ 0 ], n12 = te[ 4 ], n13 = te[ 8 ], n14 = te[ 12 ];
-// 		const n21 = te[ 1 ], n22 = te[ 5 ], n23 = te[ 9 ], n24 = te[ 13 ];
-// 		const n31 = te[ 2 ], n32 = te[ 6 ], n33 = te[ 10 ], n34 = te[ 14 ];
-// 		const n41 = te[ 3 ], n42 = te[ 7 ], n43 = te[ 11 ], n44 = te[ 15 ];
-//
-// 		//TOO: make this more efficient
-// 		//( based on http://www.euclideanspace.com/maths/algebra/matrix/functions/inverse/fourD/index.htm )
-//
-// 		return (
-// 			n41 * (
-// 				+ n14 * n23 * n32
-// 				 - n13 * n24 * n32
-// 				 - n14 * n22 * n33
-// 				 + n12 * n24 * n33
-// 				 + n13 * n22 * n34
-// 				 - n12 * n23 * n34
-// 			) +
-// 			n42 * (
-// 				+ n11 * n23 * n34
-// 				 - n11 * n24 * n33
-// 				 + n14 * n21 * n33
-// 				 - n13 * n21 * n34
-// 				 + n13 * n24 * n31
-// 				 - n14 * n23 * n31
-// 			) +
-// 			n43 * (
-// 				+ n11 * n24 * n32
-// 				 - n11 * n22 * n34
-// 				 - n14 * n21 * n32
-// 				 + n12 * n21 * n34
-// 				 + n14 * n22 * n31
-// 				 - n12 * n24 * n31
-// 			) +
-// 			n44 * (
-// 				- n13 * n22 * n31
-// 				 - n11 * n23 * n32
-// 				 + n11 * n22 * n33
-// 				 + n13 * n21 * n32
-// 				 - n12 * n21 * n33
-// 				 + n12 * n23 * n31
-// 			)
-//
-// 		);
-//
-// 	}
-//
-// 	transpose() {
-//
-// 		const te = this.elements;
-// 		let tmp;
-//
-// 		tmp = te[ 1 ]; te[ 1 ] = te[ 4 ]; te[ 4 ] = tmp;
-// 		tmp = te[ 2 ]; te[ 2 ] = te[ 8 ]; te[ 8 ] = tmp;
-// 		tmp = te[ 6 ]; te[ 6 ] = te[ 9 ]; te[ 9 ] = tmp;
-//
-// 		tmp = te[ 3 ]; te[ 3 ] = te[ 12 ]; te[ 12 ] = tmp;
-// 		tmp = te[ 7 ]; te[ 7 ] = te[ 13 ]; te[ 13 ] = tmp;
-// 		tmp = te[ 11 ]; te[ 11 ] = te[ 14 ]; te[ 14 ] = tmp;
-//
-// 		return this;
-//
-// 	}
-//
-// 	setPosition( x, y, z ) {
-//
-// 		const te = this.elements;
-//
-// 		if ( x.isVector3 ) {
-//
-// 			te[ 12 ] = x.x;
-// 			te[ 13 ] = x.y;
-// 			te[ 14 ] = x.z;
-//
-// 		} else {
-//
-// 			te[ 12 ] = x;
-// 			te[ 13 ] = y;
-// 			te[ 14 ] = z;
-//
-// 		}
-//
-// 		return this;
-//
-// 	}
+func (m *Matrix4) MultiplyScalar(s float64) *Matrix4 {
+	m.N[0] *= s
+	m.N[1] *= s
+	m.N[2] *= s
+	m.N[3] *= s
+	m.N[4] *= s
+	m.N[5] *= s
+	m.N[6] *= s
+	m.N[7] *= s
+	m.N[8] *= s
+	m.N[9] *= s
+	m.N[10] *= s
+	m.N[11] *= s
+	m.N[12] *= s
+	m.N[13] *= s
+	m.N[14] *= s
+	m.N[15] *= s
+	return m
+}
+
+func (m *Matrix4) Determinant() float64 {
+	n11, n12, n13, n14 := m.N[0], m.N[4], m.N[8], m.N[12]
+	n21, n22, n23, n24 := m.N[1], m.N[5], m.N[9], m.N[13]
+	n31, n32, n33, n34 := m.N[2], m.N[6], m.N[10], m.N[14]
+	n41, n42, n43, n44 := m.N[3], m.N[7], m.N[11], m.N[15]
+
+	//TOO: make this more efficient
+	//( based on http://www.euclideanspace.com/maths/algebra/matrix/functions/inverse/fourD/index.htm )
+
+	return n41*(+n14*n23*n32-n13*n24*n32-n14*n22*n33+n12*n24*n33+n13*n22*n34-n12*n23*n34) +
+		n42*(+n11*n23*n34-n11*n24*n33+n14*n21*n33-n13*n21*n34+n13*n24*n31-n14*n23*n31) +
+		n43*(+n11*n24*n32-n11*n22*n34-n14*n21*n32+n12*n21*n34+n14*n22*n31-n12*n24*n31) +
+		n44*(-n13*n22*n31-n11*n23*n32+n11*n22*n33+n13*n21*n32-n12*n21*n33+n12*n23*n31)
+}
+
+func (m *Matrix4) Transpose() *Matrix4 {
+	m.N[1], m.N[4] = m.N[4], m.N[1]
+	m.N[2], m.N[8] = m.N[8], m.N[2]
+	m.N[6], m.N[9] = m.N[9], m.N[6]
+
+	m.N[3], m.N[12] = m.N[12], m.N[3]
+	m.N[7], m.N[13] = m.N[13], m.N[7]
+	m.N[11], m.N[14] = m.N[14], m.N[11]
+
+	return m
+}
+
+func (m *Matrix4) SetPosition(x, y, z float64) *Matrix4 {
+	m.N[12], m.N[13], m.N[14] = x, y, z
+	return m
+}
+
+func (m *Matrix4) SetPositionVector3(v *Vector3) *Matrix4 {
+	m.N[12], m.N[13], m.N[14] = v.X, v.Y, v.Z
+	return m
+
+}
 
 func (m *Matrix4) Invert() *Matrix4 {
 	// based on http://www.euclideanspace.com/maths/algebra/matrix/functions/inverse/fourD/index.htm
@@ -484,166 +387,113 @@ func (m *Matrix4) Invert() *Matrix4 {
 	return m
 }
 
-// todo
-// scale( v ) {
-//
-//	const te = this.elements;
-//	const x = v.x, y = v.y, z = v.z;
-//
-//	te[ 0 ] *= x; te[ 4 ] *= y; te[ 8 ] *= z;
-//	te[ 1 ] *= x; te[ 5 ] *= y; te[ 9 ] *= z;
-//	te[ 2 ] *= x; te[ 6 ] *= y; te[ 10 ] *= z;
-//	te[ 3 ] *= x; te[ 7 ] *= y; te[ 11 ] *= z;
-//
-//	return this;
-//
-// }
-//
-// getMaxScaleOnAxis() {
-//
-//	const te = this.elements;
-//
-//	const scaleXSq = te[ 0 ] * te[ 0 ] + te[ 1 ] * te[ 1 ] + te[ 2 ] * te[ 2 ];
-//	const scaleYSq = te[ 4 ] * te[ 4 ] + te[ 5 ] * te[ 5 ] + te[ 6 ] * te[ 6 ];
-//	const scaleZSq = te[ 8 ] * te[ 8 ] + te[ 9 ] * te[ 9 ] + te[ 10 ] * te[ 10 ];
-//
-//	return Math.sqrt( Math.max( scaleXSq, scaleYSq, scaleZSq ) );
-//
-// }
-//
-// makeTranslation( x, y, z ) {
-//
-//	if ( x.isVector3 ) {
-//
-//		this.set(
-//
-//			1, 0, 0, x.x,
-//			0, 1, 0, x.y,
-//			0, 0, 1, x.z,
-//			0, 0, 0, 1
-//
-//		);
-//
-//	} else {
-//
-//		this.set(
-//
-//			1, 0, 0, x,
-//			0, 1, 0, y,
-//			0, 0, 1, z,
-//			0, 0, 0, 1
-//
-//		);
-//
-//	}
-//
-//	return this;
-//
-// }
-//
-// makeRotationX( theta ) {
-//
-//	const c = Math.cos( theta ), s = Math.sin( theta );
-//
-//	this.set(
-//
-//		1, 0, 0, 0,
-//		0, c, - s, 0,
-//		0, s, c, 0,
-//		0, 0, 0, 1
-//
-//	);
-//
-//	return this;
-//
-// }
-//
-// makeRotationY( theta ) {
-//
-//	const c = Math.cos( theta ), s = Math.sin( theta );
-//
-//	this.set(
-//
-//		 c, 0, s, 0,
-//		 0, 1, 0, 0,
-//		- s, 0, c, 0,
-//		 0, 0, 0, 1
-//
-//	);
-//
-//	return this;
-//
-// }
-//
-// makeRotationZ( theta ) {
-//
-//	const c = Math.cos( theta ), s = Math.sin( theta );
-//
-//	this.set(
-//
-//		c, - s, 0, 0,
-//		s, c, 0, 0,
-//		0, 0, 1, 0,
-//		0, 0, 0, 1
-//
-//	);
-//
-//	return this;
-//
-// }
-//
-// makeRotationAxis( axis, angle ) {
-//
-//	// Based on http://www.gamedev.net/reference/articles/article1199.asp
-//
-//	const c = Math.cos( angle );
-//	const s = Math.sin( angle );
-//	const t = 1 - c;
-//	const x = axis.x, y = axis.y, z = axis.z;
-//	const tx = t * x, ty = t * y;
-//
-//	this.set(
-//
-//		tx * x + c, tx * y - s * z, tx * z + s * y, 0,
-//		tx * y + s * z, ty * y + c, ty * z - s * x, 0,
-//		tx * z - s * y, ty * z + s * x, t * z * z + c, 0,
-//		0, 0, 0, 1
-//
-//	);
-//
-//	return this;
-//
-// }
-//
-// makeScale( x, y, z ) {
-//
-//	this.set(
-//
-//		x, 0, 0, 0,
-//		0, y, 0, 0,
-//		0, 0, z, 0,
-//		0, 0, 0, 1
-//
-//	);
-//
-//	return this;
-//
-// }
-//
-// makeShear( xy, xz, yx, yz, zx, zy ) {
-//
-//	this.set(
-//
-//		1, yx, zx, 0,
-//		xy, 1, zy, 0,
-//		xz, yz, 1, 0,
-//		0, 0, 0, 1
-//
-//	);
-//
-//	return this;
-//
-// }
+func (m *Matrix4) Scale(v *Vector3) *Matrix4 {
+	m.N[0] *= v.X
+	m.N[1] *= v.X
+	m.N[2] *= v.X
+	m.N[3] *= v.X
+	m.N[4] *= v.Y
+	m.N[5] *= v.Y
+	m.N[6] *= v.Y
+	m.N[7] *= v.Y
+	m.N[8] *= v.Z
+	m.N[9] *= v.Z
+	m.N[10] *= v.Z
+	m.N[11] *= v.Z
+	return m
+}
+
+func (m *Matrix4) GetMaxScaleOnAxis() float64 {
+	scaleXSq := m.N[0]*m.N[0] + m.N[1]*m.N[1] + m.N[2]*m.N[2]
+	scaleYSq := m.N[4]*m.N[4] + m.N[5]*m.N[5] + m.N[6]*m.N[6]
+	scaleZSq := m.N[8]*m.N[8] + m.N[9]*m.N[9] + m.N[10]*m.N[10]
+	return math.Sqrt(math.Max(math.Max(scaleXSq, scaleYSq), scaleZSq))
+}
+
+func (m *Matrix4) MakeTranslation(x, y, z float64) *Matrix4 {
+	return m.Set(
+		1, 0, 0, x,
+		0, 1, 0, y,
+		0, 0, 1, z,
+		0, 0, 0, 1,
+	)
+}
+
+func (m *Matrix4) MakeTranslationVector3(v *Vector3) *Matrix4 {
+	return m.Set(
+		1, 0, 0, v.X,
+		0, 1, 0, v.Y,
+		0, 0, 1, v.Z,
+		0, 0, 0, 1,
+	)
+}
+
+func (m *Matrix4) MakeRotationX(theta float64) *Matrix4 {
+	c, s := math.Cos(theta), math.Sin(theta)
+
+	return m.Set(
+		1, 0, 0, 0,
+		0, c, -s, 0,
+		0, s, c, 0,
+		0, 0, 0, 1,
+	)
+}
+
+func (m *Matrix4) MakeRotationY(theta float64) *Matrix4 {
+	c, s := math.Cos(theta), math.Sin(theta)
+
+	return m.Set(
+		c, 0, s, 0,
+		0, 1, 0, 0,
+		-s, 0, c, 0,
+		0, 0, 0, 1,
+	)
+}
+
+func (m *Matrix4) MakeRotationZ(theta float64) *Matrix4 {
+	c, s := math.Cos(theta), math.Sin(theta)
+
+	return m.Set(
+		c, -s, 0, 0,
+		s, c, 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1,
+	)
+}
+
+func (m *Matrix4) MakeRotationAxis(axis *Vector3, angle float64) *Matrix4 {
+	// Based on http://www.gamedev.net/reference/articles/article1199.asp
+
+	c, s := math.Cos(angle), math.Sin(angle)
+	t := 1 - c
+	x, y, z := axis.X, axis.Y, axis.Z
+	tx, ty := t*x, t*y
+
+	return m.Set(
+		tx*x+c, tx*y-s*z, tx*z+s*y, 0,
+		tx*y+s*z, ty*y+c, ty*z-s*x, 0,
+		tx*z-s*y, ty*z+s*x, t*z*z+c, 0,
+		0, 0, 0, 1,
+	)
+}
+
+func (m *Matrix4) MakeScale(x, y, z float64) *Matrix4 {
+	return m.Set(
+		x, 0, 0, 0,
+		0, y, 0, 0,
+		0, 0, z, 0,
+		0, 0, 0, 1,
+	)
+}
+
+func (m *Matrix4) MakeShear(xy, xz, yx, yz, zx, zy float64) *Matrix4 {
+	return m.Set(
+		1, yx, zx, 0,
+		xy, 1, zy, 0,
+		xz, yz, 1, 0,
+		0, 0, 0, 1,
+	)
+}
 
 func (m *Matrix4) Compose(position *Vector3, quaternion *Quaternion, scale *Vector3) *Matrix4 {
 	x, y, z, w := quaternion.x, quaternion.y, quaternion.z, quaternion.w
@@ -677,179 +527,103 @@ func (m *Matrix4) Compose(position *Vector3, quaternion *Quaternion, scale *Vect
 	return m
 }
 
-// todo
-// decompose( position, quaternion, scale ) {
-//
-//	const te = this.elements;
-//
-//	let sx = _v1.set( te[ 0 ], te[ 1 ], te[ 2 ] ).length();
-//	const sy = _v1.set( te[ 4 ], te[ 5 ], te[ 6 ] ).length();
-//	const sz = _v1.set( te[ 8 ], te[ 9 ], te[ 10 ] ).length();
-//
-//	// if determine is negative, we need to invert one scale
-//	const det = this.determinant();
-//	if ( det < 0 ) sx = - sx;
-//
-//	position.x = te[ 12 ];
-//	position.y = te[ 13 ];
-//	position.z = te[ 14 ];
-//
-//	// scale the rotation part
-//	_m1.copy( this );
-//
-//	const invSX = 1 / sx;
-//	const invSY = 1 / sy;
-//	const invSZ = 1 / sz;
-//
-//	_m1.elements[ 0 ] *= invSX;
-//	_m1.elements[ 1 ] *= invSX;
-//	_m1.elements[ 2 ] *= invSX;
-//
-//	_m1.elements[ 4 ] *= invSY;
-//	_m1.elements[ 5 ] *= invSY;
-//	_m1.elements[ 6 ] *= invSY;
-//
-//	_m1.elements[ 8 ] *= invSZ;
-//	_m1.elements[ 9 ] *= invSZ;
-//	_m1.elements[ 10 ] *= invSZ;
-//
-//	quaternion.setFromRotationMatrix( _m1 );
-//
-//	scale.x = sx;
-//	scale.y = sy;
-//	scale.z = sz;
-//
-//	return this;
-//
-// }
-//
-// makePerspective( left, right, top, bottom, near, far, coordinateSystem = WebGLCoordinateSystem ) {
-//
-//	const te = this.elements;
-//	const x = 2 * near / ( right - left );
-//	const y = 2 * near / ( top - bottom );
-//
-//	const a = ( right + left ) / ( right - left );
-//	const b = ( top + bottom ) / ( top - bottom );
-//
-//	let c, d;
-//
-//	if ( coordinateSystem === WebGLCoordinateSystem ) {
-//
-//		c = - ( far + near ) / ( far - near );
-//		d = ( - 2 * far * near ) / ( far - near );
-//
-//	} else if ( coordinateSystem === WebGPUCoordinateSystem ) {
-//
-//		c = - far / ( far - near );
-//		d = ( - far * near ) / ( far - near );
-//
-//	} else {
-//
-//		throw new Error( 'THREE.Matrix4.makePerspective(): Invalid coordinate system: ' + coordinateSystem );
-//
-//	}
-//
-//	te[ 0 ] = x;	te[ 4 ] = 0;	te[ 8 ] = a; 	te[ 12 ] = 0;
-//	te[ 1 ] = 0;	te[ 5 ] = y;	te[ 9 ] = b; 	te[ 13 ] = 0;
-//	te[ 2 ] = 0;	te[ 6 ] = 0;	te[ 10 ] = c; 	te[ 14 ] = d;
-//	te[ 3 ] = 0;	te[ 7 ] = 0;	te[ 11 ] = - 1;	te[ 15 ] = 0;
-//
-//	return this;
-//
-// }
-//
-// makeOrthographic( left, right, top, bottom, near, far, coordinateSystem = WebGLCoordinateSystem ) {
-//
-//	const te = this.elements;
-//	const w = 1.0 / ( right - left );
-//	const h = 1.0 / ( top - bottom );
-//	const p = 1.0 / ( far - near );
-//
-//	const x = ( right + left ) * w;
-//	const y = ( top + bottom ) * h;
-//
-//	let z, zInv;
-//
-//	if ( coordinateSystem === WebGLCoordinateSystem ) {
-//
-//		z = ( far + near ) * p;
-//		zInv = - 2 * p;
-//
-//	} else if ( coordinateSystem === WebGPUCoordinateSystem ) {
-//
-//		z = near * p;
-//		zInv = - 1 * p;
-//
-//	} else {
-//
-//		throw new Error( 'THREE.Matrix4.makeOrthographic(): Invalid coordinate system: ' + coordinateSystem );
-//
-//	}
-//
-//	te[ 0 ] = 2 * w;	te[ 4 ] = 0;		te[ 8 ] = 0; 		te[ 12 ] = - x;
-//	te[ 1 ] = 0; 		te[ 5 ] = 2 * h;	te[ 9 ] = 0; 		te[ 13 ] = - y;
-//	te[ 2 ] = 0; 		te[ 6 ] = 0;		te[ 10 ] = zInv;	te[ 14 ] = - z;
-//	te[ 3 ] = 0; 		te[ 7 ] = 0;		te[ 11 ] = 0;		te[ 15 ] = 1;
-//
-//	return this;
-//
-// }
-//
-// equals( matrix ) {
-//
-//	const te = this.elements;
-//	const me = matrix.elements;
-//
-//	for ( let i = 0; i < 16; i ++ ) {
-//
-//		if ( te[ i ] !== me[ i ] ) return false;
-//
-//	}
-//
-//	return true;
-//
-// }
-//
-// fromArray( array, offset = 0 ) {
-//
-//	for ( let i = 0; i < 16; i ++ ) {
-//
-//		this.elements[ i ] = array[ i + offset ];
-//
-//	}
-//
-//	return this;
-//
-// }
-//
-// toArray( array = [], offset = 0 ) {
-//
-//	const te = this.elements;
-//
-//	array[ offset ] = te[ 0 ];
-//	array[ offset + 1 ] = te[ 1 ];
-//	array[ offset + 2 ] = te[ 2 ];
-//	array[ offset + 3 ] = te[ 3 ];
-//
-//	array[ offset + 4 ] = te[ 4 ];
-//	array[ offset + 5 ] = te[ 5 ];
-//	array[ offset + 6 ] = te[ 6 ];
-//	array[ offset + 7 ] = te[ 7 ];
-//
-//	array[ offset + 8 ] = te[ 8 ];
-//	array[ offset + 9 ] = te[ 9 ];
-//	array[ offset + 10 ] = te[ 10 ];
-//	array[ offset + 11 ] = te[ 11 ];
-//
-//	array[ offset + 12 ] = te[ 12 ];
-//	array[ offset + 13 ] = te[ 13 ];
-//	array[ offset + 14 ] = te[ 14 ];
-//	array[ offset + 15 ] = te[ 15 ];
-//
-//	return array;
-//
-// }
+func (m *Matrix4) Decompose(position *Vector3, quaternion *Quaternion, scale *Vector3) *Matrix4 {
+	sx := _v1Matrix4.Set(m.N[0], m.N[1], m.N[2]).Length()
+	sy := _v1Matrix4.Set(m.N[4], m.N[5], m.N[6]).Length()
+	sz := _v1Matrix4.Set(m.N[8], m.N[9], m.N[10]).Length()
+
+	// if determine is negative, we need to invert one scale
+	det := m.Determinant()
+	if det < 0 {
+		sx = -sx
+	}
+
+	position.X, position.Y, position.Z = m.N[12], m.N[13], m.N[14]
+
+	// scale the rotation part
+	_m1Matrix4.Copy(m)
+
+	invSX, invSY, invSZ := 1/sx, 1/sy, 1/sz
+
+	_m1Matrix4.N[0] *= invSX
+	_m1Matrix4.N[1] *= invSX
+	_m1Matrix4.N[2] *= invSX
+
+	_m1Matrix4.N[4] *= invSY
+	_m1Matrix4.N[5] *= invSY
+	_m1Matrix4.N[6] *= invSY
+
+	_m1Matrix4.N[8] *= invSZ
+	_m1Matrix4.N[9] *= invSZ
+	_m1Matrix4.N[10] *= invSZ
+
+	quaternion.SetFromRotationMatrix(_m1Matrix4)
+
+	scale.X, scale.Y, scale.Z = sx, sy, sz
+
+	return m
+}
+
+func (m *Matrix4) MakePerspective(left, right, top, bottom, near, far float64, webGLCoordinateSystem bool) *Matrix4 {
+	x := 2 * near / (right - left)
+	y := 2 * near / (top - bottom)
+
+	a := (right + left) / (right - left)
+	b := (top + bottom) / (top - bottom)
+
+	var c, d float64
+	if webGLCoordinateSystem {
+		c = -(far + near) / (far - near)
+		d = (-2 * far * near) / (far - near)
+	} else {
+		c = -far / (far - near)
+		d = (-far * near) / (far - near)
+	}
+
+	m.N[0], m.N[4], m.N[8], m.N[12] = x, 0, a, 0
+	m.N[1], m.N[5], m.N[9], m.N[13] = 0, y, b, 0
+	m.N[2], m.N[6], m.N[10], m.N[14] = 0, 0, c, d
+	m.N[3], m.N[7], m.N[11], m.N[15] = 0, 0, -1, 0
+	return m
+}
+
+func (m *Matrix4) MakeOrthographic(left, right, top, bottom, near, far float64, webGLCoordinateSystem bool) *Matrix4 {
+	w := 1.0 / (right - left)
+	h := 1.0 / (top - bottom)
+	p := 1.0 / (far - near)
+
+	x := (right + left) * w
+	y := (top + bottom) * h
+
+	var z, zInv float64
+	if webGLCoordinateSystem {
+		z = (far + near) * p
+		zInv = -2 * p
+	} else {
+		z = near * p
+		zInv = -1 * p
+	}
+
+	m.N[0], m.N[4], m.N[8], m.N[12] = 2*w, 0, 0, -x
+	m.N[1], m.N[5], m.N[9], m.N[13] = 0, 2*h, 0, -y
+	m.N[2], m.N[6], m.N[10], m.N[14] = 0, 0, zInv, -z
+	m.N[3], m.N[7], m.N[11], m.N[15] = 0, 0, 0, 1
+	return m
+}
+
+func (m *Matrix4) Equals(matrix *Matrix4) bool {
+	return matrix.N == m.N
+}
+
+func (m *Matrix4) FromArray(array []float64) *Matrix4 {
+	copy(m.N[:], array[:16])
+	return m
+}
+
+func (m *Matrix4) ToArray(array []float64) *Matrix4 {
+	copy(array[:16], m.N[:])
+	return m
+}
 
 var _v1Matrix4 = NewVector3Defaults()
 var _m1Matrix4 = NewMatrix4Identity()

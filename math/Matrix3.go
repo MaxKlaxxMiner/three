@@ -31,8 +31,6 @@ func (m *Matrix3) Set(n11, n12, n13, n21, n22, n23, n31, n32, n33 float64) *Matr
 	return m
 }
 
-var zeroMatrix3 Matrix3
-
 var identityMatrix3 = Matrix3{
 	N: [3 * 3]float64{
 		1, 0, 0,
