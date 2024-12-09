@@ -11,7 +11,7 @@ type Vector3 struct {
 }
 
 func NewVector3Defaults() *Vector3 {
-	return &Vector3{}
+	return new(Vector3)
 }
 
 func NewVector3(x, y, z float64) *Vector3 {
