@@ -2,6 +2,7 @@ package math
 
 import (
 	"fmt"
+	"github.com/MaxKlaxxMiner/three/utils"
 	"math"
 )
 
@@ -20,192 +21,107 @@ func NewQuaternion(x, y, z, w float64) *Quaternion {
 
 func (q *Quaternion) IsQuaternion() bool { return q != nil }
 
-//todo
-// 	static slerpFlat( dst, dstOffset, src0, srcOffset0, src1, srcOffset1, t ) {
-//
-// 		// fuzz-free, array-based Quaternion SLERP operation
-//
-// 		let x0 = src0[ srcOffset0 + 0 ],
-// 			y0 = src0[ srcOffset0 + 1 ],
-// 			z0 = src0[ srcOffset0 + 2 ],
-// 			w0 = src0[ srcOffset0 + 3 ];
-//
-// 		const x1 = src1[ srcOffset1 + 0 ],
-// 			y1 = src1[ srcOffset1 + 1 ],
-// 			z1 = src1[ srcOffset1 + 2 ],
-// 			w1 = src1[ srcOffset1 + 3 ];
-//
-// 		if ( t === 0 ) {
-//
-// 			dst[ dstOffset + 0 ] = x0;
-// 			dst[ dstOffset + 1 ] = y0;
-// 			dst[ dstOffset + 2 ] = z0;
-// 			dst[ dstOffset + 3 ] = w0;
-// 			return;
-//
-// 		}
-//
-// 		if ( t === 1 ) {
-//
-// 			dst[ dstOffset + 0 ] = x1;
-// 			dst[ dstOffset + 1 ] = y1;
-// 			dst[ dstOffset + 2 ] = z1;
-// 			dst[ dstOffset + 3 ] = w1;
-// 			return;
-//
-// 		}
-//
-// 		if ( w0 !== w1 || x0 !== x1 || y0 !== y1 || z0 !== z1 ) {
-//
-// 			let s = 1 - t;
-// 			const cos = x0 * x1 + y0 * y1 + z0 * z1 + w0 * w1,
-// 				dir = ( cos >= 0 ? 1 : - 1 ),
-// 				sqrSin = 1 - cos * cos;
-//
-// 			// Skip the Slerp for tiny steps to avoid numeric problems:
-// 			if ( sqrSin > Number.EPSILON ) {
-//
-// 				const sin = Math.sqrt( sqrSin ),
-// 					len = Math.atan2( sin, cos * dir );
-//
-// 				s = Math.sin( s * len ) / sin;
-// 				t = Math.sin( t * len ) / sin;
-//
-// 			}
-//
-// 			const tDir = t * dir;
-//
-// 			x0 = x0 * s + x1 * tDir;
-// 			y0 = y0 * s + y1 * tDir;
-// 			z0 = z0 * s + z1 * tDir;
-// 			w0 = w0 * s + w1 * tDir;
-//
-// 			// Normalize in case we just did a lerp:
-// 			if ( s === 1 - t ) {
-//
-// 				const f = 1 / Math.sqrt( x0 * x0 + y0 * y0 + z0 * z0 + w0 * w0 );
-//
-// 				x0 *= f;
-// 				y0 *= f;
-// 				z0 *= f;
-// 				w0 *= f;
-//
-// 			}
-//
-// 		}
-//
-// 		dst[ dstOffset ] = x0;
-// 		dst[ dstOffset + 1 ] = y0;
-// 		dst[ dstOffset + 2 ] = z0;
-// 		dst[ dstOffset + 3 ] = w0;
-//
-// 	}
-//
-// 	static multiplyQuaternionsFlat( dst, dstOffset, src0, srcOffset0, src1, srcOffset1 ) {
-//
-// 		const x0 = src0[ srcOffset0 ];
-// 		const y0 = src0[ srcOffset0 + 1 ];
-// 		const z0 = src0[ srcOffset0 + 2 ];
-// 		const w0 = src0[ srcOffset0 + 3 ];
-//
-// 		const x1 = src1[ srcOffset1 ];
-// 		const y1 = src1[ srcOffset1 + 1 ];
-// 		const z1 = src1[ srcOffset1 + 2 ];
-// 		const w1 = src1[ srcOffset1 + 3 ];
-//
-// 		dst[ dstOffset ] = x0 * w1 + w0 * x1 + y0 * z1 - z0 * y1;
-// 		dst[ dstOffset + 1 ] = y0 * w1 + w0 * y1 + z0 * x1 - x0 * z1;
-// 		dst[ dstOffset + 2 ] = z0 * w1 + w0 * z1 + x0 * y1 - y0 * x1;
-// 		dst[ dstOffset + 3 ] = w0 * w1 - x0 * x1 - y0 * y1 - z0 * z1;
-//
-// 		return dst;
-//
-// 	}
-//
-// 	get x() {
-//
-// 		return this._x;
-//
-// 	}
-//
-// 	set x( value ) {
-//
-// 		this._x = value;
-// 		this._onChangeCallback();
-//
-// 	}
-//
-// 	get y() {
-//
-// 		return this._y;
-//
-// 	}
-//
-// 	set y( value ) {
-//
-// 		this._y = value;
-// 		this._onChangeCallback();
-//
-// 	}
-//
-// 	get z() {
-//
-// 		return this._z;
-//
-// 	}
-//
-// 	set z( value ) {
-//
-// 		this._z = value;
-// 		this._onChangeCallback();
-//
-// 	}
-//
-// 	get w() {
-//
-// 		return this._w;
-//
-// 	}
-//
-// 	set w( value ) {
-//
-// 		this._w = value;
-// 		this._onChangeCallback();
-//
-// 	}
-//
-// 	set( x, y, z, w ) {
-//
-// 		this._x = x;
-// 		this._y = y;
-// 		this._z = z;
-// 		this._w = w;
-//
-// 		this._onChangeCallback();
-//
-// 		return this;
-//
-// 	}
-//
-// 	clone() {
-//
-// 		return new this.constructor( this._x, this._y, this._z, this._w );
-//
-// 	}
-//
-// 	copy( quaternion ) {
-//
-// 		this._x = quaternion.x;
-// 		this._y = quaternion.y;
-// 		this._z = quaternion.z;
-// 		this._w = quaternion.w;
-//
-// 		this._onChangeCallback();
-//
-// 		return this;
-//
-// 	}
-//
+func SlerpFlat(dst, src0, src1 []float64, t float64) {
+	// fuzz-free, array-based Quaternion SLERP operation
+	_, _, _ = dst[3], src0[3], src1[3]
+
+	x0, y0, z0, w0 := src0[0], src0[1], src0[2], src0[3]
+	x1, y1, z1, w1 := src1[0], src1[1], src1[2], src1[3]
+
+	if t == 0 {
+		dst[0], dst[1], dst[2], dst[3] = x0, y0, z0, w0
+		return
+	}
+
+	if t == 1 {
+		dst[0], dst[1], dst[2], dst[3] = x1, y1, z1, w1
+		return
+	}
+
+	if w0 != w1 || x0 != x1 || y0 != y1 || z0 != z1 {
+		s := 1 - t
+		cos := x0*x1 + y0*y1 + z0*z1 + w0*w1
+		dir := utils.If(cos >= 0, 1.0, -1.0)
+		sqrSin := 1 - cos*cos
+
+		// Skip the Slerp for tiny steps to avoid numeric problems:
+		if sqrSin > EPSILON {
+			sin := math.Sqrt(sqrSin)
+			length := math.Atan2(sin, cos*dir)
+			s = math.Sin(s*length) / sin
+			t = math.Sin(t*length) / sin
+		}
+
+		tDir := t * dir
+		x0 = x0*s + x1*tDir
+		y0 = y0*s + y1*tDir
+		z0 = z0*s + z1*tDir
+		w0 = w0*s + w1*tDir
+
+		// Normalize in case we just did a lerp:
+		if s == 1-t {
+			f := 1 / math.Sqrt(x0*x0+y0*y0+z0*z0+w0*w0)
+			x0 *= f
+			y0 *= f
+			z0 *= f
+			w0 *= f
+		}
+	}
+
+	dst[0], dst[1], dst[2], dst[3] = x0, y0, z0, w0
+}
+
+func MultiplyQuaternionsFlat(dst, src0, src1 []float64) []float64 {
+	_, _, _ = dst[3], src0[3], src1[3]
+
+	x0, y0, z0, w0 := src0[0], src0[1], src0[2], src0[3]
+	x1, y1, z1, w1 := src1[0], src1[1], src1[2], src1[3]
+
+	dst[0] = x0*w1 + w0*x1 + y0*z1 - z0*y1
+	dst[1] = y0*w1 + w0*y1 + z0*x1 - x0*z1
+	dst[2] = z0*w1 + w0*z1 + x0*y1 - y0*x1
+	dst[3] = w0*w1 - x0*x1 - y0*y1 - z0*z1
+
+	return dst
+}
+
+func (q *Quaternion) GetX() float64 { return q.x }
+func (q *Quaternion) GetY() float64 { return q.y }
+func (q *Quaternion) GetZ() float64 { return q.z }
+func (q *Quaternion) GetW() float64 { return q.w }
+
+func (q *Quaternion) SetX(x float64) {
+	q.x = x
+	q._onChangeCallback()
+}
+func (q *Quaternion) SetY(y float64) {
+	q.y = y
+	q._onChangeCallback()
+}
+func (q *Quaternion) SetZ(z float64) {
+	q.z = z
+	q._onChangeCallback()
+}
+func (q *Quaternion) SetW(w float64) {
+	q.w = w
+	q._onChangeCallback()
+}
+
+func (q *Quaternion) Set(x, y, z, w float64) *Quaternion {
+	q.x, q.y, q.z, q.w = x, y, z, w
+	q._onChangeCallback()
+	return q
+}
+
+func (q *Quaternion) Clone() *Quaternion {
+	return NewQuaternion(q.x, q.y, q.z, q.w)
+}
+
+func (q *Quaternion) Copy(quaternion *Quaternion) *Quaternion {
+	q.x, q.y, q.z, q.w = quaternion.x, quaternion.y, quaternion.z, quaternion.w
+	q._onChangeCallback()
+	return q
+}
 
 func (q *Quaternion) SetFromEuler(euler *Euler) *Quaternion {
 	return q.SetFromEulerUpdate(euler, true)
@@ -264,7 +180,6 @@ func (q *Quaternion) SetFromEulerUpdate(euler *Euler, update bool) *Quaternion {
 	if update {
 		q._onChangeCallback()
 	}
-
 	return q
 }
 
@@ -281,397 +196,271 @@ func (q *Quaternion) SetFromAxisAngle(axis *Vector3, angle float64) *Quaternion 
 	q.w = math.Cos(halfAngle)
 
 	q._onChangeCallback()
+	return q
+}
+
+func (q *Quaternion) SetFromRotationMatrix(m *Matrix4) *Quaternion {
+	// http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/index.htm
+	// assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)
+
+	m11, m12, m13 := m.N[0], m.N[4], m.N[8]
+	m21, m22, m23 := m.N[1], m.N[5], m.N[9]
+	m31, m32, m33 := m.N[2], m.N[6], m.N[10]
+
+	trace := m11 + m22 + m33
+
+	if trace > 0 {
+		s := 0.5 / math.Sqrt(trace+1.0)
+		q.w = 0.25 / s
+		q.x = (m32 - m23) * s
+		q.y = (m13 - m31) * s
+		q.z = (m21 - m12) * s
+	} else if m11 > m22 && m11 > m33 {
+		s := 2.0 * math.Sqrt(1.0+m11-m22-m33)
+		q.w = (m32 - m23) / s
+		q.x = 0.25 * s
+		q.y = (m12 + m21) / s
+		q.z = (m13 + m31) / s
+	} else if m22 > m33 {
+		s := 2.0 * math.Sqrt(1.0+m22-m11-m33)
+		q.w = (m13 - m31) / s
+		q.x = (m12 + m21) / s
+		q.y = 0.25 * s
+		q.z = (m23 + m32) / s
+	} else {
+		s := 2.0 * math.Sqrt(1.0+m33-m11-m22)
+		q.w = (m21 - m12) / s
+		q.x = (m13 + m31) / s
+		q.y = (m23 + m32) / s
+		q.z = 0.25 * s
+	}
+
+	q._onChangeCallback()
+	return q
+}
+
+func (q *Quaternion) setFromUnitVectors(vFrom, vTo *Vector3) *Quaternion {
+	// assumes direction vectors vFrom and vTo are normalized
+
+	r := vFrom.Dot(vTo) + 1
+
+	if r < EPSILON {
+		// vFrom and vTo point in opposite directions
+		r = 0
+
+		if math.Abs(vFrom.X) > math.Abs(vFrom.Z) {
+			q.x = -vFrom.Y
+			q.y = vFrom.X
+			q.z = 0
+			q.w = r
+		} else {
+			q.x = 0
+			q.y = -vFrom.Z
+			q.z = vFrom.Y
+			q.w = r
+		}
+	} else {
+		// crossVectors( vFrom, vTo ); // inlined to avoid cyclic dependency on Vector3
+
+		q.x = vFrom.Y*vTo.Z - vFrom.Z*vTo.Y
+		q.y = vFrom.Z*vTo.X - vFrom.X*vTo.Z
+		q.z = vFrom.X*vTo.Y - vFrom.Y*vTo.X
+		q.w = r
+	}
+
+	return q.Normalize()
+}
+
+func (q *Quaternion) AngleTo(v *Quaternion) float64 {
+	return 2 * math.Acos(math.Abs(Clamp(q.Dot(v), -1, 1)))
+}
+
+func (q *Quaternion) RotateTowards(v *Quaternion, step float64) *Quaternion {
+	angle := q.AngleTo(v)
+	if angle == 0 {
+		return q
+	}
+
+	t := math.Min(1, step/angle)
+	q.Slerp(v, t)
 
 	return q
 }
 
+func (q *Quaternion) Identity() *Quaternion {
+	return q.Set(0, 0, 0, 1)
+}
+
+func (q *Quaternion) Invert() *Quaternion {
+	// quaternion is assumed to have unit length
+	return q.Conjugate()
+}
+
+func (q *Quaternion) Conjugate() *Quaternion {
+	q.x *= -1
+	q.y *= -1
+	q.z *= -1
+	q._onChangeCallback()
+	return q
+}
+
+func (q *Quaternion) Dot(v *Quaternion) float64 {
+	return q.x*v.x + q.y*v.y + q.z*v.z + q.w*v.w
+}
+
+func (q *Quaternion) LengthSq() float64 {
+	return q.x*q.x + q.y*q.y + q.z*q.z + q.w*q.w
+}
+
+func (q *Quaternion) Length() float64 {
+	return math.Sqrt(q.LengthSq())
+}
+
+func (q *Quaternion) Normalize() *Quaternion {
+	l := q.Length()
+
+	if l == 0 {
+		q.x = 0
+		q.y = 0
+		q.z = 0
+		q.w = 1
+	} else {
+		l = 1 / l
+		q.x *= l
+		q.y *= l
+		q.z *= l
+		q.w *= l
+
+	}
+
+	q._onChangeCallback()
+	return q
+}
+
+func (q *Quaternion) Multiply(v *Quaternion) *Quaternion {
+	return q.MultiplyQuaternions(q, v)
+}
+
+func (q *Quaternion) Premultiply(v *Quaternion) *Quaternion {
+	return q.MultiplyQuaternions(v, q)
+}
+
+func (q *Quaternion) MultiplyQuaternions(a, b *Quaternion) *Quaternion {
+	// from http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/code/index.htm
+
+	qax, qay, qaz, qaw := a.x, a.y, a.z, a.w
+	qbx, qby, qbz, qbw := b.x, b.y, b.z, b.w
+
+	q.x = qax*qbw + qaw*qbx + qay*qbz - qaz*qby
+	q.y = qay*qbw + qaw*qby + qaz*qbx - qax*qbz
+	q.z = qaz*qbw + qaw*qbz + qax*qby - qay*qbx
+	q.w = qaw*qbw - qax*qbx - qay*qby - qaz*qbz
+
+	q._onChangeCallback()
+	return q
+}
+
+func (q *Quaternion) Slerp(qb *Quaternion, t float64) *Quaternion {
+	if t == 0 {
+		return q
+	}
+	if t == 1 {
+		return q.Copy(qb)
+	}
+
+	x, y, z, w := q.x, q.y, q.z, q.w
+
+	// http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/
+
+	cosHalfTheta := w*qb.w + x*qb.x + y*qb.y + z*qb.z
+
+	if cosHalfTheta < 0 {
+		q.x, q.y, q.z, q.w = -qb.x, -qb.y, -qb.z, -qb.w
+		cosHalfTheta = -cosHalfTheta
+	} else {
+		q.x, q.y, q.z, q.w = qb.x, qb.y, qb.z, qb.w // todo issue fix: q.Copy(qb) without trigger q._onChangeCallback()
+	}
+
+	if cosHalfTheta >= 1.0 {
+		q.w, q.x, q.y, q.z = w, x, y, z
+		return q //todo issue: missing q._onChangeCallback()?
+	}
+
+	sqrSinHalfTheta := 1.0 - cosHalfTheta*cosHalfTheta
+
+	if sqrSinHalfTheta <= EPSILON {
+		s := 1 - t
+		q.w, q.x, q.y, q.z = s*w+t*q.w, s*x+t*q.x, s*y+t*q.y, s*z+t*q.z
+		return q.Normalize() // normalize calls _onChangeCallback()
+	}
+
+	sinHalfTheta := math.Sqrt(sqrSinHalfTheta)
+	halfTheta := math.Atan2(sinHalfTheta, cosHalfTheta)
+	ratioA := math.Sin((1-t)*halfTheta) / sinHalfTheta
+	ratioB := math.Sin(t*halfTheta) / sinHalfTheta
+	q.x, q.y, q.z, q.w = x*ratioA+q.x*ratioB, y*ratioA+q.y*ratioB, z*ratioA+q.z*ratioB, w*ratioA+q.w*ratioB
+
+	q._onChangeCallback()
+	return q
+}
+
+func (q *Quaternion) SlerpQuaternions(qa, qb *Quaternion, t float64) *Quaternion {
+	return q.Copy(qa).Slerp(qb, t)
+}
+
+func (q *Quaternion) Random() *Quaternion {
+	// sets this quaternion to a uniform random unit quaternnion
+
+	// Ken Shoemake
+	// Uniform random rotations
+	// D. Kirk, editor, Graphics Gems III, pages 124-132. Academic Press, New York, 1992.
+
+	theta1 := 2 * math.Pi * RandomFloat()
+	theta2 := 2 * math.Pi * RandomFloat()
+
+	x0 := RandomFloat()
+	r1 := math.Sqrt(1 - x0)
+	r2 := math.Sqrt(x0)
+
+	return q.Set(
+		r1*math.Sin(theta1),
+		r1*math.Cos(theta1),
+		r2*math.Sin(theta2),
+		r2*math.Cos(theta2))
+}
+
+func (q *Quaternion) Equals(quaternion *Quaternion) bool {
+	return quaternion.x == q.x && quaternion.y == q.y && quaternion.z == q.z && quaternion.w == q.w
+}
+
+func (q *Quaternion) FromArray(array []float64) *Quaternion {
+	_ = array[3]
+	q.x, q.y, q.z, q.w = array[0], array[1], array[2], array[3]
+	q._onChangeCallback()
+	return q
+}
+
+func (q *Quaternion) ToArray(array []float64) []float64 {
+	_ = array[3]
+	array[0], array[1], array[2], array[3] = q.x, q.y, q.z, q.w
+	return array
+}
+
 //todo
-// 	setFromRotationMatrix( m ) {
-//
-// 		// http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/index.htm
-//
-// 		// assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)
-//
-// 		const te = m.elements,
-//
-// 			m11 = te[ 0 ], m12 = te[ 4 ], m13 = te[ 8 ],
-// 			m21 = te[ 1 ], m22 = te[ 5 ], m23 = te[ 9 ],
-// 			m31 = te[ 2 ], m32 = te[ 6 ], m33 = te[ 10 ],
-//
-// 			trace = m11 + m22 + m33;
-//
-// 		if ( trace > 0 ) {
-//
-// 			const s = 0.5 / Math.sqrt( trace + 1.0 );
-//
-// 			this._w = 0.25 / s;
-// 			this._x = ( m32 - m23 ) * s;
-// 			this._y = ( m13 - m31 ) * s;
-// 			this._z = ( m21 - m12 ) * s;
-//
-// 		} else if ( m11 > m22 && m11 > m33 ) {
-//
-// 			const s = 2.0 * Math.sqrt( 1.0 + m11 - m22 - m33 );
-//
-// 			this._w = ( m32 - m23 ) / s;
-// 			this._x = 0.25 * s;
-// 			this._y = ( m12 + m21 ) / s;
-// 			this._z = ( m13 + m31 ) / s;
-//
-// 		} else if ( m22 > m33 ) {
-//
-// 			const s = 2.0 * Math.sqrt( 1.0 + m22 - m11 - m33 );
-//
-// 			this._w = ( m13 - m31 ) / s;
-// 			this._x = ( m12 + m21 ) / s;
-// 			this._y = 0.25 * s;
-// 			this._z = ( m23 + m32 ) / s;
-//
-// 		} else {
-//
-// 			const s = 2.0 * Math.sqrt( 1.0 + m33 - m11 - m22 );
-//
-// 			this._w = ( m21 - m12 ) / s;
-// 			this._x = ( m13 + m31 ) / s;
-// 			this._y = ( m23 + m32 ) / s;
-// 			this._z = 0.25 * s;
-//
-// 		}
-//
-// 		this._onChangeCallback();
-//
-// 		return this;
-//
-// 	}
-//
-// 	setFromUnitVectors( vFrom, vTo ) {
-//
-// 		// assumes direction vectors vFrom and vTo are normalized
-//
-// 		let r = vFrom.dot( vTo ) + 1;
-//
-// 		if ( r < Number.EPSILON ) {
-//
-// 			// vFrom and vTo point in opposite directions
-//
-// 			r = 0;
-//
-// 			if ( Math.abs( vFrom.x ) > Math.abs( vFrom.z ) ) {
-//
-// 				this._x = - vFrom.y;
-// 				this._y = vFrom.x;
-// 				this._z = 0;
-// 				this._w = r;
-//
-// 			} else {
-//
-// 				this._x = 0;
-// 				this._y = - vFrom.z;
-// 				this._z = vFrom.y;
-// 				this._w = r;
-//
-// 			}
-//
-// 		} else {
-//
-// 			// crossVectors( vFrom, vTo ); // inlined to avoid cyclic dependency on Vector3
-//
-// 			this._x = vFrom.y * vTo.z - vFrom.z * vTo.y;
-// 			this._y = vFrom.z * vTo.x - vFrom.x * vTo.z;
-// 			this._z = vFrom.x * vTo.y - vFrom.y * vTo.x;
-// 			this._w = r;
-//
-// 		}
-//
-// 		return this.normalize();
-//
-// 	}
-//
-// 	angleTo( q ) {
-//
-// 		return 2 * Math.acos( Math.abs( clamp( this.dot( q ), - 1, 1 ) ) );
-//
-// 	}
-//
-// 	rotateTowards( q, step ) {
-//
-// 		const angle = this.angleTo( q );
-//
-// 		if ( angle === 0 ) return this;
-//
-// 		const t = Math.min( 1, step / angle );
-//
-// 		this.slerp( q, t );
-//
-// 		return this;
-//
-// 	}
-//
-// 	identity() {
-//
-// 		return this.set( 0, 0, 0, 1 );
-//
-// 	}
-//
-// 	invert() {
-//
-// 		// quaternion is assumed to have unit length
-//
-// 		return this.conjugate();
-//
-// 	}
-//
-// 	conjugate() {
-//
-// 		this._x *= - 1;
-// 		this._y *= - 1;
-// 		this._z *= - 1;
-//
-// 		this._onChangeCallback();
-//
-// 		return this;
-//
-// 	}
-//
-// 	dot( v ) {
-//
-// 		return this._x * v._x + this._y * v._y + this._z * v._z + this._w * v._w;
-//
-// 	}
-//
-// 	lengthSq() {
-//
-// 		return this._x * this._x + this._y * this._y + this._z * this._z + this._w * this._w;
-//
-// 	}
-//
-// 	length() {
-//
-// 		return Math.sqrt( this._x * this._x + this._y * this._y + this._z * this._z + this._w * this._w );
-//
-// 	}
-//
-// 	normalize() {
-//
-// 		let l = this.length();
-//
-// 		if ( l === 0 ) {
-//
-// 			this._x = 0;
-// 			this._y = 0;
-// 			this._z = 0;
-// 			this._w = 1;
-//
-// 		} else {
-//
-// 			l = 1 / l;
-//
-// 			this._x = this._x * l;
-// 			this._y = this._y * l;
-// 			this._z = this._z * l;
-// 			this._w = this._w * l;
-//
-// 		}
-//
-// 		this._onChangeCallback();
-//
-// 		return this;
-//
-// 	}
-//
-// 	multiply( q ) {
-//
-// 		return this.multiplyQuaternions( this, q );
-//
-// 	}
-//
-// 	premultiply( q ) {
-//
-// 		return this.multiplyQuaternions( q, this );
-//
-// 	}
-//
-// 	multiplyQuaternions( a, b ) {
-//
-// 		// from http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/code/index.htm
-//
-// 		const qax = a._x, qay = a._y, qaz = a._z, qaw = a._w;
-// 		const qbx = b._x, qby = b._y, qbz = b._z, qbw = b._w;
-//
-// 		this._x = qax * qbw + qaw * qbx + qay * qbz - qaz * qby;
-// 		this._y = qay * qbw + qaw * qby + qaz * qbx - qax * qbz;
-// 		this._z = qaz * qbw + qaw * qbz + qax * qby - qay * qbx;
-// 		this._w = qaw * qbw - qax * qbx - qay * qby - qaz * qbz;
-//
-// 		this._onChangeCallback();
-//
-// 		return this;
-//
-// 	}
-//
-// 	slerp( qb, t ) {
-//
-// 		if ( t === 0 ) return this;
-// 		if ( t === 1 ) return this.copy( qb );
-//
-// 		const x = this._x, y = this._y, z = this._z, w = this._w;
-//
-// 		// http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/
-//
-// 		let cosHalfTheta = w * qb._w + x * qb._x + y * qb._y + z * qb._z;
-//
-// 		if ( cosHalfTheta < 0 ) {
-//
-// 			this._w = - qb._w;
-// 			this._x = - qb._x;
-// 			this._y = - qb._y;
-// 			this._z = - qb._z;
-//
-// 			cosHalfTheta = - cosHalfTheta;
-//
-// 		} else {
-//
-// 			this.copy( qb );
-//
-// 		}
-//
-// 		if ( cosHalfTheta >= 1.0 ) {
-//
-// 			this._w = w;
-// 			this._x = x;
-// 			this._y = y;
-// 			this._z = z;
-//
-// 			return this;
-//
-// 		}
-//
-// 		const sqrSinHalfTheta = 1.0 - cosHalfTheta * cosHalfTheta;
-//
-// 		if ( sqrSinHalfTheta <= Number.EPSILON ) {
-//
-// 			const s = 1 - t;
-// 			this._w = s * w + t * this._w;
-// 			this._x = s * x + t * this._x;
-// 			this._y = s * y + t * this._y;
-// 			this._z = s * z + t * this._z;
-//
-// 			this.normalize(); // normalize calls _onChangeCallback()
-//
-// 			return this;
-//
-// 		}
-//
-// 		const sinHalfTheta = Math.sqrt( sqrSinHalfTheta );
-// 		const halfTheta = Math.atan2( sinHalfTheta, cosHalfTheta );
-// 		const ratioA = Math.sin( ( 1 - t ) * halfTheta ) / sinHalfTheta,
-// 			ratioB = Math.sin( t * halfTheta ) / sinHalfTheta;
-//
-// 		this._w = ( w * ratioA + this._w * ratioB );
-// 		this._x = ( x * ratioA + this._x * ratioB );
-// 		this._y = ( y * ratioA + this._y * ratioB );
-// 		this._z = ( z * ratioA + this._z * ratioB );
-//
-// 		this._onChangeCallback();
-//
-// 		return this;
-//
-// 	}
-//
-// 	slerpQuaternions( qa, qb, t ) {
-//
-// 		return this.copy( qa ).slerp( qb, t );
-//
-// 	}
-//
-// 	random() {
-//
-// 		// sets this quaternion to a uniform random unit quaternnion
-//
-// 		// Ken Shoemake
-// 		// Uniform random rotations
-// 		// D. Kirk, editor, Graphics Gems III, pages 124-132. Academic Press, New York, 1992.
-//
-// 		const theta1 = 2 * Math.PI * Math.random();
-// 		const theta2 = 2 * Math.PI * Math.random();
-//
-// 		const x0 = Math.random();
-// 		const r1 = Math.sqrt( 1 - x0 );
-// 		const r2 = Math.sqrt( x0 );
-//
-// 		return this.set(
-// 			r1 * Math.sin( theta1 ),
-// 			r1 * Math.cos( theta1 ),
-// 			r2 * Math.sin( theta2 ),
-// 			r2 * Math.cos( theta2 ),
-// 		);
-//
-// 	}
-//
-// 	equals( quaternion ) {
-//
-// 		return ( quaternion._x === this._x ) && ( quaternion._y === this._y ) && ( quaternion._z === this._z ) && ( quaternion._w === this._w );
-//
-// 	}
-//
-// 	fromArray( array, offset = 0 ) {
-//
-// 		this._x = array[ offset ];
-// 		this._y = array[ offset + 1 ];
-// 		this._z = array[ offset + 2 ];
-// 		this._w = array[ offset + 3 ];
-//
-// 		this._onChangeCallback();
-//
-// 		return this;
-//
-// 	}
-//
-// 	toArray( array = [], offset = 0 ) {
-//
-// 		array[ offset ] = this._x;
-// 		array[ offset + 1 ] = this._y;
-// 		array[ offset + 2 ] = this._z;
-// 		array[ offset + 3 ] = this._w;
-//
-// 		return array;
-//
-// 	}
-//
 // 	fromBufferAttribute( attribute, index ) {
-//
 // 		this._x = attribute.getX( index );
 // 		this._y = attribute.getY( index );
 // 		this._z = attribute.getZ( index );
 // 		this._w = attribute.getW( index );
-//
 // 		this._onChangeCallback();
-//
 // 		return this;
-//
 // 	}
-//
-// 	toJSON() {
-//
-// 		return this.toArray();
-//
-// 	}
-//
-// 	_onChange( callback ) {
-//
-// 		this._onChangeCallback = callback;
-//
-// 		return this;
-//
-// 	}
-//
-// 	_onChangeCallback() {}
-//
-// 	*[ Symbol.iterator ]() {
-//
-// 		yield this._x;
-// 		yield this._y;
-// 		yield this._z;
-// 		yield this._w;
-//
-// 	}
+
+func (q *Quaternion) _onChange(callback func()) *Quaternion {
+	q._onChangeCallback = callback
+	return q
+}
+
+func (q *Quaternion) Append(buf []float64) []float64 {
+	return append(buf, q.x, q.y, q.z, q.w)
+}

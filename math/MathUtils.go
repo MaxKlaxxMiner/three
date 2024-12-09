@@ -8,6 +8,7 @@ var lut = "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20212
 
 const DEG2RAD = math.Pi / 180
 const RAD2DEG = 180 / math.Pi
+const EPSILON = 2.220446049250313e-16
 
 type UUID struct {
 	d0, d1, d2, d3 uint32

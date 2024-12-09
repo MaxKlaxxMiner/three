@@ -24,7 +24,7 @@ func (u *Utils) ConvertWithColorspace(p Format, colorSpace ColorSpace) int32 {
 	case UnsignedShort5551Type:
 		return u.gl.UNSIGNED_SHORT_5_5_5_1
 	case UnsignedInt248Type:
-		return u.gl.UNSIGNED_INT_24_8
+		return u.gl.UNSIGNED_INT_24_8 //todo issue fix
 	case UnsignedInt5999Type:
 		return u.gl.UNSIGNED_INT_5_9_9_9_REV
 
@@ -68,7 +68,7 @@ func (u *Utils) ConvertWithColorspace(p Format, colorSpace ColorSpace) int32 {
 	case RGIntegerFormat:
 		return u.gl.RG_INTEGER
 	case RGBIntegerFormat:
-		return u.gl.RGB_INTEGER
+		return u.gl.RGB_INTEGER //todo issue fix
 	case RGBAIntegerFormat:
 		return u.gl.RGBA_INTEGER
 
