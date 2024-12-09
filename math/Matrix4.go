@@ -91,9 +91,9 @@ func (m *Matrix4) MakeBasis(xAxis, yAxis, zAxis *Vector3) *Matrix4 {
 func (m *Matrix4) ExtractRotation(v *Matrix4) *Matrix4 {
 	// this method does not support reflection matrices
 
-	scaleX := 1 / v1.SetFromMatrixColumn(m, 0).Length()
-	scaleY := 1 / v1.SetFromMatrixColumn(m, 1).Length()
-	scaleZ := 1 / v1.SetFromMatrixColumn(m, 2).Length()
+	scaleX := 1 / _v1Matrix4.SetFromMatrixColumn(m, 0).Length()
+	scaleY := 1 / _v1Matrix4.SetFromMatrixColumn(m, 1).Length()
+	scaleZ := 1 / _v1Matrix4.SetFromMatrixColumn(m, 2).Length()
 
 	m.N[0] = v.N[0] * scaleX
 	m.N[1] = v.N[1] * scaleX
@@ -240,13 +240,11 @@ func (m *Matrix4) ExtractRotation(v *Matrix4) *Matrix4 {
 // 		return this;
 //
 // 	}
-//
-// 	makeRotationFromQuaternion( q ) {
-//
-// 		return this.compose( _zero, q, _one );
-//
-// 	}
-//
+
+func (m *Matrix4) MakeRotationFromQuaternion(q *Quaternion) *Matrix4 {
+	return m.Compose(_zeroMatrix4, q, _oneMatrix4)
+}
+
 // 	lookAt( eye, target, up ) {
 //
 // 		const te = this.elements;
@@ -852,11 +850,11 @@ func (m *Matrix4) Compose(position *Vector3, quaternion *Quaternion, scale *Vect
 //	return array;
 //
 // }
-var v1 = NewVector3Defaults()
 
-// const _m1 = /*@__PURE__*/ new Matrix4(); todo
-// const _zero = /*@__PURE__*/ new Vector3( 0, 0, 0 );
-// const _one = /*@__PURE__*/ new Vector3( 1, 1, 1 );
-// const _x = /*@__PURE__*/ new Vector3();
-// const _y = /*@__PURE__*/ new Vector3();
-// const _z = /*@__PURE__*/ new Vector3();
+var _v1Matrix4 = NewVector3Defaults()
+var _m1Matrix4 = NewMatrix4Identity()
+var _zeroMatrix4 = NewVector3Defaults()
+var _oneMatrix4 = NewVector3(1, 1, 1)
+var _xMatrix4 = NewVector3Defaults()
+var _yMatrix4 = NewVector3Defaults()
+var _zMatrix4 = NewVector3Defaults()

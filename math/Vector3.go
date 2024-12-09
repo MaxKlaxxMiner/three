@@ -148,11 +148,11 @@ func (v *Vector3) MultiplyVectors(a, b *Vector3) *Vector3 {
 }
 
 func (v *Vector3) ApplyEuler(euler *Euler) *Vector3 {
-	return v.ApplyQuaternion(_quaternion.SetFromEuler(euler))
+	return v.ApplyQuaternion(_quaternionVector3.SetFromEuler(euler))
 }
 
 func (v *Vector3) ApplyAxisAngle(axis *Vector3, angle float64) *Vector3 {
-	return v.ApplyQuaternion(_quaternion.SetFromAxisAngle(axis, angle))
+	return v.ApplyQuaternion(_quaternionVector3.SetFromAxisAngle(axis, angle))
 }
 
 func (v *Vector3) ApplyMatrix3(m *Matrix3) *Vector3 {
@@ -367,13 +367,13 @@ func (v *Vector3) ProjectOnVector(a *Vector3) *Vector3 {
 }
 
 func (v *Vector3) ProjectOnPlane(planeNormal *Vector3) *Vector3 {
-	return v.Sub(_vector.Copy(v).ProjectOnVector(planeNormal))
+	return v.Sub(_vectorVector3.Copy(v).ProjectOnVector(planeNormal))
 }
 
 func (v *Vector3) Reflect(normal *Vector3) *Vector3 {
 	// reflect incident vector off plane orthogonal to normal
 	// normal is assumed to have unit length
-	return v.Sub(_vector.Copy(normal).MultiplyScalar(2 * v.Dot(normal)))
+	return v.Sub(_vectorVector3.Copy(normal).MultiplyScalar(2 * v.Dot(normal)))
 }
 
 func (v *Vector3) AngleTo(a *Vector3) float64 {
@@ -508,5 +508,5 @@ func (v *Vector3) Append(buf []float64) []float64 {
 	return append(buf, v.X, v.Y, v.Z)
 }
 
-var _vector = NewVector3Defaults()
-var _quaternion = NewQuaternionDefaults()
+var _vectorVector3 = NewVector3Defaults()
+var _quaternionVector3 = NewQuaternionDefaults()

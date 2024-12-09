@@ -378,4 +378,4 @@ func (m *Matrix3) Copy(v *Matrix3) *Matrix3 {
 //
 // }
 //
-// const _m3 = /*@__PURE__*/ new Matrix3();
+// const _m3Matrix3 = /*@__PURE__*/ new Matrix3();

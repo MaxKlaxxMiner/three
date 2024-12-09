@@ -1,5 +1,10 @@
 package math
 
+import (
+	"math"
+	"strconv"
+)
+
 type Euler struct {
 	x, y, z           float64
 	order             EulerOrderType
@@ -74,210 +79,137 @@ func (e *Euler) Copy(a *Euler) *Euler {
 	return e
 }
 
-//todo
-// 	setFromRotationMatrix( m, order = this._order, update = true ) {
-//
-// 		// assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)
-//
-// 		const te = m.elements;
-// 		const m11 = te[ 0 ], m12 = te[ 4 ], m13 = te[ 8 ];
-// 		const m21 = te[ 1 ], m22 = te[ 5 ], m23 = te[ 9 ];
-// 		const m31 = te[ 2 ], m32 = te[ 6 ], m33 = te[ 10 ];
-//
-// 		switch ( order ) {
-//
-// 			case 'XYZ':
-//
-// 				this._y = Math.asin( clamp( m13, - 1, 1 ) );
-//
-// 				if ( Math.abs( m13 ) < 0.9999999 ) {
-//
-// 					this._x = Math.atan2( - m23, m33 );
-// 					this._z = Math.atan2( - m12, m11 );
-//
-// 				} else {
-//
-// 					this._x = Math.atan2( m32, m22 );
-// 					this._z = 0;
-//
-// 				}
-//
-// 				break;
-//
-// 			case 'YXZ':
-//
-// 				this._x = Math.asin( - clamp( m23, - 1, 1 ) );
-//
-// 				if ( Math.abs( m23 ) < 0.9999999 ) {
-//
-// 					this._y = Math.atan2( m13, m33 );
-// 					this._z = Math.atan2( m21, m22 );
-//
-// 				} else {
-//
-// 					this._y = Math.atan2( - m31, m11 );
-// 					this._z = 0;
-//
-// 				}
-//
-// 				break;
-//
-// 			case 'ZXY':
-//
-// 				this._x = Math.asin( clamp( m32, - 1, 1 ) );
-//
-// 				if ( Math.abs( m32 ) < 0.9999999 ) {
-//
-// 					this._y = Math.atan2( - m31, m33 );
-// 					this._z = Math.atan2( - m12, m22 );
-//
-// 				} else {
-//
-// 					this._y = 0;
-// 					this._z = Math.atan2( m21, m11 );
-//
-// 				}
-//
-// 				break;
-//
-// 			case 'ZYX':
-//
-// 				this._y = Math.asin( - clamp( m31, - 1, 1 ) );
-//
-// 				if ( Math.abs( m31 ) < 0.9999999 ) {
-//
-// 					this._x = Math.atan2( m32, m33 );
-// 					this._z = Math.atan2( m21, m11 );
-//
-// 				} else {
-//
-// 					this._x = 0;
-// 					this._z = Math.atan2( - m12, m22 );
-//
-// 				}
-//
-// 				break;
-//
-// 			case 'YZX':
-//
-// 				this._z = Math.asin( clamp( m21, - 1, 1 ) );
-//
-// 				if ( Math.abs( m21 ) < 0.9999999 ) {
-//
-// 					this._x = Math.atan2( - m23, m22 );
-// 					this._y = Math.atan2( - m31, m11 );
-//
-// 				} else {
-//
-// 					this._x = 0;
-// 					this._y = Math.atan2( m13, m33 );
-//
-// 				}
-//
-// 				break;
-//
-// 			case 'XZY':
-//
-// 				this._z = Math.asin( - clamp( m12, - 1, 1 ) );
-//
-// 				if ( Math.abs( m12 ) < 0.9999999 ) {
-//
-// 					this._x = Math.atan2( m32, m22 );
-// 					this._y = Math.atan2( m13, m11 );
-//
-// 				} else {
-//
-// 					this._x = Math.atan2( - m23, m33 );
-// 					this._y = 0;
-//
-// 				}
-//
-// 				break;
-//
-// 			default:
-//
-// 				console.warn( 'THREE.Euler: .setFromRotationMatrix() encountered an unknown order: ' + order );
-//
-// 		}
-//
-// 		this._order = order;
-//
-// 		if ( update === true ) this._onChangeCallback();
-//
-// 		return this;
-//
-// 	}
-//
-// 	setFromQuaternion( q, order, update ) {
-//
-// 		_matrix.makeRotationFromQuaternion( q );
-//
-// 		return this.setFromRotationMatrix( _matrix, order, update );
-//
-// 	}
-//
-// 	setFromVector3( v, order = this._order ) {
-//
-// 		return this.set( v.x, v.y, v.z, order );
-//
-// 	}
-//
-// 	reorder( newOrder ) {
-//
-// 		// WARNING: this discards revolution information -bhouston
-//
-// 		_quaternion.setFromEuler( this );
-//
-// 		return this.setFromQuaternion( _quaternion, newOrder );
-//
-// 	}
-//
-// 	equals( euler ) {
-//
-// 		return ( euler._x === this._x ) && ( euler._y === this._y ) && ( euler._z === this._z ) && ( euler._order === this._order );
-//
-// 	}
-//
-// 	fromArray( array ) {
-//
-// 		this._x = array[ 0 ];
-// 		this._y = array[ 1 ];
-// 		this._z = array[ 2 ];
-// 		if ( array[ 3 ] !== undefined ) this._order = array[ 3 ];
-//
-// 		this._onChangeCallback();
-//
-// 		return this;
-//
-// 	}
-//
-// 	toArray( array = [], offset = 0 ) {
-//
-// 		array[ offset ] = this._x;
-// 		array[ offset + 1 ] = this._y;
-// 		array[ offset + 2 ] = this._z;
-// 		array[ offset + 3 ] = this._order;
-//
-// 		return array;
-//
-// 	}
-//
-// 	_onChange( callback ) {
-//
-// 		this._onChangeCallback = callback;
-//
-// 		return this;
-//
-// 	}
-//
-// 	*[ Symbol.iterator ]() {
-//
-// 		yield this._x;
-// 		yield this._y;
-// 		yield this._z;
-// 		yield this._order;
-//
-// 	}
-//
-// const _matrix = /*@__PURE__*/ new Matrix4();
-// const _quaternion = /*@__PURE__*/ new Quaternion();
+func (e *Euler) SetFromRotationMatrix(m *Matrix4) *Euler {
+	return e.SetFromRotationMatrixOrderUpdate(m, e.order, true)
+}
+
+func (e *Euler) SetFromRotationMatrixOrderUpdate(m *Matrix4, order EulerOrderType, update bool) *Euler {
+	// assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)
+
+	m11, m12, m13 := m.N[0], m.N[4], m.N[8]
+	m21, m22, m23 := m.N[1], m.N[5], m.N[9]
+	m31, m32, m33 := m.N[2], m.N[6], m.N[10]
+
+	switch order {
+	case EulerOrderXYZ:
+		e.y = math.Asin(Clamp(m13, -1, 1))
+		if math.Abs(m13) < 0.9999999 {
+			e.x = math.Atan2(-m23, m33)
+			e.z = math.Atan2(-m12, m11)
+		} else {
+			e.x = math.Atan2(m32, m22)
+			e.z = 0
+		}
+	case EulerOrderYXZ:
+		e.x = math.Asin(-Clamp(m23, -1, 1))
+		if math.Abs(m23) < 0.9999999 {
+			e.y = math.Atan2(m13, m33)
+			e.z = math.Atan2(m21, m22)
+		} else {
+			e.y = math.Atan2(-m31, m11)
+			e.z = 0
+		}
+	case EulerOrderZXY:
+		e.x = math.Asin(Clamp(m32, -1, 1))
+		if math.Abs(m32) < 0.9999999 {
+			e.y = math.Atan2(-m31, m33)
+			e.z = math.Atan2(-m12, m22)
+		} else {
+			e.y = 0
+			e.z = math.Atan2(m21, m11)
+		}
+	case EulerOrderZYX:
+		e.y = math.Asin(-Clamp(m31, -1, 1))
+		if math.Abs(m31) < 0.9999999 {
+			e.x = math.Atan2(m32, m33)
+			e.z = math.Atan2(m21, m11)
+		} else {
+			e.x = 0
+			e.z = math.Atan2(-m12, m22)
+		}
+	case EulerOrderYZX:
+		e.z = math.Asin(Clamp(m21, -1, 1))
+		if math.Abs(m21) < 0.9999999 {
+			e.x = math.Atan2(-m23, m22)
+			e.y = math.Atan2(-m31, m11)
+		} else {
+			e.x = 0
+			e.y = math.Atan2(m13, m33)
+		}
+	case EulerOrderXZY:
+		e.z = math.Asin(-Clamp(m12, -1, 1))
+		if math.Abs(m12) < 0.9999999 {
+			e.x = math.Atan2(m32, m22)
+			e.y = math.Atan2(m13, m11)
+		} else {
+			e.x = math.Atan2(-m23, m33)
+			e.y = 0
+		}
+	default:
+		panic("THREE.Euler: .setFromRotationMatrix() encountered an unknown order: " + strconv.Itoa(int(order)))
+	}
+
+	e.order = order
+
+	if update {
+		e._onChangeCallback()
+	}
+
+	return e
+}
+
+func (e *Euler) SetFromQuaternion(q *Quaternion, order EulerOrderType, update bool) *Euler {
+	_matrixEuler.MakeRotationFromQuaternion(q)
+	return e.SetFromRotationMatrixOrderUpdate(_matrixEuler, order, update)
+}
+
+func (e *Euler) SetFromVector3(v *Vector3) *Euler {
+	return e.SetXYZ(v.X, v.Y, v.Z)
+}
+
+func (e *Euler) SetFromVector3Order(v *Vector3, order EulerOrderType) *Euler {
+	return e.SetXYZOrder(v.X, v.Y, v.Z, order)
+}
+
+func (e *Euler) Reorder(newOrder EulerOrderType) *Euler {
+	// WARNING: this discards revolution information -bhouston
+	_quaternionEuler.SetFromEuler(e)
+	return e.SetFromQuaternion(_quaternionEuler, newOrder, false)
+}
+
+func (e *Euler) Equals(euler *Euler) bool {
+	return euler.x == e.x && euler.y == e.y && euler.z == e.z && euler.order == e.order
+}
+
+func (e *Euler) FromArray(array []float64) *Euler {
+	e.x = array[0]
+	e.y = array[1]
+	e.z = array[2]
+	if len(array) > 3 && array[3] > 1000000 {
+		e.order = EulerOrderType(int(array[3])/1000000 - 1)
+	}
+	e._onChangeCallback()
+	return e
+}
+
+func (e *Euler) ToArray(array []float64) []float64 {
+	array[0] = e.x
+	array[1] = e.y
+	array[2] = e.z
+	if len(array) > 3 {
+		array[3] = float64((int(e.order) + 1) * 1000001)
+	}
+	return array
+}
+
+func (e *Euler) _onChange(callback func()) *Euler {
+	e._onChangeCallback = callback
+	return e
+}
+
+func (e *Euler) Append(array []float64) []float64 {
+	return append(array, e.x, e.y, e.y, float64((int(e.order)+1)*1000001))
+}
+
+var _matrixEuler = NewMatrix4Identity()
+var _quaternionEuler = NewQuaternionDefaults()
