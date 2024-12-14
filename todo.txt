@@ -1,7 +1,6 @@
-[23%] cameras/Camera
-[11%] cameras/PerspectiveCamera
+[92%] cameras/PerspectiveCamera
 [ 2%] core/BufferGeometry
-[20%] core/Object3D (193 / 962)
+[25%] core/Object3D (228 / 915)
 [85%] geometries/BoxGeometry
 [ 5%] materials/Material
 [27%] materials/MeshBasicMaterial
@@ -22,6 +21,7 @@
 [16%] core (34 / 208)
 
 --- finished ---
+[100%] cameras/Camera
 [100%] core/EventDispatcher
 [100%] core/Layers
 [100%] demos/demo1

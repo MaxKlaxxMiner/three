@@ -459,17 +459,14 @@ func (o *Object3D) Add(objects ...*Object3D) *Object3D {
 // 		return target;
 //
 // 	}
-//
-// 	getWorldDirection( target ) {
-//
-// 		this.updateWorldMatrix( true, false );
-//
-// 		const e = this.matrixWorld.elements;
-//
-// 		return target.set( e[ 8 ], e[ 9 ], e[ 10 ] ).normalize();
-//
-// 	}
-//
+
+func (o *Object3D) GetWorldDirection(target *math.Vector3) *math.Vector3 {
+	o.UpdateWorldMatrix(true, false)
+
+	return target.Set(o.MatrixWorld.N[8], o.MatrixWorld.N[9], o.MatrixWorld.N[10]).Normalize()
+}
+
+//todo
 // 	raycast( /* raycaster, intersects */ ) {}
 //
 // 	traverse( callback ) {
@@ -549,51 +546,35 @@ func (o *Object3D) UpdateMatrixWorldForce(force bool) {
 	}
 }
 
+func (o *Object3D) UpdateWorldMatrix(updateParents, updateChildren bool) {
+	parent := o.Parent
+
+	if updateParents && parent != nil {
+		parent.UpdateWorldMatrix(true, false)
+	}
+
+	if o.MatrixAutoUpdate {
+		o.UpdateMatrix()
+	}
+
+	if o.MatrixWorldAutoUpdate {
+		if o.Parent == nil {
+			o.MatrixWorld.Copy(&o.Matrix)
+		} else {
+			o.MatrixWorld.MultiplyMatrices(&o.Parent.MatrixWorld, &o.Matrix)
+		}
+	}
+
+	// make sure descendants are updated
+
+	if updateChildren {
+		for i := range o.Children {
+			o.Children[i].UpdateWorldMatrix(false, true)
+		}
+	}
+}
+
 //todo
-// 	updateWorldMatrix( updateParents, updateChildren ) {
-//
-// 		const parent = this.parent;
-//
-// 		if ( updateParents === true && parent !== null ) {
-//
-// 			parent.updateWorldMatrix( true, false );
-//
-// 		}
-//
-// 		if ( this.matrixAutoUpdate ) this.updateMatrix();
-//
-// 		if ( this.matrixWorldAutoUpdate === true ) {
-//
-// 			if ( this.parent === null ) {
-//
-// 				this.matrixWorld.copy( this.matrix );
-//
-// 			} else {
-//
-// 				this.matrixWorld.multiplyMatrices( this.parent.matrixWorld, this.matrix );
-//
-// 			}
-//
-// 		}
-//
-// 		// make sure descendants are updated
-//
-// 		if ( updateChildren === true ) {
-//
-// 			const children = this.children;
-//
-// 			for ( let i = 0, l = children.length; i < l; i ++ ) {
-//
-// 				const child = children[ i ];
-//
-// 				child.updateWorldMatrix( false, true );
-//
-// 			}
-//
-// 		}
-//
-// 	}
-//
 // 	toJSON( meta ) {
 //
 // 		// meta is a string when called from JSON.stringify
