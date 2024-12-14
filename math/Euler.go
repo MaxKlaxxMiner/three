@@ -11,6 +11,10 @@ type Euler struct {
 	_onChangeCallback func()
 }
 
+func NewEulerDefaults() *Euler {
+	return &Euler{0, 0, 0, EulerDefaultOrder, func() {}}
+}
+
 func NewEuler(x, y, z float64) *Euler {
 	return &Euler{x, y, z, EulerDefaultOrder, func() {}}
 }
@@ -55,6 +59,9 @@ func (e *Euler) SetZ(z float64) {
 func (e *Euler) SetOrder(order EulerOrderType) {
 	e.order = order
 	e._onChangeCallback()
+}
+func (e *Euler) SetOrderNoUpdate(order EulerOrderType) {
+	e.order = order
 }
 func (e *Euler) SetXYZ(x, y, z float64) *Euler {
 	e.x, e.y, e.z = x, y, z
@@ -202,7 +209,7 @@ func (e *Euler) ToArray(array []float64) []float64 {
 	return array
 }
 
-func (e *Euler) _onChange(callback func()) *Euler {
+func (e *Euler) OverrideOnChange(callback func()) *Euler {
 	e._onChangeCallback = callback
 	return e
 }

@@ -14,6 +14,8 @@ type Object3D struct {
 	Position               math.Vector3
 	Rotation               math.Euler
 	Quaternion             math.Quaternion
+	ModelViewMatrix        math.Matrix4
+	NormalMatrix           math.Matrix3
 	Scale                  math.Vector3
 	Matrix                 math.Matrix4
 	MatrixWorld            math.Matrix4
@@ -53,37 +55,11 @@ func NewObject3D() *Object3D {
 	this.Quaternion = *math.NewQuaternionDefaults()
 	this.Scale.SetScalar(1)
 
-	//todo
-	// 		function onRotationChange() {
-	// 			quaternion.setFromEuler( rotation, false );
-	// 		}
-	//
-	// 		function onQuaternionChange() {
-	// 			rotation.setFromQuaternion( quaternion, undefined, false );
-	// 		}
-	//
-	// 		rotation._onChange( onRotationChange );
-	// 		quaternion._onChange( onQuaternionChange );
-	//
-	// 		Object.defineProperties( this, {
-	// 			rotation: {
-	// 				configurable: true,
-	// 				enumerable: true,
-	// 				value: rotation
-	// 			},
-	// 			quaternion: {
-	// 				configurable: true,
-	// 				enumerable: true,
-	// 				value: quaternion
-	// 			},
-	// 			modelViewMatrix: {
-	// 				value: new Matrix4()
-	// 			},
-	// 			normalMatrix: {
-	// 				value: new Matrix3()
-	// 			}
-	// 		} );
-	//
+	this.Rotation.OverrideOnChange(func() { this.Quaternion.SetFromEulerUpdate(&this.Rotation, false) })
+	this.Quaternion.OverrideOnChange(func() { this.Rotation.SetFromQuaternion(&this.Quaternion, this.Rotation.GetOrder(), false) })
+
+	this.ModelViewMatrix = *math.NewMatrix4Identity()
+	this.NormalMatrix = *math.NewMatrix3Identity()
 
 	this.Matrix = *math.NewMatrix4Identity()
 	this.MatrixWorld = *math.NewMatrix4Identity()
@@ -912,59 +888,58 @@ func (o *Object3D) UpdateMatrixWorldForce(force bool) {
 // 		}
 //
 // 	}
-//
-// 	clone( recursive ) {
-//
-// 		return new this.constructor().copy( this, recursive );
-//
-// 	}
-//
-// 	copy( source, recursive = true ) {
-//
-// 		this.name = source.name;
-//
-// 		this.up.copy( source.up );
-//
-// 		this.position.copy( source.position );
-// 		this.rotation.order = source.rotation.order;
-// 		this.quaternion.copy( source.quaternion );
-// 		this.scale.copy( source.scale );
-//
-// 		this.matrix.copy( source.matrix );
-// 		this.matrixWorld.copy( source.matrixWorld );
-//
-// 		this.matrixAutoUpdate = source.matrixAutoUpdate;
-//
-// 		this.matrixWorldAutoUpdate = source.matrixWorldAutoUpdate;
-// 		this.matrixWorldNeedsUpdate = source.matrixWorldNeedsUpdate;
-//
-// 		this.layers.mask = source.layers.mask;
-// 		this.visible = source.visible;
-//
-// 		this.castShadow = source.castShadow;
-// 		this.receiveShadow = source.receiveShadow;
-//
-// 		this.frustumCulled = source.frustumCulled;
-// 		this.renderOrder = source.renderOrder;
-//
-// 		this.animations = source.animations.slice();
-//
-// 		this.userData = JSON.parse( JSON.stringify( source.userData ) );
-//
-// 		if ( recursive === true ) {
-//
-// 			for ( let i = 0; i < source.children.length; i ++ ) {
-//
-// 				const child = source.children[ i ];
-// 				this.add( child.clone() );
-//
-// 			}
-//
-// 		}
-//
-// 		return this;
-//
-// 	}
+
+func (o *Object3D) Clone() *Object3D {
+	return NewObject3D().Copy(o)
+}
+
+func (o *Object3D) CloneRecursive(recursive bool) *Object3D {
+	return NewObject3D().CopyRecursive(o, recursive)
+}
+
+func (o *Object3D) Copy(source *Object3D) *Object3D {
+	return o.CopyRecursive(source, true)
+}
+
+func (o *Object3D) CopyRecursive(source *Object3D, recursive bool) *Object3D {
+	o.Name = source.Name
+
+	o.Up.Copy(&source.Up)
+
+	o.Position.Copy(&source.Position)
+	o.Rotation.SetOrderNoUpdate(source.Rotation.GetOrder())
+	o.Quaternion.Copy(&source.Quaternion)
+	o.Scale.Copy(&source.Scale)
+
+	o.Matrix.Copy(&source.Matrix)
+	o.MatrixWorld.Copy(&source.MatrixWorld)
+
+	o.MatrixAutoUpdate = source.MatrixAutoUpdate
+
+	o.MatrixWorldAutoUpdate = source.MatrixWorldAutoUpdate
+	o.MatrixWorldNeedsUpdate = source.MatrixWorldNeedsUpdate
+
+	o.Layers.Mask = source.Layers.Mask
+	o.Visible = source.Visible
+
+	o.CastShadow = source.CastShadow
+	o.ReceiveShadow = source.ReceiveShadow
+
+	o.FrustumCulled = source.FrustumCulled
+	o.RenderOrder = source.RenderOrder
+
+	// 		this.animations = source.animations.slice(); todo
+
+	// 		this.userData = JSON.parse( JSON.stringify( source.userData ) ); todo
+
+	if recursive {
+		for i := range source.Children {
+			o.Add(source.Children[i].Clone())
+		}
+	}
+
+	return o
+}
 
 var Object3dDefaultUp = math.NewVector3(0, 1, 0)
 var Object3dDefaultMatrixAutoUpdate = true

@@ -1,7 +1,7 @@
 [23%] cameras/Camera
 [11%] cameras/PerspectiveCamera
 [ 2%] core/BufferGeometry
-[14%] core/Object3D (134 / 987)
+[20%] core/Object3D (193 / 962)
 [85%] geometries/BoxGeometry
 [ 5%] materials/Material
 [27%] materials/MeshBasicMaterial
@@ -16,7 +16,7 @@
 [ 9%] renderers/webgl/WebGLState (126 / 1352)
 [45%] renderers/webgl/WebGLUtils
 [ 9%] renderers/WebGLRenderer (262 / 2845)
-[21%] scenes/Scene
+[66%] scenes/Scene
 [ 6%] utils/utils
 [ 2%] constants
 [16%] core (34 / 208)

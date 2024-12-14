@@ -182,6 +182,7 @@ var (
 	// export { Box3 } from './math/Box3.js';
 	// export { Box2 } from './math/Box2.js';
 	// export { Line3 } from './math/Line3.js';
+	NewEulerDefaults   = math.NewEulerDefaults
 	NewEuler           = math.NewEuler
 	NewEulerWithOrder  = math.NewEulerWithOrder
 	NewVector4Defaults = math.NewVector4Defaults

@@ -1,9 +1,17 @@
 package scenes
 
-import "github.com/MaxKlaxxMiner/three/core"
+import (
+	"github.com/MaxKlaxxMiner/three/core"
+	"github.com/MaxKlaxxMiner/three/math"
+)
 
 type Scene struct {
 	core.Object3D
+	BackgroundBlurriness float64
+	BackgroundIntensity  float64
+	BackgroundRotation   math.Euler
+	EnvironmentIntensity float64
+	EnvironmentRotation  math.Euler
 }
 
 func NewScene() *Scene {
@@ -14,43 +22,44 @@ func NewScene() *Scene {
 	// 		this.background = null; todo
 	// 		this.environment = null; todo
 	// 		this.fog = null; todo
-	// 		this.backgroundBlurriness = 0; todo
-	// 		this.backgroundIntensity = 1; todo
-	// 		this.backgroundRotation = new Euler(); todo
-	// 		this.environmentIntensity = 1; todo
-	// 		this.environmentRotation = new Euler(); todo
+	this.BackgroundBlurriness = 0
+	this.BackgroundIntensity = 1
+	this.BackgroundRotation = *math.NewEulerDefaults()
+	this.EnvironmentIntensity = 1
+	this.EnvironmentRotation = *math.NewEulerDefaults()
 	// 		this.overrideMaterial = null; todo
 	return this
 }
 
 func (s *Scene) IsScene() bool { return s != nil }
 
+func (s *Scene) Copy(source *Scene) *Scene {
+	return s.CopyRecursive(source, true)
+}
+
+func (s *Scene) CopyRecursive(source *Scene, recursive bool) *Scene {
+	s.Object3D.CopyRecursive(&source.Object3D, recursive)
+
+	// 		if ( source.background !== null ) this.background = source.background.clone(); todo
+	// 		if ( source.environment !== null ) this.environment = source.environment.clone(); todo
+	// 		if ( source.fog !== null ) this.fog = source.fog.clone(); todo
+
+	s.BackgroundBlurriness = source.BackgroundBlurriness
+	s.BackgroundIntensity = source.BackgroundIntensity
+	s.BackgroundRotation.Copy(&source.BackgroundRotation)
+
+	s.EnvironmentIntensity = source.EnvironmentIntensity
+	s.EnvironmentRotation.Copy(&source.EnvironmentRotation)
+
+	//		if ( source.overrideMaterial !== null ) this.overrideMaterial = source.overrideMaterial.clone(); todo
+
+	s.MatrixAutoUpdate = source.MatrixAutoUpdate
+
+	return s
+}
+
 // todo
-// 	copy( source, recursive ) {
-//
-// 		super.copy( source, recursive );
-//
-// 		if ( source.background !== null ) this.background = source.background.clone();
-// 		if ( source.environment !== null ) this.environment = source.environment.clone();
-// 		if ( source.fog !== null ) this.fog = source.fog.clone();
-//
-// 		this.backgroundBlurriness = source.backgroundBlurriness;
-// 		this.backgroundIntensity = source.backgroundIntensity;
-// 		this.backgroundRotation.copy( source.backgroundRotation );
-//
-// 		this.environmentIntensity = source.environmentIntensity;
-// 		this.environmentRotation.copy( source.environmentRotation );
-//
-// 		if ( source.overrideMaterial !== null ) this.overrideMaterial = source.overrideMaterial.clone();
-//
-// 		this.matrixAutoUpdate = source.matrixAutoUpdate;
-//
-// 		return this;
-//
-// 	}
-//
 // 	toJSON( meta ) {
-//
 // 		const data = super.toJSON( meta );
 //
 // 		if ( this.fog !== null ) data.object.fog = this.fog.toJSON();
@@ -63,8 +72,4 @@ func (s *Scene) IsScene() bool { return s != nil }
 // 		data.object.environmentRotation = this.environmentRotation.toArray();
 //
 // 		return data;
-//
 // 	}
-//
-// import { Object3D } from '../core/Object3D.js';
-// import { Euler } from '../math/Euler.js';

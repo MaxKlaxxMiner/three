@@ -456,7 +456,7 @@ func (q *Quaternion) ToArray(array []float64) []float64 {
 // 		return this;
 // 	}
 
-func (q *Quaternion) _onChange(callback func()) *Quaternion {
+func (q *Quaternion) OverrideOnChange(callback func()) *Quaternion {
 	q._onChangeCallback = callback
 	return q
 }
