@@ -11,8 +11,27 @@
 [99%] math/Vector3
 [98%] math/Vector4
 [ 5%] objects/Mesh
+[ 4%] renderers/webgl/WebGLAttributes
+[ 5%] renderers/webgl/WebGLBackground
+[ 2%] renderers/webgl/WebGLBindingStates
+[12%] renderers/webgl/WebGLBufferRenderer
 [22%] renderers/webgl/WebGLCapabilities
+[ 5%] renderers/webgl/WebGLClipping
+[ 9%] renderers/webgl/WebGLCubeMaps
+[ 7%] renderers/webgl/WebGLCubeUVMaps
+[ 7%] renderers/webgl/WebGLGeometries
+[11%] renderers/webgl/WebGLIndexedBufferRenderer
+[ 2%] renderers/webgl/WebGLMaterials
+[ 7%] renderers/webgl/WebGLMorphtargets
+[13%] renderers/webgl/WebGLObjects
+[ 2%] renderers/webgl/WebGLPrograms
+[20%] renderers/webgl/WebGLProperties
+[ 3%] renderers/webgl/WebGLRenderLists
+[ 8%] renderers/webgl/WebGLRenderStates
+[ 3%] renderers/webgl/WebGLShadowMap
 [ 9%] renderers/webgl/WebGLState (126 / 1352)
+[ 1%] renderers/webgl/WebGLTextures
+[ 3%] renderers/webgl/WebGLUniformsGroups
 [45%] renderers/webgl/WebGLUtils
 [ 9%] renderers/WebGLRenderer (262 / 2845)
 [66%] scenes/Scene

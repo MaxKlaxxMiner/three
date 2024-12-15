@@ -9,8 +9,8 @@ import (
 )
 
 type State struct {
-	gl         Context
-	extensions Extensions
+	gl         *Context
+	extensions *Extensions
 	// 	const colorBuffer = new ColorBuffer(); todo
 	// 	const depthBuffer = new DepthBuffer(); todo
 	// 	const stencilBuffer = new StencilBuffer(); todo
@@ -93,7 +93,7 @@ type State struct {
 	// 		reset: reset
 }
 
-func NewWebGLState(gl Context, extensions Extensions) *State {
+func NewWebGLState(gl *Context, extensions *Extensions) *State {
 	r := &State{gl: gl, extensions: extensions}
 
 	//todo

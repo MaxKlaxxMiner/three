@@ -3,11 +3,11 @@ package webgl
 import . "github.com/MaxKlaxxMiner/three/consts"
 
 type Utils struct {
-	gl         Context
-	extensions Extensions
+	gl         *Context
+	extensions *Extensions
 }
 
-func NewWebGLUtils(gl Context, extensions Extensions) *Utils {
+func NewWebGLUtils(gl *Context, extensions *Extensions) *Utils {
 	return &Utils{gl, extensions}
 }
 

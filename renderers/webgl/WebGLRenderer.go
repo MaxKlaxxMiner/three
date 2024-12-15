@@ -1,17 +1,16 @@
-package renderers
+package webgl
 
 import (
 	"fmt"
 	"github.com/MaxKlaxxMiner/three/cameras"
 	"github.com/MaxKlaxxMiner/three/consts"
 	"github.com/MaxKlaxxMiner/three/math"
-	"github.com/MaxKlaxxMiner/three/renderers/webgl"
 	"github.com/MaxKlaxxMiner/three/scenes"
 	"github.com/MaxKlaxxMiner/three/utils"
 	"strconv"
 )
 
-type WebGLRenderer struct {
+type Renderer struct {
 	localValues
 	localJsValues
 	GlobalJsValues
@@ -45,24 +44,44 @@ type localValues struct {
 	width, height int
 	pixelRatio    float64
 	viewport      math.Vector4
-	gl            webgl.Context
+	gl            Context
 
-	parameters               webgl.RendererParams
-	Extensions               webgl.Extensions
-	utils                    webgl.Utils
-	Capabilities             webgl.Capabilities
-	State                    webgl.State
-	Info                     webgl.Info
-	animation                webgl.Animation
+	parameters            RendererParams
+	Extensions            Extensions
+	Capabilities          Capabilities
+	State                 State
+	Info                  Info
+	Properties            Properties
+	Textures              Textures
+	Cubemaps              CubeMaps
+	Cubeuvmaps            CubeUVMaps
+	Attributes            Attributes
+	Geometries            Geometries
+	Objects               Objects
+	ProgramCache          Programs
+	Materials             Materials
+	RenderLists           RenderLists
+	RenderStates          RenderStates
+	Clipping              Clipping
+	ShadowMap             ShadowMap
+	Background            Background
+	Morphtargets          Morphtargets
+	BufferRenderer        BufferRenderer
+	IndexedBufferRenderer IndexedBufferRenderer
+	Utils                 Utils
+	BindingStates         BindingStates
+	UniformsGroups        UniformsGroups
+
+	Animation                Animation
 	onAnimationFrameCallback func(time float64, frame int)
 }
 
-func NewWebGLRendererDefaults() *WebGLRenderer {
-	return NewWebGLRenderer(webgl.RendererParams{})
+func NewWebGLRendererDefaults() *Renderer {
+	return NewWebGLRenderer(RendererParams{})
 }
 
-func NewWebGLRenderer(parameters webgl.RendererParams) *WebGLRenderer {
-	this := new(WebGLRenderer)
+func NewWebGLRenderer(parameters RendererParams) *Renderer {
+	this := new(Renderer)
 	this.initParameters(parameters)
 
 	if !this.context.IsNull() {
@@ -190,10 +209,10 @@ func NewWebGLRenderer(parameters webgl.RendererParams) *WebGLRenderer {
 
 	// --- initialize ---
 
-	this.gl = webgl.Context{this.context, webgl.ContextConsts{}}
+	this.gl = Context{this.context, ContextConsts{}}
 
-	getContext := func(contextName string, contextAttributes utils.JsValue) webgl.Context {
-		return webgl.Context{this.canvas.Call("getContext", contextName, contextAttributes.AsJsValue()), webgl.ContextConsts{}}
+	getContext := func(contextName string, contextAttributes utils.JsValue) Context {
+		return Context{this.canvas.Call("getContext", contextName, contextAttributes.AsJsValue()), ContextConsts{}}
 	}
 
 	contextAttributes := utils.JsGlobal.Get("Object").New()
@@ -266,8 +285,8 @@ func NewWebGLRenderer(parameters webgl.RendererParams) *WebGLRenderer {
 	// 		this.xr = xr;
 	//
 
-	this.animation = *webgl.NewWebGLAnimation()
-	this.animation.SetAnimationLoop(func(time float64, frame int) {
+	this.Animation = *NewWebGLAnimation()
+	this.Animation.SetAnimationLoop(func(time float64, frame int) {
 		if this.onAnimationFrameCallback != nil {
 			this.onAnimationFrameCallback(time, frame)
 		}
@@ -276,55 +295,46 @@ func NewWebGLRenderer(parameters webgl.RendererParams) *WebGLRenderer {
 	return this
 }
 
-func (r *WebGLRenderer) IsWebGLRenderer() bool { return r != nil }
+func (r *Renderer) IsWebGLRenderer() bool { return r != nil }
 
-func (r *WebGLRenderer) initGLContext() {
-	//todo
-	// 		let properties, textures, cubemaps, cubeuvmaps, attributes, geometries, objects;
-	// 		let programCache, materials, renderLists, renderStates, clipping, shadowMap;
-	//
-	// 		let background, morphtargets, bufferRenderer, indexedBufferRenderer;
-	//
-	// 		let bindingStates, uniformsGroups;
-
-	r.Extensions = *webgl.NewWebGLExtensions(r.gl)
+func (r *Renderer) initGLContext() {
+	r.Extensions = *NewWebGLExtensions(&r.gl)
 	r.Extensions.Init()
 
-	r.utils = *webgl.NewWebGLUtils(r.gl, r.Extensions)
+	r.Utils = *NewWebGLUtils(&r.gl, &r.Extensions)
 
-	r.Capabilities = *webgl.NewWebGLCapabilities(r.gl, r.Extensions, r.parameters, r.utils)
+	r.Capabilities = *NewWebGLCapabilities(&r.gl, &r.Extensions, &r.parameters, &r.Utils)
 
-	r.State = *webgl.NewWebGLState(r.gl, r.Extensions)
+	r.State = *NewWebGLState(&r.gl, &r.Extensions)
 
 	//todo
 	// 			if ( capabilities.reverseDepthBuffer && reverseDepthBuffer ) {
-	//
 	// 				state.buffers.depth.setReversed( true );
-	//
 	// 			}
 
-	r.Info = *webgl.NewWebGLInfo(r.gl)
-	// 			properties = new WebGLProperties(); todo
-	// 			textures = new WebGLTextures( _gl, extensions, state, properties, capabilities, utils, info );
-	// 			cubemaps = new WebGLCubeMaps( _this );
-	// 			cubeuvmaps = new WebGLCubeUVMaps( _this );
-	// 			attributes = new WebGLAttributes( _gl );
-	// 			bindingStates = new WebGLBindingStates( _gl, attributes );
-	// 			geometries = new WebGLGeometries( _gl, attributes, info, bindingStates );
-	// 			objects = new WebGLObjects( _gl, geometries, attributes, info );
-	// 			morphtargets = new WebGLMorphtargets( _gl, capabilities, textures );
-	// 			clipping = new WebGLClipping( properties );
-	// 			programCache = new WebGLPrograms( _this, cubemaps, cubeuvmaps, extensions, capabilities, bindingStates, clipping );
-	// 			materials = new WebGLMaterials( _this, properties );
-	// 			renderLists = new WebGLRenderLists();
-	// 			renderStates = new WebGLRenderStates( extensions );
-	// 			background = new WebGLBackground( _this, cubemaps, cubeuvmaps, state, objects, _alpha, premultipliedAlpha );
-	// 			shadowMap = new WebGLShadowMap( _this, objects, capabilities );
-	// 			uniformsGroups = new WebGLUniformsGroups( _gl, info, capabilities, state );
-	//
-	// 			bufferRenderer = new WebGLBufferRenderer( _gl, extensions, info );
-	// 			indexedBufferRenderer = new WebGLIndexedBufferRenderer( _gl, extensions, info );
-	//
+	r.Info = *NewWebGLInfo(&r.gl)
+	r.Properties = *NewWebGLProperties()
+	r.Textures = *NewWebGLTextures(&r.gl, &r.Extensions, &r.State, &r.Properties, &r.Capabilities, &r.Utils, &r.Info)
+	r.Cubemaps = *NewWebGLCubeMaps(r)
+	r.Cubeuvmaps = *NewWebGLCubeUVMaps(r)
+	r.Attributes = *NewWebGLAttributes(&r.gl)
+	r.BindingStates = *NewWebGLBindingStates(&r.gl, &r.Attributes)
+	r.Geometries = *NewWebGLGeometries(&r.gl, &r.Attributes, &r.Info, &r.BindingStates)
+	r.Objects = *NewWebGLObjects(&r.gl, &r.Geometries, &r.Attributes, &r.Info)
+	r.Morphtargets = *NewWebGLMorphtargets(&r.gl, &r.Capabilities, &r.Textures)
+	r.Clipping = *NewWebGLClipping(&r.Properties)
+	r.ProgramCache = *NewWebGLPrograms(r, &r.Cubemaps, &r.Cubeuvmaps, &r.Extensions, &r.Capabilities, &r.BindingStates, &r.Clipping)
+	r.Materials = *NewWebGLMaterials(r, &r.Properties)
+	r.RenderLists = *NewWebGLRenderLists()
+	r.RenderStates = *NewWebGLRenderStates(&r.Extensions)
+	r.Background = *NewWebGLBackground(r, &r.Cubemaps, &r.Cubeuvmaps, &r.State, &r.Objects, r.alpha, r.premultipliedAlpha)
+	r.ShadowMap = *NewWebGLShadowMap(r, &r.Objects, &r.Capabilities)
+	r.UniformsGroups = *NewWebGLUniformsGroups(&r.gl, &r.Info, &r.Capabilities, &r.State)
+
+	r.BufferRenderer = *NewWebGLBufferRenderer(&r.gl, &r.Extensions, &r.Info)
+	r.IndexedBufferRenderer = *NewWebGLIndexedBufferRenderer(&r.gl, &r.Extensions, &r.Info)
+
+	//todo
 	// 			info.programs = programCache.programs;
 	//
 	// 			_this.properties = properties;
@@ -332,7 +342,7 @@ func (r *WebGLRenderer) initGLContext() {
 	// 			_this.shadowMap = shadowMap;
 }
 
-func (r *WebGLRenderer) GetContext() *webgl.Context {
+func (r *Renderer) GetContext() *Context {
 	return &r.gl
 }
 
@@ -380,11 +390,11 @@ func (r *WebGLRenderer) GetContext() *webgl.Context {
 // 		};
 //
 
-func (r *WebGLRenderer) SetSize(width, height int) {
+func (r *Renderer) SetSize(width, height int) {
 	r.SetSizeAndUpdateStyles(width, height, true)
 }
 
-func (r *WebGLRenderer) SetSizeAndUpdateStyles(width, height int, updateStyle bool) {
+func (r *Renderer) SetSizeAndUpdateStyles(width, height int, updateStyle bool) {
 	// 			if ( xr.isPresenting ) { todo
 	// 				console.warn( 'THREE.WebGLRenderer: Can\'t change size while VR device is presenting.' ); todo
 	// 				return; todo
@@ -439,13 +449,13 @@ func (r *WebGLRenderer) SetSizeAndUpdateStyles(width, height int, updateStyle bo
 // 		};
 //
 
-func (r *WebGLRenderer) SetViewport(x, y, width, height float64) {
+func (r *Renderer) SetViewport(x, y, width, height float64) {
 	r.viewport.Set(x, y, width, height)
 
 	r.State.Viewport(r.currentViewport.Copy(&r.viewport).MultiplyScalar(r.pixelRatio).Round())
 }
 
-func (r *WebGLRenderer) SetViewportVector4(v math.Vector4) {
+func (r *Renderer) SetViewportVector4(v math.Vector4) {
 	r.SetViewport(v.X, v.Y, v.Z, v.W)
 }
 
@@ -1097,20 +1107,20 @@ func (r *WebGLRenderer) SetViewportVector4(v math.Vector4) {
 
 // --- Animation Loop ---
 
-func (r *WebGLRenderer) SetAnimationLoop(callback func(time float64, frame int)) {
+func (r *Renderer) SetAnimationLoop(callback func(time float64, frame int)) {
 	r.onAnimationFrameCallback = callback
 	// 			xr.setAnimationLoop( callback ); todo
 
 	if callback != nil {
-		r.animation.Start()
+		r.Animation.Start()
 	} else {
-		r.animation.Stop()
+		r.Animation.Stop()
 	}
 }
 
 // --- Rendering ---
 
-func (r *WebGLRenderer) Render(scene *scenes.Scene, camera *cameras.Camera) {
+func (r *Renderer) Render(scene *scenes.Scene, camera *cameras.Camera) {
 	if !scene.IsScene() {
 		panic("THREE.WebGLRenderer.render: scene ist not defined")
 	}

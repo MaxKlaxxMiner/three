@@ -7,14 +7,13 @@ import (
 	"github.com/MaxKlaxxMiner/three/materials"
 	"github.com/MaxKlaxxMiner/three/math"
 	"github.com/MaxKlaxxMiner/three/objects"
-	"github.com/MaxKlaxxMiner/three/renderers"
 	"github.com/MaxKlaxxMiner/three/renderers/webgl"
 	"github.com/MaxKlaxxMiner/three/scenes"
 )
 
 var (
-	NewWebGLRendererDefaults = renderers.NewWebGLRendererDefaults
-	NewWebGLRenderer         = renderers.NewWebGLRenderer
+	NewWebGLRendererDefaults = webgl.NewWebGLRendererDefaults
+	NewWebGLRenderer         = webgl.NewWebGLRenderer
 	// export { ShaderLib } from './renderers/shaders/ShaderLib.js';
 	// export { UniformsLib } from './renderers/shaders/UniformsLib.js';
 	// export { UniformsUtils } from './renderers/shaders/UniformsUtils.js';

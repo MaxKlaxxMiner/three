@@ -3,11 +3,11 @@ package webgl
 import "fmt"
 
 type Extensions struct {
-	gl         Context
+	gl         *Context
 	extensions map[string]Extension
 }
 
-func NewWebGLExtensions(gl Context) *Extensions {
+func NewWebGLExtensions(gl *Context) *Extensions {
 	return &Extensions{gl, make(map[string]Extension)}
 }
 

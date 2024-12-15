@@ -3,7 +3,7 @@ package webgl
 import "strconv"
 
 type Info struct {
-	gl     Context
+	gl     *Context
 	Memory struct {
 		Geometries int
 		Textures   int
@@ -18,7 +18,7 @@ type Info struct {
 	AutoReset bool
 }
 
-func NewWebGLInfo(gl Context) *Info {
+func NewWebGLInfo(gl *Context) *Info {
 	return &Info{gl: gl, AutoReset: true}
 }
 

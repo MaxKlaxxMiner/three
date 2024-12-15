@@ -1,14 +1,14 @@
 package webgl
 
 type Capabilities struct {
-	gl            Context
-	extensions    Extensions
-	parameters    RendererParams
-	utils         Utils
+	gl            *Context
+	extensions    *Extensions
+	parameters    *RendererParams
+	utils         *Utils
 	maxAnisotropy int
 }
 
-func NewWebGLCapabilities(gl Context, extensions Extensions, parameters RendererParams, utils Utils) *Capabilities {
+func NewWebGLCapabilities(gl *Context, extensions *Extensions, parameters *RendererParams, utils *Utils) *Capabilities {
 	r := &Capabilities{
 		gl:            gl,
 		extensions:    extensions,

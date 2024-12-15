@@ -1,10 +1,9 @@
 //go:build !js
 
-package renderers
+package webgl
 
 import (
 	"github.com/MaxKlaxxMiner/three/internal/js"
-	"github.com/MaxKlaxxMiner/three/renderers/webgl"
 	"github.com/MaxKlaxxMiner/three/utils"
 )
 
@@ -17,7 +16,8 @@ type GlobalJsValues struct {
 	DomElement js.Value
 }
 
-func (r *WebGLRenderer) initParameters(parameters webgl.RendererParams) {
+func (r *Renderer) initParameters(parameters RendererParams) {
+	r.parameters = parameters
 	if parameters.Canvas != nil {
 		r.canvas = *parameters.Canvas
 	} else {
