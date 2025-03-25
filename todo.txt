@@ -1,7 +1,8 @@
 [92%] cameras/PerspectiveCamera
-[ 2%] core/BufferGeometry
+[24%] core/BufferAttribute
+[ 8%] core/BufferGeometry
 [25%] core/Object3D (228 / 915)
-[85%] geometries/BoxGeometry
+[89%] geometries/BoxGeometry
 [ 5%] materials/Material
 [27%] materials/MeshBasicMaterial
 [ 5%] math/Color

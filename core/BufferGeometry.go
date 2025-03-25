@@ -4,10 +4,12 @@ import "github.com/MaxKlaxxMiner/three/math"
 
 type BufferGeometry struct {
 	EventDispatcher
-	Id   int
-	Uuid math.UUID
-	Name string
-	Type string
+	Id         int
+	Uuid       math.UUID
+	Name       string
+	Type       string
+	Index      IBufferAttribute
+	Attributes map[string]IBufferAttribute
 }
 
 var _geometryId = 0
@@ -22,11 +24,13 @@ func NewBufferGeometry() *BufferGeometry {
 	this.Name = ""
 	this.Type = "BufferGeometry"
 
+	this.Index = nil
 	//todo
-	// 		this.index = null;
 	// 		this.indirect = null;
-	// 		this.attributes = {};
-	//
+
+	this.Attributes = make(map[string]IBufferAttribute)
+
+	//todo
 	// 		this.morphAttributes = {};
 	// 		this.morphTargetsRelative = false;
 	//
@@ -65,7 +69,42 @@ func (g *BufferGeometry) IsBufferGeometry() bool { return g != nil }
 // 		return this;
 //
 // 	}
-//
+
+func (g *BufferGeometry) SetIndex(index IBufferAttribute) *BufferGeometry {
+	if index == nil {
+		g.Index = nil
+		return g
+	}
+	switch buffer := index.(type) {
+	case *Uint16BufferAttribute:
+		g.Index = buffer
+	case *Uint32BufferAttribute:
+		g.Index = buffer
+	default:
+		g.Index = NewUint32BufferAttributeFromAny(index, 1).AutoDownToUint16()
+	}
+	return g
+}
+
+func (g *BufferGeometry) SetIndexUint16(index []uint16) *BufferGeometry {
+	if index == nil {
+		g.Index = nil
+		return g
+	}
+	g.Index = NewUint16BufferAttribute(index, 1)
+	return g
+}
+
+func (g *BufferGeometry) SetIndexUint32(index []uint32) *BufferGeometry {
+	if index == nil {
+		g.Index = nil
+		return g
+	}
+	g.Index = NewUint32BufferAttribute(index, 1).AutoDownToUint16()
+	return g
+}
+
+//todo
 // 	setIndirect( indirect ) {
 //
 // 		this.indirect = indirect;
@@ -80,34 +119,27 @@ func (g *BufferGeometry) IsBufferGeometry() bool { return g != nil }
 //
 // 	}
 //
-// 	getAttribute( name ) {
-//
-// 		return this.attributes[ name ];
-//
-// 	}
-//
-// 	setAttribute( name, attribute ) {
-//
-// 		this.attributes[ name ] = attribute;
-//
-// 		return this;
-//
-// 	}
-//
-// 	deleteAttribute( name ) {
-//
-// 		delete this.attributes[ name ];
-//
-// 		return this;
-//
-// 	}
-//
-// 	hasAttribute( name ) {
-//
-// 		return this.attributes[ name ] !== undefined;
-//
-// 	}
-//
+
+func (g *BufferGeometry) GetAttribute(name string) IBufferAttribute {
+	return g.Attributes[name]
+}
+
+func (g *BufferGeometry) SetAttribute(name string, attribute IBufferAttribute) *BufferGeometry {
+	g.Attributes[name] = attribute
+	return g
+}
+
+func (g *BufferGeometry) DeleteAttribute(name string) *BufferGeometry {
+	delete(g.Attributes, name)
+	return g
+}
+
+func (g *BufferGeometry) HasAttribute(name string) bool {
+	_, ok := g.Attributes[name]
+	return ok
+}
+
+//todo
 // 	addGroup( start, count, materialIndex = 0 ) {
 //
 // 		this.groups.push( {
